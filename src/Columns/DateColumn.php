@@ -12,6 +12,20 @@ use DateTimeInterface;
 class DateColumn extends AbstractColumn
 {
 	protected string $align = 'end';
+	protected string $format = 'j. n. Y';
+
+
+	public function setFormat(string $format): self
+	{
+		$this->format = $format;
+		return $this;
+	}
+
+
+	public function getFormat(): string
+	{
+		return $this->format;
+	}
 
 
 	public function render(mixed $row): void
@@ -20,6 +34,6 @@ class DateColumn extends AbstractColumn
 			throw new \Exception;
 		}
 
-		echo $row->format('j. n. Y');
+		echo $row->format($this->format);
 	}
 }
