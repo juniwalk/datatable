@@ -15,67 +15,19 @@ use Nette\Application\UI\Control;
 class Table extends Control
 {
 	use Traits\Columns;
-
+	use Traits\Sorting;
 
 	private Source $source;
-
-
-	#[Persistent]
-	/** @var array<string, 'asc'|'desc'> */
-	public array $sort = [];
-	private bool $isSortMultiple = false;
-
 
 	#[Persistent]
 	/** @var array<string, mixed> */
 	public array $filter = [];
-
 
 	// todo add perPage
 	// todo add page
 
 
 	// todo: implement optional state store / restore from session
-
-
-	public function handleSort(string $column): void
-	{
-		if (!$this->getColumn($column, false)) {
-			throw new \Exception;
-		}
-
-		$sort = $this->sort[$column] ?? null;
-		$sort = Sort::make($sort, false);
-
-		if (!$this->isSortMultiple) {
-			$this->sort = [];
-		}
-
-		$this->sort[$column] = match ($sort) {
-			Sort::ASC	=> Sort::DESC,
-			Sort::DESC	=> null,
-			null		=> Sort::ASC,
-		};
-
-		$this->redirect('this');
-	}
-
-
-	// todo: allow setting whole datatable as sortable
-
-
-	public function setSortMultiple(bool $sortMultiple = true): void
-	{
-		$this->isSortMultiple = $sortMultiple;
-	}
-
-
-	public function isSortMultiple(): bool
-	{
-		return $this->isSortMultiple;
-	}
-
-
 
 
 	public function handleClear(string $column): void
