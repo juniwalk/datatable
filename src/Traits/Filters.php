@@ -11,9 +11,10 @@ use Nette\Application\Attributes\Persistent;
 
 trait Filters
 {
+	/** @var array<non-empty-string, scalar> */
 	#[Persistent]
-	/** @var array<string, mixed> */
 	public array $filter = [];
+
 	private bool $isFilterShown = false;
 
 

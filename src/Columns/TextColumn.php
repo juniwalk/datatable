@@ -11,6 +11,11 @@ class TextColumn extends AbstractColumn
 {
 	public function render(mixed $row): void
 	{
+		// todo: check for stringable
+		if (!is_scalar($row)) {
+			throw new \Exception;
+		}
+
 		// convert to string
 		echo $row;
 	}

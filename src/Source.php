@@ -9,17 +9,25 @@ namespace JuniWalk\DataTable;
 
 use JuniWalk\DataTable\Enums\Sort;
 
+/**
+ * @phpstan-type Item array<string, mixed>
+ * @phpstan-type Items array<int|string, Item>
+ */
 interface Source
 {
+	/**
+	 * @return Items
+	 */
 	public function getItems(): iterable;
 	public function getCount(): int;
 
-
-	// todo: add docBlock with types
+	/**
+	 * @param array<non-empty-string, scalar> $filter
+	 */
 	public function filter(array $filter): void;
 
 	/**
-	 * @param array<string, Sort> $sort
+	 * @param array<non-empty-string, Sort> $sort
 	 */
 	public function sort(array $sort): void;
 }

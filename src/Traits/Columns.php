@@ -40,16 +40,17 @@ trait Columns
 
 
 	/**
-	 * @return Column[]
+	 * @return iterable<string, Column>
 	 */
-	public function getColumns(): array
+	public function getColumns(): iterable
 	{
-		return $this->getComponents(null, Column::class);
+		return $this->getComponents(null, Column::class);	// @phpstan-ignore return.type (List is filtered for Column::class)
 	}
 
 
 	public function removeColumn(string $name): void
 	{
-		$this->removeComponent($name);
+		// todo: make sure this works properly as there was PHPStan issue
+		$this->removeComponent($this->getColumn($name));
 	}
 }

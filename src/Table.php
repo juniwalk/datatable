@@ -37,10 +37,18 @@ class Table extends Control
 
 	public function render(): void
 	{
+		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/templates/default.latte');
 
 		$columns = $this->getColumns();
+
+		// foreach ($columns as $name => $column) {
+		// 	// todo: check is sorted
+		// 	// todo: check is filtered
+		// }
+
+		/** @var array<non-empty-string, Sort> */
 		$sort = Arrays::map($this->sort, fn($x) => Sort::from($x));
 		$filter = $this->filter; // todo: make list of filter instances
 

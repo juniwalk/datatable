@@ -10,10 +10,17 @@ namespace JuniWalk\DataTable\Sources;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Source;
 
+/**
+ * @phpstan-import-type Item from Source
+ * @phpstan-import-type Items from Source
+ */
 class ArraySource implements Source
 {
 	private int $count;
 
+	/**
+	 * @param Items $items
+	 */
 	public function __construct(
 		private array $items,
 	) {
@@ -21,6 +28,9 @@ class ArraySource implements Source
 	}
 
 
+	/**
+	 * @return Items
+	 */
 	public function getItems(): iterable
 	{
 		return $this->items;
@@ -33,15 +43,20 @@ class ArraySource implements Source
 	}
 
 
-	// todo: add docBlock with types
+	/**
+	 * @param array<non-empty-string, scalar> $filter
+	 */
 	public function filter(array $filter): void
 	{
+		// todo: implement custom filtering
 		foreach ($filter as $column => $query) {
+			$query = (string) $query;
 			$items = [];
 
 			foreach ($this->items as $id => $item) {
+				$value = (string) ($item[$column] ?? ''); // @phpstan-ignore cast.string
 
-				if (strcasecmp($query, $item[$column])) {
+				if (strcasecmp($query, $value)) {
 					continue;
 				}
 
@@ -54,7 +69,7 @@ class ArraySource implements Source
 
 
 	/**
-	 * @param array<string, Sort> $sort
+	 * @param array<non-empty-string, Sort> $sort
 	 */
 	public function sort(array $sort): void
 	{
@@ -63,8 +78,8 @@ class ArraySource implements Source
 			$items = [];
 
 			foreach ($this->items as $id => $item) {
-				$value = is_object($item) ? $item->$column : $item[$column]; // @phpstan-ignore-line
-				$sort_by = $value instanceof \DateTimeInterface ? $value->format('Y-m-d H:i:s') : (string) $value;
+				$value = is_object($item) ? $item->$column : $item[$column];
+				$sort_by = $value instanceof \DateTimeInterface ? $value->format('Y-m-d H:i:s') : (string) $value; // @phpstan-ignore cast.string
 
 				$items[$sort_by][$id] = $item;
 			}

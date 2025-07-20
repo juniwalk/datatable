@@ -7,7 +7,9 @@
 
 namespace JuniWalk\DataTable;
 
-interface Column
+use Nette\ComponentModel\IComponent;
+
+interface Column extends IComponent
 {
 	public function setSortable(bool|string $sortable): self;
 	public function isSortable(): bool;

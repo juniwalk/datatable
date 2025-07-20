@@ -12,9 +12,10 @@ use Nette\Application\Attributes\Persistent;
 
 trait Sorting
 {
+	/** @var array<non-empty-string, 'asc'|'desc'|null> */
 	#[Persistent]
-	/** @var array<string, 'asc'|'desc'> */
 	public array $sort = [];
+
 	private bool $isSortMultiple = false;
 
 	// todo: setSortDefault - default sorting
@@ -23,7 +24,7 @@ trait Sorting
 
 	public function handleSort(string $column): void
 	{
-		if (!$this->getColumn($column, false)) {
+		if (!$column || !$this->getColumn($column, false)) {
 			throw new \Exception;
 		}
 
@@ -35,9 +36,9 @@ trait Sorting
 		}
 
 		$this->sort[$column] = match ($sort) {
-			Sort::ASC	=> Sort::DESC,
+			Sort::ASC	=> Sort::DESC->value,
 			Sort::DESC	=> null,
-			null		=> Sort::ASC,
+			null		=> Sort::ASC->value,
 		};
 
 		$this->redirect('this');
