@@ -16,33 +16,15 @@ class Table extends Control
 {
 	use Traits\Columns;
 	use Traits\Sorting;
+	use Traits\Filters;
 
 	private Source $source;
-
-	#[Persistent]
-	/** @var array<string, mixed> */
-	public array $filter = [];
 
 	// todo add perPage
 	// todo add page
 
 
 	// todo: implement optional state store / restore from session
-
-
-	public function handleClear(string $column): void
-	{
-		unset($this->filter[$column]);
-
-		$this->redirect('this');
-	}
-
-	public function handleClearAll(): void
-	{
-		$this->filter = [];
-
-		$this->redirect('this');
-	}
 
 
 
