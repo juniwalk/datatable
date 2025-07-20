@@ -14,13 +14,17 @@ trait Filters
 	#[Persistent]
 	/** @var array<string, mixed> */
 	public array $filter = [];
+	private bool $isFilterShown = false;
 
 
-	// todo: add filter
+	// todo: addFilter*
+	// todo: getFilter
+	// todo: removeFilter
 
-	// todo: get filter
+	// todo: setFilterDefault - default filters
 
-	// todo: remove filter
+	// todo: setFilterShown
+	// todo: isFilterShown
 
 
 	public function handleClear(string $column): void

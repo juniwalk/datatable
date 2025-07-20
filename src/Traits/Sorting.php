@@ -17,6 +17,9 @@ trait Sorting
 	public array $sort = [];
 	private bool $isSortMultiple = false;
 
+	// todo: setSortDefault - default sorting
+	// todo: setSortable - allow to set whole datatable as sortable
+
 
 	public function handleSort(string $column): void
 	{
@@ -39,9 +42,6 @@ trait Sorting
 
 		$this->redirect('this');
 	}
-
-
-	// todo: allow setting whole datatable as sortable
 
 
 	public function setSortMultiple(bool $sortMultiple = true): void
