@@ -69,12 +69,13 @@ class ArraySource implements Source
 
 
 	/**
-	 * @param array<non-empty-string, Sort> $sort
+	 * @param array<non-empty-string, Sort|'asc'|'desc'|null> $sort
 	 */
 	public function sort(array $sort): void
 	{
 		// todo: implement custom sorting  -->  https://stackoverflow.com/questions/2699086/sort-a-2d-array-by-a-column-value
 		foreach ($sort as $column => $order) {
+			$order = Sort::make($order);
 			$items = [];
 
 			foreach ($this->items as $id => $item) {

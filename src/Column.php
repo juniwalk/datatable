@@ -7,14 +7,17 @@
 
 namespace JuniWalk\DataTable;
 
+use JuniWalk\DataTable\Enums\Sort;
 use Nette\ComponentModel\IComponent;
 
 interface Column extends IComponent
 {
+	public function setSort(Sort|string|null $sort): self;
 	public function setSortable(bool|string $sortable): self;
 	public function isSortable(): bool;
 
 
+	public function setFilter(mixed $filter): self;
 	public function setFiltered(bool $filtered): self;
 	public function isFiltered(): bool;
 

@@ -8,17 +8,35 @@
 namespace JuniWalk\DataTable\Columns;
 
 use JuniWalk\DataTable\Column;
+use JuniWalk\DataTable\Enums\Sort;
 use Nette\Application\UI\Control;
 
 abstract class AbstractColumn extends Control implements Column
 {
 	protected bool|string $isSortable = false;
+	protected ?Sort $sort;
+
 	protected bool $isFiltered = false;
+	protected mixed $filter;
+
 	protected string $align = 'start';
 
 	public function __construct(
 		protected ?string $label,
 	) {
+	}
+
+
+	public function setSort(Sort|string|null $sort): self
+	{
+		$this->sort = Sort::make($sort, false);
+		return $this;
+	}
+
+
+	public function getSort(): ?Sort
+	{
+		return $this->sort ?? null;
 	}
 
 
@@ -34,6 +52,19 @@ abstract class AbstractColumn extends Control implements Column
 		return (bool) $this->isSortable;
 	}
 
+
+
+	public function setFilter(mixed $filter): self
+	{
+		$this->filter = $filter;
+		return $this;
+	}
+
+
+	public function getFilter(): mixed
+	{
+		return $this->filter ?? null;
+	}
 
 
 	public function setFiltered(bool $filtered): self

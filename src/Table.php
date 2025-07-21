@@ -7,9 +7,6 @@
 
 namespace JuniWalk\DataTable;
 
-use JuniWalk\DataTable\Enums\Sort;
-use JuniWalk\Utils\Arrays;
-use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Control;
 
 class Table extends Control
@@ -17,22 +14,11 @@ class Table extends Control
 	use Traits\Columns;
 	use Traits\Sorting;
 	use Traits\Filters;
+	use Traits\Sources;
 
-	private Source $source;
 
 	// todo add perPage
 	// todo add page
-
-
-	// todo: implement optional state store / restore from session
-
-
-
-	// todo: allow dynamic source creation from given data type (in different method)
-	public function setSource(Source $source): void
-	{
-		$this->source = $source;
-	}
 
 
 	public function render(): void
@@ -41,32 +27,29 @@ class Table extends Control
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/templates/default.latte');
 
+		if (!isset($this->source)) {
+			throw new \Exception('No source set');
+		}
+
+
+		$this->source->filter($this->filter);
+		$this->source->sort($this->sort);
+
+
+		// todo: handle onDataLoaded event in the Source
+		$items = $this->source->getItems();
 		$columns = $this->getColumns();
 
-		// foreach ($columns as $name => $column) {
-		// 	// todo: check is sorted
-		// 	// todo: check is filtered
-		// }
-
-		/** @var array<non-empty-string, Sort> */
-		$sort = Arrays::map($this->sort, fn($x) => Sort::from($x));
-		$filter = $this->filter; // todo: make list of filter instances
-
-		// todo: do this in more elegant way
-		foreach ($filter as $column => $query) {
-			$this->getColumn($column, false)?->setFiltered(true);
+		foreach ($columns as $name => $column) {
+			$column->setFiltered((bool) ($this->filter[$name] ?? false));
+			$column->setFilter($this->filter[$name] ?? null);
+			$column->setSort($this->sort[$name] ?? null);
 		}
 
 		$template->add('columns', $columns);
-		$template->add('sorts', $sort);
+		$template->add('items', $items);
 
-		$this->source->filter($filter);
-		$this->source->sort($sort);
-
-		// todo: handle onDataLoaded event in the Source
-		$template->add('items', $this->source->getItems());
-
-		// bdump($this);
+		bdump($this);
 
 		$template->render();
 	}

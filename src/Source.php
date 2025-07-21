@@ -27,7 +27,7 @@ interface Source
 	public function filter(array $filter): void;
 
 	/**
-	 * @param array<non-empty-string, Sort> $sort
+	 * @param array<non-empty-string, Sort|'asc'|'desc'|null> $sort
 	 */
 	public function sort(array $sort): void;
 }
