@@ -7,7 +7,9 @@
 
 namespace JuniWalk\DataTable\Traits;
 
+use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Column;
+use JuniWalk\DataTable\Columns\ActionColumn;
 use JuniWalk\DataTable\Columns\DateColumn;
 use JuniWalk\DataTable\Columns\TextColumn;
 
@@ -16,16 +18,27 @@ trait Columns
 	// todo: store columns in subcomponent so there is no name clashing with actions / filters
 
 
-	public function addTextColumn(string $name, ?string $label = null): TextColumn
+	public function addTextColumn(string $name, ?string $label): TextColumn
 	{
 		$this->addComponent($column = new TextColumn($label), $name);
 		return $column;
 	}
 
 
-	public function addDateColumn(string $name, ?string $label = null): DateColumn
+	public function addDateColumn(string $name, ?string $label): DateColumn
 	{
 		$this->addComponent($column = new DateColumn($label), $name);
+		return $column;
+	}
+
+
+	/**
+	 * @param iterable<string, Action> $actions
+	 */
+	protected function addColumnAction(string $name, ?string $label, iterable $actions): ActionColumn
+	{
+		$this->addComponent($column = new ActionColumn($label), $name);
+		$column->addActions($actions);
 		return $column;
 	}
 

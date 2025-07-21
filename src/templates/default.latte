@@ -52,8 +52,6 @@
 					</div>
 				</th>
 
-				{* todo: add header for actions *}
-
 			</tr>
 		</thead>
 
@@ -61,10 +59,8 @@
 			<tr n:foreach="$items as $item">
 
 				<td n:class="'col-'.$name, 'text-'.$column->getAlign()" n:foreach="$columns as $name => $column">
-					{control $column, $item[$name]}
+					{control $column, $item}
 				</td>
-
-				{* todo: add row actions *}
 
 			</tr>
 		</tbody>

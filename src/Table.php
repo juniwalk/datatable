@@ -19,9 +19,10 @@ use Nette\Application\UI\Control;
  */
 class Table extends Control
 {
+	use Traits\Actions;
 	use Traits\Columns;
-	use Traits\Sorting;
 	use Traits\Filters;
+	use Traits\Sorting;
 	use Traits\Sources;
 
 
@@ -55,13 +56,11 @@ class Table extends Control
 			throw new \Exception('No source set');
 		}
 
+		if ($actions = $this->getActions()) {
+			$this->addColumnAction('actions', 'Akce', $actions);
+		}
 
-		$this->source->filter($this->filter);
-		$this->source->sort($this->sort);
 
-
-		// todo: handle onDataLoaded event in the Source
-		$items = $this->source->getItems();
 		$columns = $this->getColumns();
 
 		foreach ($columns as $name => $column) {
@@ -71,6 +70,14 @@ class Table extends Control
 			$column->setFiltered((bool) ($this->filter[$name] ?? false));
 			$column->setFilter($this->filter[$name] ?? null);
 		}
+
+
+		$this->source->filter($this->filter);
+		$this->source->sort($this->sort);
+
+		// todo: handle onDataLoaded event in the Source
+		$items = $this->source->getItems();
+
 
 		$template->add('columns', $columns);
 		$template->add('items', $items);

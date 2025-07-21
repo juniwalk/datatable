@@ -30,10 +30,12 @@ class DateColumn extends AbstractColumn
 
 	public function render(mixed $row): void
 	{
-		if (!$row instanceof DateTimeInterface) {
+		$value = $row[$this->getName()] ?? null;
+
+		if (!$value instanceof DateTimeInterface) {
 			throw new \Exception;
 		}
 
-		echo $row->format($this->format);
+		echo $value->format($this->format);
 	}
 }
