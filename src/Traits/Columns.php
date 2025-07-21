@@ -18,14 +18,14 @@ trait Columns
 	// todo: store columns in subcomponent so there is no name clashing with actions / filters
 
 
-	public function addTextColumn(string $name, ?string $label): TextColumn
+	public function addColumnText(string $name, ?string $label): TextColumn
 	{
 		$this->addComponent($column = new TextColumn($label), $name);
 		return $column;
 	}
 
 
-	public function addDateColumn(string $name, ?string $label): DateColumn
+	public function addColumnDate(string $name, ?string $label): DateColumn
 	{
 		$this->addComponent($column = new DateColumn($label), $name);
 		return $column;
