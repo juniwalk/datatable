@@ -7,6 +7,6 @@
 
 namespace JuniWalk\DataTable\Actions;
 
-class ButtonAction extends AbstractAction
+class LinkAction extends AbstractAction
 {
 }

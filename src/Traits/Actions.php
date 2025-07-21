@@ -8,16 +8,19 @@
 namespace JuniWalk\DataTable\Traits;
 
 use JuniWalk\DataTable\Action;
-use JuniWalk\DataTable\Actions\ButtonAction;
+use JuniWalk\DataTable\Actions\LinkAction;
 
 trait Actions
 {
-	// todo: store ctions in subcomponent so there is no name clashing with actions / filters
+	// todo: store actions in subcomponent so there is no name clashing with actions / filters
+
+	// todo: new action addActionCallback ?
+	// todo: new action addActionDropdown ?
 
 
-	public function addActionButton(string $name, ?string $label = null): ButtonAction
+	public function addAction(string $name, ?string $label = null): LinkAction
 	{
-		$this->addComponent($column = new ButtonAction($label), $name);
+		$this->addComponent($column = new LinkAction($label), $name);
 		return $column;
 	}
 
