@@ -7,8 +7,16 @@
 
 namespace JuniWalk\DataTable;
 
+use JuniWalk\DataTable\Enums\Sort;
 use Nette\Application\UI\Control;
 
+/**
+ * @phpstan-import-type ColumnName from Column
+ * @phpstan-type State array{
+ * 		sort: array<ColumnName, 'asc'|'desc'>,
+ * 		filter: array<ColumnName, scalar|scalar[]>,
+ * }
+ */
 class Table extends Control
 {
 	use Traits\Columns;
@@ -19,6 +27,22 @@ class Table extends Control
 
 	// todo add perPage
 	// todo add page
+
+
+	// todo: implement optional state store / restore from session
+
+
+	/**
+	 * @param State $params
+	 */
+	public function loadState(array $params): void
+	{
+		foreach ($params['sort'] ?? [] as $column => $order) {
+			$params['sort'][$column] = Sort::make($order, false);
+		}
+
+		parent::loadState($params);
+	}
 
 
 	public function render(): void
@@ -41,15 +65,17 @@ class Table extends Control
 		$columns = $this->getColumns();
 
 		foreach ($columns as $name => $column) {
+			$column->setSort($this->sort[$name] ?? null);
+
+			// todo: improve filter handling
 			$column->setFiltered((bool) ($this->filter[$name] ?? false));
 			$column->setFilter($this->filter[$name] ?? null);
-			$column->setSort($this->sort[$name] ?? null);
 		}
 
 		$template->add('columns', $columns);
 		$template->add('items', $items);
 
-		bdump($this);
+		// bdump($this);
 
 		$template->render();
 	}

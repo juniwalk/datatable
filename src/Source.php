@@ -10,6 +10,7 @@ namespace JuniWalk\DataTable;
 use JuniWalk\DataTable\Enums\Sort;
 
 /**
+ * @phpstan-import-type ColumnName from Column
  * @phpstan-type Item array<string, mixed>
  * @phpstan-type Items array<int|string, Item>
  */
@@ -22,12 +23,12 @@ interface Source
 	public function getCount(): int;
 
 	/**
-	 * @param array<non-empty-string, scalar> $filter
+	 * @param array<ColumnName, scalar> $filter
 	 */
 	public function filter(array $filter): void;
 
 	/**
-	 * @param array<non-empty-string, Sort|'asc'|'desc'|null> $sort
+	 * @param array<ColumnName, ?Sort> $sort
 	 */
 	public function sort(array $sort): void;
 }

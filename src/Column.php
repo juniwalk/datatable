@@ -10,9 +10,12 @@ namespace JuniWalk\DataTable;
 use JuniWalk\DataTable\Enums\Sort;
 use Nette\ComponentModel\IComponent;
 
+/**
+ * @phpstan-type ColumnName non-empty-string
+ */
 interface Column extends IComponent
 {
-	public function setSort(Sort|string|null $sort): self;
+	public function setSort(?Sort $sort): self;
 	public function setSortable(bool|string $sortable): self;
 	public function isSortable(): bool;
 

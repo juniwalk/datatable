@@ -7,12 +7,16 @@
 
 namespace JuniWalk\DataTable\Traits;
 
+use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Enums\Sort;
 use Nette\Application\Attributes\Persistent;
 
+/**
+ * @phpstan-import-type ColumnName from Column
+ */
 trait Sorting
 {
-	/** @var array<non-empty-string, 'asc'|'desc'|null> */
+	/** @var array<ColumnName, ?Sort> */
 	#[Persistent]
 	public array $sort = [];
 
@@ -22,6 +26,9 @@ trait Sorting
 	// todo: setSortable - allow to set whole datatable as sortable
 
 
+	/**
+	 * @param ColumnName $column
+	 */
 	public function handleSort(string $column): void
 	{
 		if (!$column || !$this->getColumn($column, false)) {
@@ -29,16 +36,15 @@ trait Sorting
 		}
 
 		$sort = $this->sort[$column] ?? null;
-		$sort = Sort::make($sort, false);
 
 		if (!$this->isSortMultiple) {
 			$this->sort = [];
 		}
 
 		$this->sort[$column] = match ($sort) {
-			Sort::ASC	=> Sort::DESC->value,
+			Sort::ASC	=> Sort::DESC,
 			Sort::DESC	=> null,
-			null		=> Sort::ASC->value,
+			null		=> Sort::ASC,
 		};
 
 		$this->redirect('this');

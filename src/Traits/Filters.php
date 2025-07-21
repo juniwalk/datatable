@@ -7,11 +7,15 @@
 
 namespace JuniWalk\DataTable\Traits;
 
+use JuniWalk\DataTable\Column;
 use Nette\Application\Attributes\Persistent;
 
+/**
+ * @phpstan-import-type ColumnName from Column
+ */
 trait Filters
 {
-	/** @var array<non-empty-string, scalar> */
+	/** @var array<ColumnName, scalar> */
 	#[Persistent]
 	public array $filter = [];
 
@@ -28,6 +32,9 @@ trait Filters
 	// todo: isFilterShown
 
 
+	/**
+	 * @param ColumnName $column
+	 */
 	public function handleClear(string $column): void
 	{
 		unset($this->filter[$column]);

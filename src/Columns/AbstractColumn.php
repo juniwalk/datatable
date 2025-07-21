@@ -27,9 +27,9 @@ abstract class AbstractColumn extends Control implements Column
 	}
 
 
-	public function setSort(Sort|string|null $sort): self
+	public function setSort(?Sort $sort): self
 	{
-		$this->sort = Sort::make($sort, false);
+		$this->sort = $sort;
 		return $this;
 	}
 

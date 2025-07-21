@@ -7,10 +7,12 @@
 
 namespace JuniWalk\DataTable\Sources;
 
+use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Source;
 
 /**
+ * @phpstan-import-type ColumnName from Column
  * @phpstan-import-type Item from Source
  * @phpstan-import-type Items from Source
  */
@@ -44,7 +46,7 @@ class ArraySource implements Source
 
 
 	/**
-	 * @param array<non-empty-string, scalar> $filter
+	 * @param array<ColumnName, scalar> $filter
 	 */
 	public function filter(array $filter): void
 	{
@@ -69,13 +71,12 @@ class ArraySource implements Source
 
 
 	/**
-	 * @param array<non-empty-string, Sort|'asc'|'desc'|null> $sort
+	 * @param array<ColumnName, ?Sort> $sort
 	 */
 	public function sort(array $sort): void
 	{
 		// todo: implement custom sorting  -->  https://stackoverflow.com/questions/2699086/sort-a-2d-array-by-a-column-value
 		foreach ($sort as $column => $order) {
-			$order = Sort::make($order);
 			$items = [];
 
 			foreach ($this->items as $id => $item) {
