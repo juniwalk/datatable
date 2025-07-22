@@ -13,8 +13,9 @@ use Nette\Application\UI\Control;
 
 abstract class AbstractColumn extends Control implements Column
 {
-	protected bool|string $isSortable = false;
-	protected ?Sort $sortedBy;
+	protected bool $isSortable;
+	protected string $sortBy;
+	protected ?Sort $sort;
 
 	protected bool $isFiltered = false;
 	protected mixed $filter;
@@ -27,29 +28,39 @@ abstract class AbstractColumn extends Control implements Column
 	}
 
 
-	public function setSortedBy(?Sort $sortedBy): self
-	{
-		$this->sortedBy = $sortedBy;
-		return $this;
-	}
-
-
-	public function isSortedBy(): ?Sort
-	{
-		return $this->sortedBy ?? null;
-	}
-
-
 	public function setSortable(bool|string $sortable): self
 	{
-		$this->isSortable = $sortable;
+		if (is_string($sortable) && $sortable <> '') {
+			$this->sortBy = $sortable;
+		}
+
+		$this->isSortable = (bool) $sortable;
 		return $this;
 	}
 
 
-	public function isSortable(): bool
+	public function isSortable(): ?bool
 	{
-		return (bool) $this->isSortable;
+		return $this->isSortable ?? null;
+	}
+
+
+	public function getSortedBy(): ?string
+	{
+		return $this->sortBy ?? null;
+	}
+
+
+	public function setSorted(?Sort $sort): self
+	{
+		$this->sort = $sort;
+		return $this;
+	}
+
+
+	public function isSorted(): ?Sort
+	{
+		return $this->sort ?? null;
 	}
 
 

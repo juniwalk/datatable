@@ -20,10 +20,10 @@ trait Sorting
 	#[Persistent]
 	public array $sort = [];
 
+	private bool $isSortable = false;
 	private bool $isSortMultiple = false;
 
 	// todo: setSortDefault - default sorting
-	// todo: setSortable - allow to set whole datatable as sortable
 
 
 	/**
@@ -47,7 +47,25 @@ trait Sorting
 			null		=> Sort::ASC,
 		};
 
+		// todo: if the sort list is empty, use default sort
+		// if (!array_filter($this->sort)) {
+		// 	$this->sort = $this->sortDefault;
+		// }
+
 		$this->redirect('this');
+	}
+
+
+	public function setSortable(bool $sortable = true): self
+	{
+		$this->isSortable = $sortable;
+		return $this;
+	}
+
+
+	public function isSortable(): bool
+	{
+		return $this->isSortable;
 	}
 
 

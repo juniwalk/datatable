@@ -64,7 +64,12 @@ class Table extends Control
 		$columns = $this->getColumns();
 
 		foreach ($columns as $name => $column) {
-			$column->setSortedBy($this->sort[$name] ?? null);
+			// ? Set column as sortable only if there is no override
+			if ($this->isSortable() && $column->isSortable() === null) {
+				$column->setSortable(true);
+			}
+
+			$column->setSorted($this->sort[$name] ?? null);
 
 			// todo: improve filter handling
 			$column->setFiltered((bool) ($this->filter[$name] ?? false));

@@ -44,7 +44,7 @@
 					<div class="d-flex gap-2 justify-content-between">
 						<div n:class="flex-fill, 'text-'.$column->getAlign()">
 						<a n:href="sort! $name" n:tag-if="$column->isSortable()">
-							<i n:class="fa-solid, $column->isSortedBy()?->icon() ?? fa-sort, fa-fw" n:if="$column->isSortable()"></i>
+							<i n:class="fa-solid, $column->isSorted()?->icon() ?? fa-sort, fa-fw" n:if="$column->isSortable()"></i>
 							<small>{control $column:label}</small>
 						</a>
 						</div>
