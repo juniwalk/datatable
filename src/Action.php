@@ -7,9 +7,13 @@
 
 namespace JuniWalk\DataTable;
 
+use JuniWalk\DataTable\Row;
 use Nette\ComponentModel\IComponent;
+use Nette\Utils\Html;
 
 interface Action extends IComponent
 {
 	public function getLabel(): ?string;
+
+	public function render(Row $row): Html;
 }

@@ -14,15 +14,18 @@ trait Actions
 {
 	// todo: store actions in subcomponent so there is no name clashing with actions / filters
 
-	// todo: new action addActionCallback ?
-	// todo: new action addActionDropdown ?
-
 
 	public function addAction(string $name, ?string $label = null): LinkAction
 	{
+		// todo: allow $name to be signal (clear unwanted characters for $name)
+
 		$this->addComponent($column = new LinkAction($label), $name);
 		return $column;
 	}
+
+
+	// todo: new action addActionCallback ?
+	// todo: new action addActionDropdown ?
 
 
 	/**

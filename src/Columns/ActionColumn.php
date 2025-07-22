@@ -37,10 +37,10 @@ class ActionColumn extends AbstractColumn
 	{
 		$toolbar = Html::el('div class="btn-toolbar gap-1 justify-content-end"');
 
-		// todo: build list of buttons with actions
 		foreach ($this->actions as $name => $action) {
-			$button = Html::el('a class="btn btn-xs btn-secondary"', $action->getLabel());
+			// todo: check if the row is allowed to have this action
 
+			$button = $action->render($row);
 			$toolbar->addHtml($button);
 		}
 

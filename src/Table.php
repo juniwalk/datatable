@@ -46,6 +46,12 @@ class Table extends Control
 	}
 
 
+	public function flashMessage(string|\stdClass|\Stringable $message, string $type = 'info'): \stdClass
+	{
+		return $this->getPresenter()->flashMessage($message, $type);
+	}
+
+
 	public function render(): void
 	{
 		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
