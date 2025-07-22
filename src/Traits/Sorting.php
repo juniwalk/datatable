@@ -20,10 +20,11 @@ trait Sorting
 	#[Persistent]
 	public array $sort = [];
 
+	/** @var array<ColumnName, Sort> */
+	private array $sortDefault = [];
+
 	private bool $isSortable = false;
 	private bool $isSortMultiple = false;
-
-	// todo: setSortDefault - default sorting
 
 
 	/**
@@ -32,6 +33,7 @@ trait Sorting
 	public function handleSort(string $column): void
 	{
 		if (!$column || !$this->getColumn($column, false)) {
+			// todo: throw new ColumnNotFoundException($column)
 			throw new \Exception;
 		}
 
@@ -47,10 +49,9 @@ trait Sorting
 			null		=> Sort::ASC,
 		};
 
-		// todo: if the sort list is empty, use default sort
-		// if (!array_filter($this->sort)) {
-		// 	$this->sort = $this->sortDefault;
-		// }
+		if (!array_filter($this->sort)) {
+			$this->sort = $this->sortDefault;
+		}
 
 		$this->redirect('this');
 	}
@@ -78,5 +79,40 @@ trait Sorting
 	public function isSortMultiple(): bool
 	{
 		return $this->isSortMultiple;
+	}
+
+
+	/**
+	 * @param array<ColumnName, Sort|Sort::*> $sort
+	 */
+	public function setDefaultSort(array $sort): self
+	{
+		$this->sortDefault = [];
+
+		foreach ($sort as $column => $sort) {
+			if (!$column || !$this->getColumn($column, false)) {
+				// todo: throw new ColumnNotFoundException($column)
+				throw new \Exception;
+			}
+
+			$this->sortDefault[$column] = Sort::make($sort, true);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @return array<ColumnName, Sort>
+	 */
+	public function getDefaultSort(): array
+	{
+		return $this->sortDefault;
+	}
+
+
+	public function isDefaultSort(): bool
+	{
+		return !array_diff_key($this->sortDefault, array_filter($this->sort));
 	}
 }
