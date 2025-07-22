@@ -40,7 +40,7 @@
 		<thead>
 			<tr>
 
-				<th n:class="'col-'.$name" n:foreach="$columns as $name => $column">
+				<th n:foreach="$columns as $name => $column" n:class="'col-'.$name">
 					<div class="d-flex gap-2 justify-content-between">
 						<div n:class="flex-fill, 'text-'.$column->getAlign()">
 						<a n:href="sort! $name" n:tag-if="$column->isSortable()">
@@ -56,10 +56,10 @@
 		</thead>
 
 		<tbody>
-			<tr n:foreach="$items as $item">
+			<tr n:foreach="$rows as $row">
 
-				<td n:class="'col-'.$name, 'text-'.$column->getAlign()" n:foreach="$columns as $name => $column">
-					{control $column, $item}
+				<td n:foreach="$columns as $name => $column" n:class="'col-'.$name, 'text-'.$column->getAlign()">
+					{control $column, $row}
 				</td>
 
 			</tr>

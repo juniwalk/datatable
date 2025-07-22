@@ -8,6 +8,7 @@
 namespace JuniWalk\DataTable\Columns;
 
 use DateTimeInterface;
+use JuniWalk\DataTable\Row;
 
 class DateColumn extends AbstractColumn
 {
@@ -28,9 +29,11 @@ class DateColumn extends AbstractColumn
 	}
 
 
-	public function render(mixed $row): void
+	public function render(Row $row): void
 	{
-		$value = $row[$this->getName()] ?? null;
+		$value = $row->getValue($this);
+
+		// todo: try to make DateTime from other value types
 
 		if (!$value instanceof DateTimeInterface) {
 			throw new \Exception;

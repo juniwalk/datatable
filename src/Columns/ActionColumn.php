@@ -8,6 +8,7 @@
 namespace JuniWalk\DataTable\Columns;
 
 use JuniWalk\DataTable\Action;
+use JuniWalk\DataTable\Row;
 use Nette\Utils\Html;
 
 class ActionColumn extends AbstractColumn
@@ -32,7 +33,7 @@ class ActionColumn extends AbstractColumn
 	}
 
 
-	public function render(mixed $row): void
+	public function render(Row $row): void
 	{
 		$toolbar = Html::el('div class="btn-toolbar gap-1 justify-content-end"');
 

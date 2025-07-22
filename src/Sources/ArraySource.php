@@ -35,6 +35,7 @@ class ArraySource implements Source
 	 */
 	public function getItems(): iterable
 	{
+		// todo: handle onDataLoaded event in the Source
 		return $this->items;
 	}
 

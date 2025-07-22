@@ -33,6 +33,6 @@ interface Column extends IComponent
 	public function getAlign(): string;
 
 
+	public function render(Row $row): void;
 	public function renderLabel(): void;
-	public function render(mixed $row): void;
 }

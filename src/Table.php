@@ -71,6 +71,8 @@ class Table extends Control
 
 			$column->setSorted($this->sort[$name] ?? null);
 
+
+
 			// todo: improve filter handling
 			$column->setFiltered((bool) ($this->filter[$name] ?? false));
 			$column->setFilter($this->filter[$name] ?? null);
@@ -80,12 +82,14 @@ class Table extends Control
 		$this->source->filter($this->filter);
 		$this->source->sort($this->sort);
 
-		// todo: handle onDataLoaded event in the Source
-		$items = $this->source->getItems();
+		$rows = [];
 
+		foreach ($this->source->getItems() as $key => $item) {
+			$rows[$key] = new Row($key, $item);
+		}
 
 		$template->add('columns', $columns);
-		$template->add('items', $items);
+		$template->add('rows', $rows);
 
 		// bdump($this);
 

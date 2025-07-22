@@ -7,13 +7,16 @@
 
 namespace JuniWalk\DataTable\Columns;
 
+use JuniWalk\DataTable\Row;
+
 class TextColumn extends AbstractColumn
 {
-	public function render(mixed $row): void
+	public function render(Row $row): void
 	{
-		$value = $row[$this->getName()] ?? null;
+		$value = $row->getValue($this);
 
 		// todo: check for stringable
+		// todo: allow BackedEnums to be printed
 		if (!is_scalar($value)) {
 			throw new \Exception;
 		}
