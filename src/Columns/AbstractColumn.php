@@ -14,7 +14,7 @@ use Nette\Application\UI\Control;
 abstract class AbstractColumn extends Control implements Column
 {
 	protected bool|string $isSortable = false;
-	protected ?Sort $sort;
+	protected ?Sort $sortedBy;
 
 	protected bool $isFiltered = false;
 	protected mixed $filter;
@@ -27,16 +27,16 @@ abstract class AbstractColumn extends Control implements Column
 	}
 
 
-	public function setSort(?Sort $sort): self
+	public function setSortedBy(?Sort $sortedBy): self
 	{
-		$this->sort = $sort;
+		$this->sortedBy = $sortedBy;
 		return $this;
 	}
 
 
-	public function getSort(): ?Sort
+	public function isSortedBy(): ?Sort
 	{
-		return $this->sort ?? null;
+		return $this->sortedBy ?? null;
 	}
 
 

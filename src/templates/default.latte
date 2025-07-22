@@ -44,8 +44,8 @@
 					<div class="d-flex gap-2 justify-content-between">
 						<div n:class="flex-fill, 'text-'.$column->getAlign()">
 						<a n:href="sort! $name" n:tag-if="$column->isSortable()">
-							<i n:class="fa-solid, $column->getSort()?->icon() ?? fa-sort, fa-fw" n:if="$column->isSortable()"></i>
-							{control $column:label}
+							<i n:class="fa-solid, $column->isSortedBy()?->icon() ?? fa-sort, fa-fw" n:if="$column->isSortable()"></i>
+							<small>{control $column:label}</small>
 						</a>
 						</div>
 						<a n:href="clear! $name" class="text-danger" n:if="$column->isFiltered()"><i class="fa-solid fa-times fa-fw"></i></a>

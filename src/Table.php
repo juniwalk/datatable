@@ -64,7 +64,7 @@ class Table extends Control
 		$columns = $this->getColumns();
 
 		foreach ($columns as $name => $column) {
-			$column->setSort($this->sort[$name] ?? null);
+			$column->setSortedBy($this->sort[$name] ?? null);
 
 			// todo: improve filter handling
 			$column->setFiltered((bool) ($this->filter[$name] ?? false));
