@@ -20,14 +20,10 @@ class ActionColumn extends AbstractColumn
 
 
 	/**
-	 * @param iterable<string, Action> $actions
+	 * @param array<string, Action> $actions
 	 */
-	public function addActions(iterable $actions): self
+	public function addActions(array $actions): self
 	{
-		if (!is_array($actions)) {
-			$actions = iterator_to_array($actions);
-		}
-
 		$this->actions = $actions;
 		return $this;
 	}

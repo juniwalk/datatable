@@ -38,11 +38,14 @@ trait Actions
 
 
 	/**
-	 * @return iterable<string, Action>
+	 * @return array<string, Action>
 	 */
-	public function getActions(): iterable
+	public function getActions(): array
 	{
-		return $this->getComponents(null, Action::class);	// @phpstan-ignore return.type (List is filtered for Action::class)
+		$actions = $this->getComponents(null, Action::class);
+
+		/** @var array<string, Action> */
+		return iterator_to_array($actions);
 	}
 
 

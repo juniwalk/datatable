@@ -41,9 +41,9 @@ trait Columns
 
 
 	/**
-	 * @param iterable<string, Action> $actions
+	 * @param array<string, Action> $actions
 	 */
-	protected function addColumnAction(string $name, ?string $label, iterable $actions): ActionColumn
+	protected function addColumnAction(string $name, ?string $label, array $actions): ActionColumn
 	{
 		return $this->addColumn($name, new ActionColumn($label))->addActions($actions);
 	}
