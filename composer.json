@@ -27,7 +27,8 @@
 	"require": {
 		"php": ">=8.2",
 		"nette/application": "^3.0",
-		"juniwalk/utils": "^4.0"
+		"juniwalk/utils": "^4.0",
+		"symfony/property-access": "^7.0"
 	},
 
 	"require-dev": {

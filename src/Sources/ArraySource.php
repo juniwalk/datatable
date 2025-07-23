@@ -58,9 +58,12 @@ class ArraySource implements Source
 
 			// todo: dont use index, get $primaryKey from $item
 			foreach ($this->items as $id => $item) {
-				$value = (string) ($item[$column] ?? ''); // @phpstan-ignore cast.string
+				$value = $this->readValue($item, $column) ?? null;
 
-				if (strcasecmp($query, $value)) {
+				if (is_string($value) && strcasecmp($query, $value)) {
+					continue;
+
+				} elseif ($query <> $value) {
 					continue;
 				}
 
@@ -106,8 +109,10 @@ class ArraySource implements Source
 
 			// todo: dont use index, get $primaryKey from $item
 			foreach ($this->items as $id => $item) {
-				$value = is_object($item) ? $item->$field : $item[$field];
-				$sort_by = $value instanceof \DateTimeInterface ? $value->format('Y-m-d H:i:s') : (string) $value; // @phpstan-ignore cast.string
+				$value = $this->readValue($item, $field) ?? '';
+				$sort_by = $value instanceof \DateTimeInterface
+					? $value->format('Y-m-d H:i:s')
+					: (string) $value; // @phpstan-ignore cast.string
 
 				$items[$sort_by][$id] = $item;
 			}
@@ -134,5 +139,20 @@ class ArraySource implements Source
 	public function limit(int $page, int $limit): void
 	{
 		$this->items = array_slice($this->items, $limit * ($page - 1), $limit, true);
+	}
+
+
+	/**
+	 * @param Item $item
+	 */
+	private function readValue(array|object $item, string $field): mixed
+	{
+		return match (true) {
+			is_object($item) => $item->$field ?? null,
+			is_array($item) => $item[$field] ?? null,	// @phpstan-ignore function.alreadyNarrowedType
+
+			// todo: throw InvalidValueException
+			default => throw new \Exception,
+		};
 	}
 }

@@ -9,7 +9,7 @@ namespace JuniWalk\DataTable;
 
 /**
  * @phpstan-import-type ColumnName from Column
- * @phpstan-type Item array<string, mixed>
+ * @phpstan-type Item object|array<string, mixed>
  * @phpstan-type Items array<int|string, Item>
  */
 interface Source

@@ -7,12 +7,31 @@
 
 namespace JuniWalk\DataTable;
 
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
+
 class Row
 {
+	private int|string $id;
+	private PropertyAccessor $reader;
+
+	/**
+	 * @param object|array<string, mixed> $item
+	 */
 	public function __construct(
-		private int|string $id,
-		private mixed $item,
+		private array|object $item,
+		private string $primaryKey,	// @phpstan-ignore property.onlyWritten
 	) {
+		$this->reader = PropertyAccess::createPropertyAccessor();
+
+		$id = $this->readValue($primaryKey);
+
+		if (!is_string($id) && !is_int($id)) {
+			// todo: throw IdentifierInvalidException
+			throw new \Exception;
+		}
+
+		$this->id = $id;
 	}
 
 
@@ -24,7 +43,23 @@ class Row
 
 	public function getValue(Column $column): mixed
 	{
-		// todo: use symfony/property-accessor to get the value
-		return $this->item[$column->getName()] ?? null;
+		if (!$field = $column->getName()) {
+			// todo: throw ColumnWithoutNameException
+			throw new \Exception;
+		}
+
+		return $this->readValue($field);
+	}
+
+
+	private function readValue(string $field): mixed
+	{
+		$path = match (true) {
+			is_array($this->item) => '['.$field.']',
+
+			default => $field,
+		};
+
+		return $this->reader->getValue($this->item, $path);
 	}
 }

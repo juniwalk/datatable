@@ -11,11 +11,18 @@ use JuniWalk\DataTable\Source;
 
 trait Sources
 {
+	private string $primaryKey = 'id';
 	private Source $source;
 
+
+	public function setPrimaryKey(string $primaryKey): self
+	{
+		$this->primaryKey = $primaryKey;
+		return $this;
+	}
+
+
 	// todo: allow dynamic source creation from given data type (in different method)
-
-
 	public function setSource(Source $source): self
 	{
 		$this->source = $source;

@@ -95,8 +95,9 @@ class Table extends Control
 
 		$rows = [];
 
-		foreach ($this->source->fetchItems() as $key => $item) {
-			$rows[$key] = new Row($key, $item);
+		foreach ($this->source->fetchItems() as $item) {
+			$row = new Row($item, $this->primaryKey);
+			$rows[$row->getId()] = $row;
 		}
 
 		$template->add('columns', $columns);
