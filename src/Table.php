@@ -71,15 +71,15 @@ class Table extends Control
 
 
 		$columns = $this->getColumns();
+		$sort = $this->getCurrentSort();
 
 		foreach ($columns as $name => $column) {
+			$column->setSorted($sort[$name] ?? null);
+
 			// ? Set column as sortable only if there is no override
 			if ($this->isSortable() && $column->isSortable() === null) {
 				$column->setSortable(true);
 			}
-
-			$column->setSorted($this->sort[$name] ?? null);
-
 
 
 			// todo: improve filter handling
@@ -91,7 +91,7 @@ class Table extends Control
 
 		// todo: first filter, then sort and then limit
 		$this->source->filter($this->filter);
-		$this->source->sort($this->sort);
+		$this->source->sort($sort);
 		$this->source->limit($this->page, $limit);
 
 		$rows = [];

@@ -16,7 +16,7 @@ use Nette\Application\Attributes\Persistent;
  */
 trait Sorting
 {
-	/** @var array<ColumnName, ?Sort> */
+	/** @var array<ColumnName, Sort> */
 	#[Persistent]
 	public array $sort = [];
 
@@ -37,20 +37,21 @@ trait Sorting
 			throw new \Exception;
 		}
 
-		$sort = $this->sort[$column] ?? null;
-
-		if (!$this->isSortMultiple) {
-			$this->sort = [];
-		}
-
-		$this->sort[$column] = match ($sort) {
+		$sort = $this->getCurrentSort();
+		$sort[$column] = match ($sort[$column] ?? null) {
 			Sort::ASC	=> Sort::DESC,
 			Sort::DESC	=> null,
 			null		=> Sort::ASC,
 		};
 
-		if (!array_filter($this->sort)) {
-			$this->sort = $this->sortDefault;
+		if (!$this->isSortMultiple) {
+			$sort = [$column => $sort[$column]];
+		}
+
+		$this->sort = array_filter($sort);
+
+		if ($this->isDefaultSort()) {
+			$this->sort = [];
 		}
 
 		$this->redirect('this');
@@ -79,6 +80,15 @@ trait Sorting
 	public function isSortMultiple(): bool
 	{
 		return $this->isSortMultiple;
+	}
+
+
+	/**
+	 * @return array<ColumnName, Sort>
+	 */
+	public function getCurrentSort(): array
+	{
+		return $this->sort ?: $this->sortDefault;
 	}
 
 
@@ -113,6 +123,10 @@ trait Sorting
 
 	public function isDefaultSort(): bool
 	{
-		return !array_diff_key($this->sortDefault, array_filter($this->sort));
+		return !array_udiff_assoc(
+			$this->getCurrentSort(),
+			$this->sortDefault,
+			fn($a, $b) => $a <=> $b,
+		);
 	}
 }
