@@ -60,10 +60,10 @@ class ArraySource implements Source
 			foreach ($this->items as $id => $item) {
 				$value = $this->readValue($item, $column) ?? null;
 
-				if (is_string($value) && strcasecmp($query, $value)) {
+				if (is_string($value) && strcasecmp($query, $value) <> 0) {
 					continue;
 
-				} elseif ($query <> $value) {
+				} elseif (!is_string($value) && $query <> $value) {
 					continue;
 				}
 
