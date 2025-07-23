@@ -17,6 +17,8 @@ trait Sources
 
 	public function setPrimaryKey(string $primaryKey): self
 	{
+		// todo: check that primaryKey is valid
+
 		$this->primaryKey = $primaryKey;
 		return $this;
 	}
@@ -25,6 +27,10 @@ trait Sources
 	// todo: allow dynamic source creation from given data type (in different method)
 	public function setSource(Source $source): self
 	{
+		if (!$source->getPrimaryKey()) {
+			$source->setPrimaryKey($this->primaryKey);
+		}
+
 		$this->source = $source;
 		return $this;
 	}

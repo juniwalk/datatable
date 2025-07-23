@@ -14,6 +14,9 @@ namespace JuniWalk\DataTable;
  */
 interface Source
 {
+	public function setPrimaryKey(string $primaryKey): self;
+	public function getPrimaryKey(): ?string;
+
 	/**
 	 * @return Items
 	 */
@@ -21,10 +24,10 @@ interface Source
 	public function totalCount(): int;
 
 	/**
-	 * @param array<ColumnName, scalar> $filters
+	 * @param array<string, Filter> $filters
 	 */
 	public function filter(array $filters): void;
-	public function filterOne(int|string ...$rows): void;
+	public function filterById(int|string ...$rows): void;
 
 	/**
 	 * @param array<ColumnName, Column> $columns

@@ -24,7 +24,7 @@ class Row
 	) {
 		$this->reader = PropertyAccess::createPropertyAccessor();
 
-		$id = $this->readValue($primaryKey);
+		$id = $this->getValue($primaryKey);
 
 		if (!is_string($id) && !is_int($id)) {
 			// todo: throw IdentifierInvalidException
@@ -41,23 +41,21 @@ class Row
 	}
 
 
-	public function getValue(Column $column): mixed
+	public function getValue(Column|string $column): mixed
 	{
-		if (!$field = $column->getName()) {
+		if ($column instanceof Column) {
+			$column = $column->getName();
+		}
+
+		if (!$column) {
 			// todo: throw ColumnWithoutNameException
 			throw new \Exception;
 		}
 
-		return $this->readValue($field);
-	}
-
-
-	private function readValue(string $field): mixed
-	{
 		$path = match (true) {
-			is_array($this->item) => '['.$field.']',
+			is_array($this->item) => '['.$column.']',
 
-			default => $field,
+			default => $column,
 		};
 
 		return $this->reader->getValue($this->item, $path);

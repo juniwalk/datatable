@@ -1,4 +1,4 @@
-<div class="card card-outline card-secondary">
+<div class="card card-outline card-secondary" id="{$controlName}">
 
 	<div class="card-header py-0">
 	<div class="d-flex flex-wrap justify-content-start align-items-center gap-2 py-2">
@@ -8,9 +8,9 @@
 		<div class="btn-toolbar gap-2">
 			{* todo toolbar actions *}
 
-			<div class="btn-group">
+			<div class="btn-group" n:if="!empty($filters)">
 				{* todo: store state of the filters collapsible in localStorage so it is remembered *}
-				<button class="btn btn-sm btn-info collapsed" data-bs-toggle="collapse" data-bs-target="#filters" aria-expanded="false">
+				<button class="btn btn-sm btn-info collapsed" data-bs-toggle="collapse" data-bs-target="#{$controlName}-filters" aria-expanded="false">
 					<i class="fas fa-filter fa-fw"></i> Filtrace
 				</button>
 				<a n:href="clearAll!" class="btn btn-sm btn-info" title="Zrušit filtraci"><i class="fas fa-times fa-fw"></i></a>
@@ -25,13 +25,19 @@
 	</div>
 	</div>
 
-	<div class="collapse show" id="filters">
-	<div class="card-header">
+	<div id="{$controlName}-filters" n:class="collapse, $control->shouldShowFilters() ? show" n:if="!empty($filters)">
+	<form n:name="filterForm" class="card-header">
 
-		{* todo: filters *}
-		Filters
+		<div class="row g-2 row-cols-auto row-cols-lg-{$control->getFilterColumnCount() ?? auto}" n:ifcontent>
+			<div class="col flex-grow-1 flex-lg-grow-0" n:foreach="$filters as $filter">
+				{control $filter, $form}
+			</div>
+			<div class="col d-flex align-items-end">
+				<button n:name="submit" type="submit" class="btn btn-sm btn-info"><i class="fas fa-filter fa-fw"></i> Filtrovat</button>
+			</div>
+		</div>
 
-	</div>
+	</form>
 	</div>
 
 	<div class="card-body table-responsive p-0">
@@ -85,7 +91,7 @@
 
 		<div class="d-flex gap-2 align-items-center">
 
-			<a n:href="clearAll!" class="btn btn-sm btn-danger text-nowrap">
+			<a n:href="clearAll!" class="btn btn-sm btn-danger text-nowrap" n:if="!empty($filters)">
 				<i class="fas fa-filter-circle-xmark fa-fw"></i>
 				Zrušit filtraci
 			</a>

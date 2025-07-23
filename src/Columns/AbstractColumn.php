@@ -9,10 +9,18 @@ namespace JuniWalk\DataTable\Columns;
 
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Enums\Sort;
+use JuniWalk\DataTable\Filter;
 use Nette\Application\UI\Control;
 
 abstract class AbstractColumn extends Control implements Column
 {
+	/**
+	 * @var array<string, Filter>
+	 */
+	protected array $filters = [];
+	protected bool $isFiltered = false;
+
+
 	protected bool $isSortable;
 
 	// todo: use better name, as it will be used for filters too
@@ -20,15 +28,37 @@ abstract class AbstractColumn extends Control implements Column
 
 	protected ?Sort $sort;
 
-	protected bool $isFiltered = false;
-	protected mixed $filter;
-
 	// todo: use new Align enum for this
 	protected string $align = 'start';
 
 	public function __construct(
 		protected ?string $label,
 	) {
+	}
+
+
+	public function isFiltered(): bool
+	{
+		return $this->isFiltered;
+	}
+
+
+	public function addFilter(Filter $filter): self
+	{
+		if ($filter->isFiltered()) {
+			$this->isFiltered = true;
+		}
+
+		$this->filters[$filter->getName()] = $filter;
+		return $this;
+	}
+
+	/**
+	 * @return array<string, Filter>
+	 */
+	public function getFilters(): array
+	{
+		return $this->filters;
 	}
 
 
@@ -65,33 +95,6 @@ abstract class AbstractColumn extends Control implements Column
 	public function isSorted(): ?Sort
 	{
 		return $this->sort ?? null;
-	}
-
-
-
-	public function setFilter(mixed $filter): self
-	{
-		$this->filter = $filter;
-		return $this;
-	}
-
-
-	public function getFilter(): mixed
-	{
-		return $this->filter ?? null;
-	}
-
-
-	public function setFiltered(bool $filtered): self
-	{
-		$this->isFiltered = $filtered;
-		return $this;
-	}
-
-
-	public function isFiltered(): bool
-	{
-		return $this->isFiltered;
 	}
 
 

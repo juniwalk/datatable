@@ -9,10 +9,10 @@ namespace JuniWalk\DataTable\Filters;
 
 use Nette\Application\UI\Form;
 
-class TextFilter extends AbstractFilter
+class DateFilter extends AbstractFilter
 {
 	public function createInput(Form $form): void
 	{
-		$form->addText($this->name, $this->label)->setNullable(true);
+		$form->addDate($this->name, $this->label);
 	}
 }

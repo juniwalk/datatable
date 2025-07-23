@@ -60,6 +60,7 @@ class Table extends Control
 		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/templates/default.latte');
+		$template->add('controlName', $this->lookupPath());
 
 		if (!isset($this->source)) {
 			throw new \Exception('No source set');
@@ -70,8 +71,20 @@ class Table extends Control
 		}
 
 
-		$columns = $this->getColumns();
 		$sort = $this->getCurrentSort();
+		$columns = $this->getColumns();
+		$filters = $this->getFilters();
+
+
+		foreach ($filters as $name => $filter) {
+			$filter->setFiltered((bool) ($this->filter[$name] ?? false));
+			$filter->setValue($this->filter[$name] ?? null);
+
+			foreach ($filter->getColumns() as $column) {
+				$columns[$column]->addFilter($filter);
+			}
+		}
+
 
 		foreach ($columns as $name => $column) {
 			$column->setSorted($sort[$name] ?? null);
@@ -80,16 +93,12 @@ class Table extends Control
 			if ($this->isSortable() && $column->isSortable() === null) {
 				$column->setSortable(true);
 			}
-
-			// todo: improve filter handling
-			$column->setFiltered((bool) ($this->filter[$name] ?? false));
-			$column->setFilter($this->filter[$name] ?? null);
 		}
 
 		$limit = $this->getCurrentLimit();
 
 		// todo: first filter, then sort and then limit
-		$this->source->filter($this->filter);
+		$this->source->filter($filters);
 		$this->source->sort($columns);
 		$this->source->limit($this->page, $limit);
 
@@ -101,14 +110,19 @@ class Table extends Control
 		}
 
 		$template->add('columns', $columns);
+		$template->add('filters', $filters);
 		$template->add('rows', $rows);
 
 		$template->add('page', $this->page);
 		$template->add('limit', $limit);
 		$template->add('perPage', $this->perPage);
 
-		// bdump($this);
+		bdump($this);
 
 		$template->render();
 	}
+
+
+	// todo: return Multiplier with custom Container so we can do $this['filters']->addComponent automatically
+	// protected function createComponent(string $name): ?IComponent
 }

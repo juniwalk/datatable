@@ -9,6 +9,8 @@ namespace JuniWalk\DataTable\Sources;
 
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Enums\Sort;
+use JuniWalk\DataTable\Filter;
+use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Source;
 
 /**
@@ -19,6 +21,7 @@ use JuniWalk\DataTable\Source;
 class ArraySource implements Source
 {
 	private int $totalCount;
+	private string $primaryKey;
 
 	/**
 	 * @param Items $items
@@ -27,6 +30,19 @@ class ArraySource implements Source
 		private array $items,
 	) {
 		$this->totalCount = sizeof($items);
+	}
+
+
+	public function setPrimaryKey(string $primaryKey): self
+	{
+		$this->primaryKey = $primaryKey;
+		return $this;
+	}
+
+
+	public function getPrimaryKey(): ?string
+	{
+		return $this->primaryKey ?? null;
 	}
 
 
@@ -47,18 +63,31 @@ class ArraySource implements Source
 
 
 	/**
-	 * @param array<ColumnName, scalar> $filters
+	 * @param array<string, Filter> $filters
 	 */
 	public function filter(array $filters): void
 	{
-		// todo: implement custom filtering
-		foreach ($filters as $column => $query) {
-			$query = (string) $query;
-			$items = [];
+		$items = $conditions = [];
 
-			// todo: dont use index, get $primaryKey from $item
-			foreach ($this->items as $id => $item) {
-				$value = $this->readValue($item, $column) ?? null;
+		foreach ($filters as $filter) {
+			if (!$filter->isFiltered()) {
+				continue;
+			}
+
+			$conditions = array_merge($conditions, $filter->getConditions());
+		}
+
+		if (empty($conditions)) {
+			return;
+		}
+
+		foreach ($this->items as $key => $item) {
+			$row = new Row($item, $this->primaryKey);
+
+			foreach ($conditions as $field => $query) {
+				$value = $row->getValue($field);
+				// todo: query should be scalar|scalar[]
+				$query = (string) $query; // @phpstan-ignore cast.string
 
 				if (is_string($value) && strcasecmp($query, $value) <> 0) {
 					continue;
@@ -67,25 +96,27 @@ class ArraySource implements Source
 					continue;
 				}
 
-				$items[$id] = $item;
+				$items[$key] = $item;
+				break;
 			}
-
-			$this->items = $items;
 		}
+
+		$this->items = $items;
 	}
 
 
-	public function filterOne(int|string ...$rows): void
+	public function filterById(int|string ...$rows): void
 	{
 		$items = [];
 
-		// todo: dont use index, get $primaryKey from $item
-		foreach ($this->items as $id => $item) {
-			if (!in_array($id, $rows)) {
+		foreach ($this->items as $key => $item) {
+			$row = new Row($item, $this->primaryKey);
+
+			if (!in_array($row->getId(), $rows)) {
 				continue;
 			}
 
-			$items[$id] = $item;
+			$items[$key] = $item;
 		}
 
 		$this->items = $items;
@@ -93,45 +124,43 @@ class ArraySource implements Source
 
 
 	/**
+	 * todo: implement custom sorting  -->  https://stackoverflow.com/questions/2699086/sort-a-2d-array-by-a-column-value
 	 * @param array<ColumnName, Column> $columns
 	 */
 	public function sort(array $columns): void
 	{
-		// todo: implement custom sorting  -->  https://stackoverflow.com/questions/2699086/sort-a-2d-array-by-a-column-value
-
 		foreach ($columns as $name => $column) {
 			if (!$sort = $column->isSorted()) {
 				continue;
 			}
 
 			$field = $column->getSortedBy() ?? $name;
-			$items = [];
+			$items = $result = [];
 
-			// todo: dont use index, get $primaryKey from $item
-			foreach ($this->items as $id => $item) {
-				$value = $this->readValue($item, $field) ?? '';
-				$sort_by = $value instanceof \DateTimeInterface
+			foreach ($this->items as $key => $item) {
+				$row = new Row($item, $this->primaryKey);
+				$value = $row->getValue($field) ?? '';
+
+				$sortBy = $value instanceof \DateTimeInterface
 					? $value->format('Y-m-d H:i:s')
 					: (string) $value; // @phpstan-ignore cast.string
 
-				$items[$sort_by][$id] = $item;
+				$result[$sortBy][$key] = $item;
 			}
 
 			if ($sort === Sort::ASC) {
-				ksort($items, SORT_LOCALE_STRING);
+				ksort($result, SORT_LOCALE_STRING);
 			} else {
-				krsort($items, SORT_LOCALE_STRING);
+				krsort($result, SORT_LOCALE_STRING);
 			}
 
-			$dataSource = [];
-
-			foreach ($items as $list) {
-				foreach ($list as $id => $item) {
-					$dataSource[$id] = $item;
+			foreach ($result as $sortBy => $rows) {
+				foreach ($rows as $key => $item) {
+					$items[$key] = $item;
 				}
 			}
 
-			$this->items = $dataSource;
+			$this->items = $items;
 		}
 	}
 
@@ -139,20 +168,5 @@ class ArraySource implements Source
 	public function limit(int $page, int $limit): void
 	{
 		$this->items = array_slice($this->items, $limit * ($page - 1), $limit, true);
-	}
-
-
-	/**
-	 * @param Item $item
-	 */
-	private function readValue(array|object $item, string $field): mixed
-	{
-		return match (true) {
-			is_object($item) => $item->$field ?? null,
-			is_array($item) => $item[$field] ?? null,	// @phpstan-ignore function.alreadyNarrowedType
-
-			// todo: throw InvalidValueException
-			default => throw new \Exception,
-		};
 	}
 }

@@ -10,8 +10,10 @@ namespace JuniWalk\DataTable\Traits;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Container;
 use JuniWalk\DataTable\Filter;
+use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\TextFilter;
 use Nette\Application\Attributes\Persistent;
+use Nette\Application\UI\Form;
 
 /**
  * @phpstan-import-type ColumnName from Column
@@ -23,6 +25,7 @@ trait Filters
 	public array $filter = [];
 
 	private bool $isFilterShown = false;
+	private ?int $filterColumnCount = null;
 
 
 	/**
@@ -44,6 +47,7 @@ trait Filters
 	}
 
 
+	// todo: Enum::Always | Enum::WhenFiltered | Enum::Hide
 	public function setFilterShown(bool $filterShown = true): self
 	{
 		$this->isFilterShown = $filterShown;
@@ -57,9 +61,36 @@ trait Filters
 	}
 
 
+	public function shouldShowFilters(): bool
+	{
+		// todo: handle Enum::Always etc
+
+		return $this->isFilterShown && !empty($this->filter);	// && !$this->isDefaultFilter();
+	}
+
+
+	public function setFilterColumnCount(?int $filterColumnCount): self
+	{
+		$this->filterColumnCount = $filterColumnCount;
+		return $this;
+	}
+
+
+	public function getFilterColumnCount(): ?int
+	{
+		return $this->filterColumnCount;
+	}
+
+
 	public function addFilterText(string $name, ?string $label): TextFilter
 	{
 		return $this->addFilter($name, new TextFilter($label));
+	}
+
+
+	public function addFilterDate(string $name, ?string $label): DateFilter
+	{
+		return $this->addFilter($name, new DateFilter($label));
 	}
 
 
@@ -107,6 +138,32 @@ trait Filters
 	// todo: setDefaultFilter - default filters
 	// todo: getDefaultFilter
 	// todo: isDefaultFilter
+
+
+	protected function createComponentFilterForm(): Form
+	{
+		$form = new Form;
+		$form->addSubmit('submit');
+
+		foreach ($this->getFilters() as $filter) {
+			$filter->createInput($form);
+		}
+
+		$form->onError[] = function($form) {
+			foreach ($form->getErrors() as $message) {
+				$this->flashMessage($message, 'danger');
+			}
+		};
+
+		$form->onSuccess[] = function($form, $data) {
+			// todo: add value formatting for each filter || stringify each value using Format class
+
+			$this->filter = (array) $data;
+			$this->redirect('this');
+		};
+
+		return $form->setDefaults($this->filter);
+	}
 
 
 	protected function createComponentFilters(): Container

@@ -15,6 +15,14 @@ use Nette\ComponentModel\IComponent;
  */
 interface Column extends IComponent
 {
+	public function isFiltered(): bool;
+	public function addFilter(Filter $filter): self;
+
+	/**
+	 * @return array<string, Filter>
+	 */
+	public function getFilters(): array;
+
 	public function setSortable(bool|string $sortable): self;
 	public function isSortable(): ?bool;
 
@@ -22,12 +30,6 @@ interface Column extends IComponent
 
 	public function setSorted(?Sort $sort): self;
 	public function isSorted(): ?Sort;
-
-
-	public function setFilter(mixed $filter): self;
-	public function getFilter(): mixed;
-	public function setFiltered(bool $filtered): self;
-	public function isFiltered(): bool;
 
 
 	public function setAlign(string $align): self;
