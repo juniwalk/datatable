@@ -11,4 +11,7 @@ use Nette\Application\UI\Component;
 
 class Container extends Component
 {
+	public const string Actions = 'actions';
+	public const string Columns = 'columns';
+	public const string Filters = 'filters';
 }

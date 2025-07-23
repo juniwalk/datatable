@@ -31,7 +31,7 @@ trait Actions
 	 */
 	public function addAction(string $name, Action $action): Action
 	{
-		$this['actions']->addComponent($action, $name);
+		$this[Container::Actions]->addComponent($action, $name);
 		return $action;
 	}
 
@@ -41,7 +41,7 @@ trait Actions
 	 */
 	public function getAction(string $name, bool $require = true): ?Action
 	{
-		return $this['actions']->getComponent($name, $require);
+		return $this[Container::Actions]->getComponent($name, $require);
 	}
 
 
@@ -50,7 +50,7 @@ trait Actions
 	 */
 	public function getActions(): array
 	{
-		$actions = $this['actions']->getComponents(null, Action::class);
+		$actions = $this[Container::Actions]->getComponents(null, Action::class);
 
 		/** @var array<string, Action> */
 		return iterator_to_array($actions);
@@ -60,12 +60,6 @@ trait Actions
 	public function removeAction(string $name): void
 	{
 		// todo: make sure this works properly as there was PHPStan issue
-		$this['actions']->removeComponent($this->getAction($name));
-	}
-
-
-	protected function createComponentActions(): Container
-	{
-		return new Container;
+		$this[Container::Actions]->removeComponent($this->getAction($name));
 	}
 }

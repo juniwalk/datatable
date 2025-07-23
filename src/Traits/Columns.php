@@ -54,7 +54,7 @@ trait Columns
 	 */
 	public function addColumn(string $name, Column $column): Column
 	{
-		$this['columns']->addComponent($column, $name);
+		$this[Container::Columns]->addComponent($column, $name);
 		return $column;
 	}
 
@@ -64,7 +64,7 @@ trait Columns
 	 */
 	public function getColumn(string $name, bool $require = true): ?Column
 	{
-		return $this['columns']->getComponent($name, $require);
+		return $this[Container::Columns]->getComponent($name, $require);
 	}
 
 
@@ -73,7 +73,7 @@ trait Columns
 	 */
 	public function getColumns(): array
 	{
-		$columns = $this['columns']->getComponents(null, Column::class);
+		$columns = $this[Container::Columns]->getComponents(null, Column::class);
 
 		/** @var array<ColumnName, Column> */
 		return iterator_to_array($columns);
@@ -83,12 +83,6 @@ trait Columns
 	public function removeColumn(string $name): void
 	{
 		// todo: make sure this works properly as there was PHPStan issue
-		$this['columns']->removeComponent($this->getColumn($name));
-	}
-
-
-	protected function createComponentColumns(): Container
-	{
-		return new Container;
+		$this[Container::Columns]->removeComponent($this->getColumn($name));
 	}
 }

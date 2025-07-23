@@ -101,7 +101,7 @@ trait Filters
 	 */
 	public function addFilter(string $name, Filter $filter): Filter
 	{
-		$this['filters']->addComponent($filter, $name);
+		$this[Container::Filters]->addComponent($filter, $name);
 		return $filter;
 	}
 
@@ -111,7 +111,7 @@ trait Filters
 	 */
 	public function getFilter(string $name, bool $require = true): ?Filter
 	{
-		return $this['filters']->getComponent($name, $require);
+		return $this[Container::Filters]->getComponent($name, $require);
 	}
 
 
@@ -120,7 +120,7 @@ trait Filters
 	 */
 	public function getFilters(): array
 	{
-		$filters = $this['filters']->getComponents(null, Filter::class);
+		$filters = $this[Container::Filters]->getComponents(null, Filter::class);
 
 		/** @var array<string, Filter> */
 		return iterator_to_array($filters);
@@ -130,7 +130,7 @@ trait Filters
 	public function removeFilter(string $name): void
 	{
 		// todo: make sure this works properly as there was PHPStan issue
-		$this['filters']->removeComponent($this->getFilter($name));
+		$this[Container::Filters]->removeComponent($this->getFilter($name));
 	}
 
 
@@ -163,11 +163,5 @@ trait Filters
 		};
 
 		return $form->setDefaults($this->filter);
-	}
-
-
-	protected function createComponentFilters(): Container
-	{
-		return new Container;
 	}
 }

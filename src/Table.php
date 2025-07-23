@@ -9,6 +9,7 @@ namespace JuniWalk\DataTable;
 
 use JuniWalk\DataTable\Enums\Sort;
 use Nette\Application\UI\Control;
+use Nette\ComponentModel\IComponent;
 
 /**
  * @phpstan-import-type ColumnName from Column
@@ -117,12 +118,24 @@ class Table extends Control
 		$template->add('limit', $limit);
 		$template->add('perPage', $this->perPage);
 
-		bdump($this);
+		// bdump($this);
 
 		$template->render();
 	}
 
 
-	// todo: return Multiplier with custom Container so we can do $this['filters']->addComponent automatically
-	// protected function createComponent(string $name): ?IComponent
+	protected function createComponent(string $name): ?IComponent
+	{
+		static $containers = [
+			Container::Actions,
+			Container::Columns,
+			Container::Filters,
+		];
+
+		if (in_array($name, $containers)) {
+			return new Container;
+		}
+
+		return parent::createComponent($name);
+	}
 }
