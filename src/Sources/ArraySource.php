@@ -104,4 +104,10 @@ class ArraySource implements Source
 			$this->items = $dataSource;
 		}
 	}
+
+
+	public function limit(int $page, int $limit): void
+	{
+		$this->items = array_slice($this->items, $limit * ($page - 1), $limit, true);
+	}
 }

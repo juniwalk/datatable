@@ -31,4 +31,7 @@ interface Source
 	 * @param array<ColumnName, ?Sort> $sort
 	 */
 	public function sort(array $sort): void;
+
+
+	public function limit(int $page, int $limit): void;
 }

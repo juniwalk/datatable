@@ -74,31 +74,32 @@
 		<div class="flex-fill">
 
 			<div class="btn-group btn-group-sm">
-				<a href="#" class="btn btn-outline-secondary disabled">Předchozí</a>
-				<a href="#" class="btn btn-primary">1</a>
-				<a href="#" class="btn btn-outline-secondary">2</a>
-				<a href="#" class="btn btn-outline-secondary">3</a>
-				<a href="#" class="btn btn-outline-secondary">10</a>
-				<a href="#" class="btn btn-outline-secondary">Další</a>
+				<a n:href="page! $page - 1" n:class="btn, btn-outline-secondary, $page === 1 ? disabled">Předchozí</a>
+				<a n:href="page! 1" n:class="btn, $page === 1 ? btn-primary : btn-outline-secondary">1</a>
+				<a n:href="page! 2" n:class="btn, $page === 2 ? btn-primary : btn-outline-secondary">2</a>
+				<a n:href="page! 3" n:class="btn, $page === 3 ? btn-primary : btn-outline-secondary">3</a>
+				<a n:href="page! $page + 1" n:class="btn, btn-outline-secondary, $page === 3 ? disabled">Další</a>
 			</div>
 
 		</div>
 
 		<div class="d-flex gap-2 align-items-center">
 
-			<a n:href="clearAll!" class="btn btn-danger btn-sm text-nowrap">
+			<a n:href="clearAll!" class="btn btn-sm btn-danger text-nowrap">
 				<i class="fas fa-filter-circle-xmark fa-fw"></i>
 				Zrušit filtraci
 			</a>
 
 			<div class="input-group input-group-sm">
 				<span class="input-group-text text-secondary">Záznamů: 1 - 20 od 190</span>
-				<select class="form-select" data-no-search>
-					<option value="10">10</option>
-					<option value="20" selected>20</option>
-					<option value="50">50</option>
-				</select>
-				<button type="submit" class="btn btn-outline-secondary">Změnit</button>
+				<div class="dropup">
+					<button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-start-0" type="button" data-bs-toggle="dropdown">Limit: <strong>{$limit}</strong></button>
+					<ul class="dropdown-menu dropdown-menu-end" style="min-width: auto">
+						<li n:foreach="$perPage as $l">
+							<a n:href="limit! $l" n:class="dropdown-item, $l === $limit ? active">{$l}</a>
+						</li>
+					</ul>
+				</div>
 			</div>
 
 		</div>

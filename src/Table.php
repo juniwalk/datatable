@@ -24,10 +24,7 @@ class Table extends Control
 	use Traits\Filters;
 	use Traits\Sorting;
 	use Traits\Sources;
-
-
-	// todo add perPage
-	// todo add page
+	use Traits\Pagination;
 
 
 	// todo: implement optional state store / restore from session
@@ -38,6 +35,12 @@ class Table extends Control
 	 */
 	public function loadState(array $params): void
 	{
+		$limit = $params['limit'] ?? null;
+
+		if (!$limit || !in_array($limit, $this->perPage)) {
+			$this->limit = null;
+		}
+
 		foreach ($params['sort'] ?? [] as $column => $order) {
 			$params['sort'][$column] = Sort::make($order, false);
 		}
@@ -84,9 +87,12 @@ class Table extends Control
 			$column->setFilter($this->filter[$name] ?? null);
 		}
 
+		$limit = $this->limit ?? $this->limitDefault ?? $this->perPage[0] ?? 10;
 
+		// todo: first filter, then sort and then limit
 		$this->source->filter($this->filter);
 		$this->source->sort($this->sort);
+		$this->source->limit($this->page, $limit);
 
 		$rows = [];
 
@@ -96,6 +102,10 @@ class Table extends Control
 
 		$template->add('columns', $columns);
 		$template->add('rows', $rows);
+
+		$template->add('page', $this->page);
+		$template->add('limit', $limit);
+		$template->add('perPage', $this->perPage);
 
 		// bdump($this);
 
