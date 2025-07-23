@@ -11,6 +11,7 @@ use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\ActionColumn;
 use JuniWalk\DataTable\Columns\DateColumn;
+use JuniWalk\DataTable\Columns\NumberColumn;
 use JuniWalk\DataTable\Columns\TextColumn;
 
 /**
@@ -24,6 +25,13 @@ trait Columns
 	public function addColumnText(string $name, ?string $label): TextColumn
 	{
 		$this->addComponent($column = new TextColumn($label), $name);
+		return $column;
+	}
+
+
+	public function addColumnNumber(string $name, ?string $label): NumberColumn
+	{
+		$this->addComponent($column = new NumberColumn($label), $name);
 		return $column;
 	}
 
