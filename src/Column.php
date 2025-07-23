@@ -25,6 +25,7 @@ interface Column extends IComponent
 
 
 	public function setFilter(mixed $filter): self;
+	public function getFilter(): mixed;
 	public function setFiltered(bool $filtered): self;
 	public function isFiltered(): bool;
 

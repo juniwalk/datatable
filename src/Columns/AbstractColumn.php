@@ -14,7 +14,10 @@ use Nette\Application\UI\Control;
 abstract class AbstractColumn extends Control implements Column
 {
 	protected bool $isSortable;
+
+	// todo: use better name, as it will be used for filters too
 	protected string $sortBy;
+
 	protected ?Sort $sort;
 
 	protected bool $isFiltered = false;
