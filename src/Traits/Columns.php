@@ -24,22 +24,19 @@ trait Columns
 
 	public function addColumnText(string $name, ?string $label): TextColumn
 	{
-		$this->addComponent($column = new TextColumn($label), $name);
-		return $column;
+		return $this->addColumn($name, new TextColumn($label));
 	}
 
 
 	public function addColumnNumber(string $name, ?string $label): NumberColumn
 	{
-		$this->addComponent($column = new NumberColumn($label), $name);
-		return $column;
+		return $this->addColumn($name, new NumberColumn($label));
 	}
 
 
 	public function addColumnDate(string $name, ?string $label): DateColumn
 	{
-		$this->addComponent($column = new DateColumn($label), $name);
-		return $column;
+		return $this->addColumn($name, new DateColumn($label));
 	}
 
 
@@ -48,8 +45,18 @@ trait Columns
 	 */
 	protected function addColumnAction(string $name, ?string $label, iterable $actions): ActionColumn
 	{
-		$this->addComponent($column = new ActionColumn($label), $name);
-		$column->addActions($actions);
+		return $this->addColumn($name, new ActionColumn($label))->addActions($actions);
+	}
+
+
+	/**
+	 * @template T of Column
+	 * @param  T $column
+	 * @return T
+	 */
+	public function addColumn(string $name, Column $column): Column
+	{
+		$this->addComponent($column, $name);
 		return $column;
 	}
 
