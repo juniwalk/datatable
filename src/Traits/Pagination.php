@@ -70,6 +70,12 @@ trait Pagination
 	}
 
 
+	public function getCurrentLimit(): int
+	{
+		return $this->limit ?? $this->limitDefault ?? $this->perPage[0];
+	}
+
+
 	public function setDefaultLimit(?int $limit): self
 	{
 		if (!in_array($limit, $this->perPage)) {

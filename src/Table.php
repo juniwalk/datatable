@@ -87,7 +87,7 @@ class Table extends Control
 			$column->setFilter($this->filter[$name] ?? null);
 		}
 
-		$limit = $this->limit ?? $this->limitDefault ?? $this->perPage[0] ?? 10;
+		$limit = $this->getCurrentLimit();
 
 		// todo: first filter, then sort and then limit
 		$this->source->filter($this->filter);
