@@ -13,15 +13,13 @@ use JuniWalk\DataTable\Columns\ActionColumn;
 use JuniWalk\DataTable\Columns\DateColumn;
 use JuniWalk\DataTable\Columns\NumberColumn;
 use JuniWalk\DataTable\Columns\TextColumn;
+use JuniWalk\DataTable\Container;
 
 /**
  * @phpstan-import-type ColumnName from Column
  */
 trait Columns
 {
-	// todo: store columns in subcomponent so there is no name clashing with actions / filters
-
-
 	public function addColumnText(string $name, ?string $label): TextColumn
 	{
 		return $this->addColumn($name, new TextColumn($label));
@@ -56,7 +54,7 @@ trait Columns
 	 */
 	public function addColumn(string $name, Column $column): Column
 	{
-		$this->addComponent($column, $name);
+		$this['columns']->addComponent($column, $name);
 		return $column;
 	}
 
@@ -66,7 +64,7 @@ trait Columns
 	 */
 	public function getColumn(string $name, bool $require = true): ?Column
 	{
-		return $this->getComponent($name, $require);
+		return $this['columns']->getComponent($name, $require);
 	}
 
 
@@ -75,7 +73,7 @@ trait Columns
 	 */
 	public function getColumns(): array
 	{
-		$columns = $this->getComponents(null, Column::class);
+		$columns = $this['columns']->getComponents(null, Column::class);
 
 		/** @var array<ColumnName, Column> */
 		return iterator_to_array($columns);
@@ -85,6 +83,12 @@ trait Columns
 	public function removeColumn(string $name): void
 	{
 		// todo: make sure this works properly as there was PHPStan issue
-		$this->removeComponent($this->getColumn($name));
+		$this['columns']->removeComponent($this->getColumn($name));
+	}
+
+
+	protected function createComponentColumns(): Container
+	{
+		return new Container;
 	}
 }

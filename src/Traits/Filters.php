@@ -8,6 +8,7 @@
 namespace JuniWalk\DataTable\Traits;
 
 use JuniWalk\DataTable\Column;
+use JuniWalk\DataTable\Container;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\TextFilter;
 use Nette\Application\Attributes\Persistent;
@@ -69,7 +70,7 @@ trait Filters
 	 */
 	public function addFilter(string $name, Filter $filter): Filter
 	{
-		$this->addComponent($filter, $name);
+		$this['filters']->addComponent($filter, $name);
 		return $filter;
 	}
 
@@ -79,7 +80,7 @@ trait Filters
 	 */
 	public function getFilter(string $name, bool $require = true): ?Filter
 	{
-		return $this->getComponent($name, $require);
+		return $this['filters']->getComponent($name, $require);
 	}
 
 
@@ -88,7 +89,7 @@ trait Filters
 	 */
 	public function getFilters(): array
 	{
-		$filters = $this->getComponents(null, Filter::class);
+		$filters = $this['filters']->getComponents(null, Filter::class);
 
 		/** @var array<string, Filter> */
 		return iterator_to_array($filters);
@@ -98,7 +99,7 @@ trait Filters
 	public function removeFilter(string $name): void
 	{
 		// todo: make sure this works properly as there was PHPStan issue
-		$this->removeComponent($this->getFilter($name));
+		$this['filters']->removeComponent($this->getFilter($name));
 	}
 
 
@@ -106,4 +107,10 @@ trait Filters
 	// todo: setDefaultFilter - default filters
 	// todo: getDefaultFilter
 	// todo: isDefaultFilter
+
+
+	protected function createComponentFilters(): Container
+	{
+		return new Container;
+	}
 }
