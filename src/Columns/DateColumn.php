@@ -36,6 +36,7 @@ class DateColumn extends AbstractColumn
 		// todo: try to make DateTime from other value types
 
 		if (!$value instanceof DateTimeInterface) {
+			// todo: throw ColumnValueTypeException
 			throw new \Exception;
 		}
 
