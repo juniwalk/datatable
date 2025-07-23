@@ -81,7 +81,6 @@ class Table extends Control
 				$column->setSortable(true);
 			}
 
-
 			// todo: improve filter handling
 			$column->setFiltered((bool) ($this->filter[$name] ?? false));
 			$column->setFilter($this->filter[$name] ?? null);
@@ -91,12 +90,12 @@ class Table extends Control
 
 		// todo: first filter, then sort and then limit
 		$this->source->filter($this->filter);
-		$this->source->sort($sort);
+		$this->source->sort($columns);
 		$this->source->limit($this->page, $limit);
 
 		$rows = [];
 
-		foreach ($this->source->getItems() as $key => $item) {
+		foreach ($this->source->fetchItems() as $key => $item) {
 			$rows[$key] = new Row($key, $item);
 		}
 

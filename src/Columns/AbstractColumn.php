@@ -20,6 +20,7 @@ abstract class AbstractColumn extends Control implements Column
 	protected bool $isFiltered = false;
 	protected mixed $filter;
 
+	// todo: use new Align enum for this
 	protected string $align = 'start';
 
 	public function __construct(

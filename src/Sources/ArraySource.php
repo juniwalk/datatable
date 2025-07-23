@@ -18,7 +18,7 @@ use JuniWalk\DataTable\Source;
  */
 class ArraySource implements Source
 {
-	private int $count;
+	private int $totalCount;
 
 	/**
 	 * @param Items $items
@@ -26,36 +26,37 @@ class ArraySource implements Source
 	public function __construct(
 		private array $items,
 	) {
-		$this->count = sizeof($items);
+		$this->totalCount = sizeof($items);
+	}
+
+
+	public function totalCount(): int
+	{
+		return $this->totalCount;
 	}
 
 
 	/**
 	 * @return Items
 	 */
-	public function getItems(): iterable
+	public function fetchItems(): iterable
 	{
 		// todo: handle onDataLoaded event in the Source
 		return $this->items;
 	}
 
 
-	public function getCount(): int
-	{
-		return $this->count;
-	}
-
-
 	/**
-	 * @param array<ColumnName, scalar> $filter
+	 * @param array<ColumnName, scalar> $filters
 	 */
-	public function filter(array $filter): void
+	public function filter(array $filters): void
 	{
 		// todo: implement custom filtering
-		foreach ($filter as $column => $query) {
+		foreach ($filters as $column => $query) {
 			$query = (string) $query;
 			$items = [];
 
+			// todo: dont use index, get $primaryKey from $item
 			foreach ($this->items as $id => $item) {
 				$value = (string) ($item[$column] ?? ''); // @phpstan-ignore cast.string
 
@@ -71,23 +72,47 @@ class ArraySource implements Source
 	}
 
 
+	public function filterOne(int|string ...$rows): void
+	{
+		$items = [];
+
+		// todo: dont use index, get $primaryKey from $item
+		foreach ($this->items as $id => $item) {
+			if (!in_array($id, $rows)) {
+				continue;
+			}
+
+			$items[$id] = $item;
+		}
+
+		$this->items = $items;
+	}
+
+
 	/**
-	 * @param array<ColumnName, ?Sort> $sort
+	 * @param array<ColumnName, Column> $columns
 	 */
-	public function sort(array $sort): void
+	public function sort(array $columns): void
 	{
 		// todo: implement custom sorting  -->  https://stackoverflow.com/questions/2699086/sort-a-2d-array-by-a-column-value
-		foreach ($sort as $column => $order) {
+
+		foreach ($columns as $name => $column) {
+			if (!$sort = $column->isSorted()) {
+				continue;
+			}
+
+			$field = $column->getSortedBy() ?? $name;
 			$items = [];
 
+			// todo: dont use index, get $primaryKey from $item
 			foreach ($this->items as $id => $item) {
-				$value = is_object($item) ? $item->$column : $item[$column];
+				$value = is_object($item) ? $item->$field : $item[$field];
 				$sort_by = $value instanceof \DateTimeInterface ? $value->format('Y-m-d H:i:s') : (string) $value; // @phpstan-ignore cast.string
 
 				$items[$sort_by][$id] = $item;
 			}
 
-			if ($order === Sort::ASC) {
+			if ($sort === Sort::ASC) {
 				ksort($items, SORT_LOCALE_STRING);
 			} else {
 				krsort($items, SORT_LOCALE_STRING);

@@ -7,8 +7,6 @@
 
 namespace JuniWalk\DataTable;
 
-use JuniWalk\DataTable\Enums\Sort;
-
 /**
  * @phpstan-import-type ColumnName from Column
  * @phpstan-type Item array<string, mixed>
@@ -19,18 +17,19 @@ interface Source
 	/**
 	 * @return Items
 	 */
-	public function getItems(): iterable;
-	public function getCount(): int;
+	public function fetchItems(): iterable;
+	public function totalCount(): int;
 
 	/**
-	 * @param array<ColumnName, scalar> $filter
+	 * @param array<ColumnName, scalar> $filters
 	 */
-	public function filter(array $filter): void;
+	public function filter(array $filters): void;
+	public function filterOne(int|string ...$rows): void;
 
 	/**
-	 * @param array<ColumnName, ?Sort> $sort
+	 * @param array<ColumnName, Column> $columns
 	 */
-	public function sort(array $sort): void;
+	public function sort(array $columns): void;
 
 
 	public function limit(int $page, int $limit): void;

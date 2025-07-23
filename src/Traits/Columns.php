@@ -13,6 +13,9 @@ use JuniWalk\DataTable\Columns\ActionColumn;
 use JuniWalk\DataTable\Columns\DateColumn;
 use JuniWalk\DataTable\Columns\TextColumn;
 
+/**
+ * @phpstan-import-type ColumnName from Column
+ */
 trait Columns
 {
 	// todo: store columns in subcomponent so there is no name clashing with actions / filters
@@ -53,11 +56,14 @@ trait Columns
 
 
 	/**
-	 * @return iterable<string, Column>
+	 * @return array<ColumnName, Column>
 	 */
-	public function getColumns(): iterable
+	public function getColumns(): array
 	{
-		return $this->getComponents(null, Column::class);	// @phpstan-ignore return.type (List is filtered for Column::class)
+		$columns = $this->getComponents(null, Column::class);
+
+		/** @var array<ColumnName, Column> */
+		return iterator_to_array($columns);
 	}
 
 
