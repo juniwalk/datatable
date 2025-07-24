@@ -7,6 +7,8 @@
 
 namespace JuniWalk\DataTable\Sources;
 
+use BackedEnum;
+use DateTimeInterface;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Filter;
@@ -141,9 +143,11 @@ class ArraySource implements Source
 				$row = new Row($item, $this->primaryKey);
 				$value = $row->getValue($field) ?? '';
 
-				$sortBy = $value instanceof \DateTimeInterface
-					? $value->format('Y-m-d H:i:s')
-					: (string) $value; // @phpstan-ignore cast.string
+				$sortBy = match (true) {
+					$value instanceof DateTimeInterface => $value->format('Y-m-d H:i:s'),
+					$value instanceof BackedEnum => $value->value,
+					default => (string) $value,	// @phpstan-ignore cast.string
+				};
 
 				$result[$sortBy][$key] = $item;
 			}
