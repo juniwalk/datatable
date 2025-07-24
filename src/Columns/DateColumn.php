@@ -30,7 +30,7 @@ class DateColumn extends AbstractColumn
 	}
 
 
-	public function render(Row $row): void
+	public function renderValue(Row $row): void
 	{
 		$date = $row->getValue($this);
 

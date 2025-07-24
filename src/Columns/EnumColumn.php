@@ -18,7 +18,7 @@ class EnumColumn extends AbstractColumn
 	protected Align $align = Align::Right;
 
 
-	public function render(Row $row): void
+	public function renderValue(Row $row): void
 	{
 		$enum = $row->getValue($this);
 

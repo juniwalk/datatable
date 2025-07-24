@@ -21,25 +21,25 @@ use JuniWalk\DataTable\Container;
  */
 trait Columns
 {
-	public function addColumnText(string $name, ?string $label): TextColumn
+	public function addColumnText(string $name, string $label): TextColumn
 	{
 		return $this->addColumn($name, new TextColumn($label));
 	}
 
 
-	public function addColumnEnum(string $name, ?string $label): EnumColumn
+	public function addColumnEnum(string $name, string $label): EnumColumn
 	{
 		return $this->addColumn($name, new EnumColumn($label));
 	}
 
 
-	public function addColumnNumber(string $name, ?string $label): NumberColumn
+	public function addColumnNumber(string $name, string $label): NumberColumn
 	{
 		return $this->addColumn($name, new NumberColumn($label));
 	}
 
 
-	public function addColumnDate(string $name, ?string $label): DateColumn
+	public function addColumnDate(string $name, string $label): DateColumn
 	{
 		return $this->addColumn($name, new DateColumn($label));
 	}
@@ -48,7 +48,7 @@ trait Columns
 	/**
 	 * @param array<string, Action> $actions
 	 */
-	protected function addColumnAction(string $name, ?string $label, array $actions): ActionColumn
+	protected function addColumnAction(string $name, string $label, array $actions): ActionColumn
 	{
 		return $this->addColumn($name, new ActionColumn($label))->addActions($actions);
 	}

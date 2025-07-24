@@ -13,7 +13,7 @@ use Stringable;
 
 class TextColumn extends AbstractColumn
 {
-	public function render(Row $row): void
+	public function renderValue(Row $row): void
 	{
 		$text = $row->getValue($this);
 

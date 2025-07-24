@@ -14,11 +14,31 @@ class NumberColumn extends AbstractColumn
 {
 	protected Align $align = Align::Right;
 
+	protected int $precision = 0;
+	protected ?string $separator = '.';
 
-	// todo: add number formatting properties
+
+	public function setFormat(int $precision = 0, ?string $separator = '.'): self
+	{
+		$this->precision = $precision;
+		$this->separator = $separator;
+		return $this;
+	}
 
 
-	public function render(Row $row): void
+	public function getPrecision(): int
+	{
+		return $this->precision;
+	}
+
+
+	public function getSeparator(): ?string
+	{
+		return $this->separator;
+	}
+
+
+	public function renderValue(Row $row): void
 	{
 		$number = $row->getValue($this);
 
@@ -27,6 +47,6 @@ class NumberColumn extends AbstractColumn
 			throw new \Exception;
 		}
 
-		echo number_format((float) $number);
+		echo number_format((float) $number, $this->precision, $this->separator, ' ');
 	}
 }

@@ -43,4 +43,10 @@ class ActionColumn extends AbstractColumn
 
 		echo $toolbar;
 	}
+
+
+	public function renderValue(Row $row): void
+	{
+		$this->render($row);
+	}
 }

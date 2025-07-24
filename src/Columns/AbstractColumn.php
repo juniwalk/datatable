@@ -7,39 +7,32 @@
 
 namespace JuniWalk\DataTable\Columns;
 
+use Closure;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Filter;
+use JuniWalk\DataTable\Row;
 use Nette\Application\UI\Control;
 
 abstract class AbstractColumn extends Control implements Column
 {
-	/**
-	 * @var array<string, Filter>
-	 */
+	/** @var array<string, Filter> */
 	protected array $filters = [];
 	protected bool $isFiltered = false;
 
-
 	protected bool $isSortable;
-
-	// todo: use better name, as it will be used for filters too
-	protected string $sortBy;
-
+	protected ?string $sortBy = null;
 	protected ?Sort $sort;
 
 	protected Align $align = Align::Left;
 
+	private ?Closure $renderer = null;
+
+
 	public function __construct(
-		protected ?string $label,
+		protected string $label,
 	) {
-	}
-
-
-	public function isFiltered(): bool
-	{
-		return $this->isFiltered;
 	}
 
 
@@ -53,12 +46,19 @@ abstract class AbstractColumn extends Control implements Column
 		return $this;
 	}
 
+
 	/**
 	 * @return array<string, Filter>
 	 */
 	public function getFilters(): array
 	{
 		return $this->filters;
+	}
+
+
+	public function isFiltered(): bool
+	{
+		return $this->isFiltered;
 	}
 
 
@@ -75,13 +75,21 @@ abstract class AbstractColumn extends Control implements Column
 
 	public function isSortable(): ?bool
 	{
+		// ? Null value allows override from global sort
 		return $this->isSortable ?? null;
+	}
+
+
+	public function setSortedBy(?string $sortBy): self
+	{
+		$this->sortBy = $sortBy;
+		return $this;
 	}
 
 
 	public function getSortedBy(): ?string
 	{
-		return $this->sortBy ?? null;
+		return $this->sortBy;
 	}
 
 
@@ -111,6 +119,35 @@ abstract class AbstractColumn extends Control implements Column
 	public function getAlign(): Align
 	{
 		return $this->align;
+	}
+
+
+	public function setRenderer(?Closure $renderer = null): self
+	{
+		$this->renderer = $renderer;
+		return $this;
+	}
+
+
+	public function getRenderer(): ?Closure
+	{
+		return $this->renderer;
+	}
+
+
+	public function render(Row $row): void
+	{
+		$value = match (true) {
+			isset($this->renderer) => call_user_func($this->renderer, $row->getItem()),
+			default => $this->renderValue($row),
+		};
+
+		if ($value !== null && !is_scalar($value)) {
+			// todo: throw ColumnValueTypeException
+			throw new \Exception;
+		}
+
+		echo $value;
 	}
 
 
