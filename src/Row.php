@@ -10,16 +10,19 @@ namespace JuniWalk\DataTable;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+/**
+ * @phpstan-import-type Item from Source
+ */
 class Row
 {
 	private int|string $id;
 	private PropertyAccessor $reader;
 
 	/**
-	 * @param object|array<string, mixed> $item
+	 * @param Item $item
 	 */
 	public function __construct(
-		private array|object $item,
+		private object|array $item,
 		private string $primaryKey,	// @phpstan-ignore property.onlyWritten
 	) {
 		$this->reader = PropertyAccess::createPropertyAccessor();
@@ -38,6 +41,15 @@ class Row
 	public function getId(): int|string
 	{
 		return $this->id;
+	}
+
+
+	/**
+	 * @return Item
+	 */
+	public function getItem(): object|array
+	{
+		return $this->item;
 	}
 
 
