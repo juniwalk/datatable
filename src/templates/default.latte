@@ -64,9 +64,7 @@
 		<tbody>
 			<tr n:foreach="$rows as $row">
 
-				<td n:foreach="$columns as $name => $column" n:class="'col-'.$name, $column->getAlign()->class()">
-					{control $column, $row}
-				</td>
+				<td n:foreach="$columns as $name => $column" n:class="'col-'.$name, $column->getAlign()->class()">{control $column, $row}</td>
 
 			</tr>
 		</tbody>
