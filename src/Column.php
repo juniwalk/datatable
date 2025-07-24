@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable;
 
+use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Enums\Sort;
 use Nette\ComponentModel\IComponent;
 
@@ -32,8 +33,11 @@ interface Column extends IComponent
 	public function isSorted(): ?Sort;
 
 
-	public function setAlign(string $align): self;
-	public function getAlign(): string;
+	/**
+	 * @param value-of<Align> $align
+	 */
+	public function setAlign(Align|string $align): self;
+	public function getAlign(): Align;
 
 
 	public function render(Row $row): void;

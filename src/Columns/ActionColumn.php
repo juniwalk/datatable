@@ -8,12 +8,13 @@
 namespace JuniWalk\DataTable\Columns;
 
 use JuniWalk\DataTable\Action;
+use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Row;
 use Nette\Utils\Html;
 
 class ActionColumn extends AbstractColumn
 {
-	protected string $align = 'end';
+	protected Align $align = Align::Right;
 
 	/** @var array<string, Action> */
 	protected array $actions;

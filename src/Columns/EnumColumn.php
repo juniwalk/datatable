@@ -8,13 +8,14 @@
 namespace JuniWalk\DataTable\Columns;
 
 use BackedEnum;
+use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Row;
 use JuniWalk\Utils\Enums\Interfaces\LabeledEnum;
 use JuniWalk\Utils\Html;
 
 class EnumColumn extends AbstractColumn
 {
-	protected string $align = 'end';
+	protected Align $align = Align::Right;
 
 
 	public function render(Row $row): void

@@ -8,11 +8,12 @@
 namespace JuniWalk\DataTable\Columns;
 
 use DateTimeInterface;
+use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Row;
 
 class DateColumn extends AbstractColumn
 {
-	protected string $align = 'end';
+	protected Align $align = Align::Right;
 	protected string $format = 'j. n. Y';
 
 

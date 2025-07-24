@@ -7,11 +7,12 @@
 
 namespace JuniWalk\DataTable\Columns;
 
+use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Row;
 
 class NumberColumn extends AbstractColumn
 {
-	protected string $align = 'end';
+	protected Align $align = Align::Right;
 
 
 	// todo: add number formatting properties

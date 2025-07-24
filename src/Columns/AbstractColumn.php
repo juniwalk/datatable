@@ -8,6 +8,7 @@
 namespace JuniWalk\DataTable\Columns;
 
 use JuniWalk\DataTable\Column;
+use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Filter;
 use Nette\Application\UI\Control;
@@ -28,8 +29,7 @@ abstract class AbstractColumn extends Control implements Column
 
 	protected ?Sort $sort;
 
-	// todo: use new Align enum for this
-	protected string $align = 'start';
+	protected Align $align = Align::Left;
 
 	public function __construct(
 		protected ?string $label,
@@ -98,14 +98,17 @@ abstract class AbstractColumn extends Control implements Column
 	}
 
 
-	public function setAlign(string $align): self
+	/**
+	 * @param value-of<Align> $align
+	 */
+	public function setAlign(Align|string $align): self
 	{
-		$this->align = $align;
+		$this->align = Align::make($align);
 		return $this;
 	}
 
 
-	public function getAlign(): string
+	public function getAlign(): Align
 	{
 		return $this->align;
 	}
