@@ -93,7 +93,7 @@ trait Sorting
 
 
 	/**
-	 * @param array<ColumnName, Sort|Sort::*> $sort
+	 * @param array<ColumnName, Sort|value-of<Sort>> $sort
 	 */
 	public function setDefaultSort(array $sort): self
 	{
