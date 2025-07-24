@@ -11,6 +11,7 @@ use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\ActionColumn;
 use JuniWalk\DataTable\Columns\DateColumn;
+use JuniWalk\DataTable\Columns\EnumColumn;
 use JuniWalk\DataTable\Columns\NumberColumn;
 use JuniWalk\DataTable\Columns\TextColumn;
 use JuniWalk\DataTable\Container;
@@ -23,6 +24,12 @@ trait Columns
 	public function addColumnText(string $name, ?string $label): TextColumn
 	{
 		return $this->addColumn($name, new TextColumn($label));
+	}
+
+
+	public function addColumnEnum(string $name, ?string $label): EnumColumn
+	{
+		return $this->addColumn($name, new EnumColumn($label));
 	}
 
 
