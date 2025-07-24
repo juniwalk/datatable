@@ -15,22 +15,22 @@ class TextColumn extends AbstractColumn
 {
 	public function render(Row $row): void
 	{
-		$value = $row->getValue($this);
+		$text = $row->getValue($this);
 
-		if ($value instanceof Stringable) {
-			$value = (string) $value;
+		if ($text instanceof Stringable) {
+			$text = (string) $text;
 		}
 
-		if ($value instanceof BackedEnum) {
-			$value = $value->value;
+		if ($text instanceof BackedEnum) {
+			$text = $text->value;
 		}
 
-		if (!is_scalar($value)) {
+		if (!is_scalar($text)) {
 			// todo: throw ColumnValueTypeException
 			throw new \Exception;
 		}
 
 		// convert to string
-		echo $value;
+		echo $text;
 	}
 }

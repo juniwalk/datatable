@@ -31,15 +31,15 @@ class DateColumn extends AbstractColumn
 
 	public function render(Row $row): void
 	{
-		$value = $row->getValue($this);
+		$date = $row->getValue($this);
 
 		// todo: try to make DateTime from other value types
 
-		if (!$value instanceof DateTimeInterface) {
+		if (!$date instanceof DateTimeInterface) {
 			// todo: throw ColumnValueTypeException
 			throw new \Exception;
 		}
 
-		echo $value->format($this->format);
+		echo $date->format($this->format);
 	}
 }

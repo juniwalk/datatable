@@ -19,13 +19,13 @@ class NumberColumn extends AbstractColumn
 
 	public function render(Row $row): void
 	{
-		$value = $row->getValue($this);
+		$number = $row->getValue($this);
 
-		if (!is_numeric($value)) {
+		if (!is_numeric($number)) {
 			// todo: throw ColumnValueTypeException
 			throw new \Exception;
 		}
 
-		echo number_format((float) $value);
+		echo number_format((float) $number);
 	}
 }
