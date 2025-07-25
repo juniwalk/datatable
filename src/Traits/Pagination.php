@@ -46,11 +46,11 @@ trait Pagination
 			throw new \Exception;
 		}
 
-		if ($limit === $this->limitDefault) {
-			$limit = null;
-		}
-
 		$this->limit = $limit;
+
+		if ($this->isLimitDefault()) {
+			$this->limit = null;
+		}
 
 		$this->redirect('this');
 	}
@@ -91,6 +91,18 @@ trait Pagination
 	}
 
 
+	public function getLimitDefault(): ?int
+	{
+		return $this->limitDefault;
+	}
+
+
+	public function isLimitDefault(): bool
+	{
+		return $this->limit === $this->limitDefault;
+	}
+
+
 	public function renderPages(): void
 	{
 		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
@@ -109,10 +121,8 @@ trait Pagination
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/../templates/table-limiter.latte');
 
-		$limit = $this->getCurrentLimit();
-
+		$template->add('limit', $this->getCurrentLimit());
 		$template->add('limits', $this->limits);
-		$template->add('limit', $limit);
 
 		$template->render();
 	}

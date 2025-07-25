@@ -15,6 +15,7 @@ use Nette\ComponentModel\IComponent;
 
 /**
  * @phpstan-type State array{
+ * 		limit?: numeric-string,
  * 		sort: array<string, value-of<Sort>>,
  * 		filter: array<string, scalar|scalar[]>,
  * }
@@ -39,8 +40,8 @@ class Table extends Control
 	{
 		$limit = $params['limit'] ?? null;
 
-		if (!$limit || !in_array($limit, $this->limits)) {
-			$this->limit = null;
+		if ($limit && !in_array($limit, $this->limits)) {
+			$params['limit'] = null;
 		}
 
 		foreach ($params['sort'] ?? [] as $column => $order) {
