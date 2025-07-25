@@ -20,7 +20,7 @@ trait Pagination
 	private ?int $limitDefault = null;
 
 	/** @var int[] */
-	private array $perPage = [10, 20, 40, 60, 80];
+	private array $limits = [10, 20, 40, 60, 80];
 
 	private Paginator $paginator;
 
@@ -41,7 +41,7 @@ trait Pagination
 
 	public function handleLimit(int $limit): void
 	{
-		if (!in_array($limit, $this->perPage)) {
+		if (!in_array($limit, $this->limits)) {
 			// todo: throw LimitInvalidException
 			throw new \Exception;
 		}
@@ -57,31 +57,31 @@ trait Pagination
 
 
 	/**
-	 * @param int[] $perPage
+	 * @param int[] $limits
 	 */
-	public function setPerPage(array $perPage): self
+	public function setLimits(array $limits): self
 	{
-		$perPage = array_unique(array_filter($perPage));
+		$limits = array_unique(array_filter($limits));
 
-		if (empty($perPage)) {
+		if (empty($limits)) {
 			// todo: throw PerPageListException
 			throw new \Exception;
 		}
 
-		$this->perPage = $perPage;
+		$this->limits = $limits;
 		return $this;
 	}
 
 
 	public function getCurrentLimit(): int
 	{
-		return $this->limit ?? $this->limitDefault ?? $this->perPage[0];
+		return $this->limit ?? $this->limitDefault ?? $this->limits[0];
 	}
 
 
 	public function setDefaultLimit(?int $limit): self
 	{
-		if (!in_array($limit, $this->perPage)) {
+		if (!in_array($limit, $this->limits)) {
 			// todo: throw LimitInvalidException
 			throw new \Exception;
 		}
@@ -111,7 +111,7 @@ trait Pagination
 
 		$limit = $this->getCurrentLimit();
 
-		$template->add('perPage', $this->perPage);
+		$template->add('limits', $this->limits);
 		$template->add('limit', $limit);
 
 		$template->render();

@@ -3,8 +3,8 @@
 	<div class="dropup">
 		<button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-start-0" type="button" data-bs-toggle="dropdown">Limit: <strong>{$limit}</strong></button>
 		<ul class="dropdown-menu dropdown-menu-end" style="min-width: auto">
-			<li n:foreach="$perPage as $l">
-				<a n:href="limit! $l" n:class="dropdown-item, $l === $limit ? active">{$l}</a>
+			<li n:foreach="$limits as $_limit">
+				<a n:href="limit! $_limit" n:class="dropdown-item, $_limit === $limit ? active">{$_limit}</a>
 			</li>
 		</ul>
 	</div>

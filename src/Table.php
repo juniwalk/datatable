@@ -39,7 +39,7 @@ class Table extends Control
 	{
 		$limit = $params['limit'] ?? null;
 
-		if (!$limit || !in_array($limit, $this->perPage)) {
+		if (!$limit || !in_array($limit, $this->limits)) {
 			$this->limit = null;
 		}
 
