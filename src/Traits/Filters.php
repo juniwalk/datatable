@@ -75,13 +75,13 @@ trait Filters
 	}
 
 
-	public function addFilterText(string $name, ?string $label): TextFilter
+	public function addFilterText(string $name, string $label): TextFilter
 	{
 		return $this->addFilter($name, new TextFilter($label));
 	}
 
 
-	public function addFilterDate(string $name, ?string $label): DateFilter
+	public function addFilterDate(string $name, string $label): DateFilter
 	{
 		return $this->addFilter($name, new DateFilter($label));
 	}

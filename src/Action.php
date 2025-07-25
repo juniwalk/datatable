@@ -13,7 +13,7 @@ use Nette\Utils\Html;
 
 interface Action extends IComponent
 {
-	public function getLabel(): ?string;
+	public function getLabel(): string;
 
 	public function render(Row $row): Html;
 }

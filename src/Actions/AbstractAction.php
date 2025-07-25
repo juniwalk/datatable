@@ -13,12 +13,12 @@ use Nette\Application\UI\Control;
 abstract class AbstractAction extends Control implements Action
 {
 	public function __construct(
-		protected ?string $label,
+		protected string $label,
 	) {
 	}
 
 
-	public function getLabel(): ?string
+	public function getLabel(): string
 	{
 		return $this->label;
 	}

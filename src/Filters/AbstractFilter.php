@@ -23,7 +23,7 @@ abstract class AbstractFilter extends Control implements Filter
 	protected array $columns = [];
 
 	public function __construct(
-		protected ?string $label,
+		protected string $label,
 	) {
 	}
 
