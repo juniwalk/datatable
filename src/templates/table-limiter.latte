@@ -2,10 +2,8 @@
 	<span class="input-group-text text-secondary">Záznamů: 1 - 20 od 190</span>
 	<div class="dropup">
 		<button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-start-0" type="button" data-bs-toggle="dropdown">Limit: <strong>{$limit}</strong></button>
-		<ul class="dropdown-menu dropdown-menu-end" style="min-width: auto">
-			<li n:foreach="$limits as $_limit">
-				<a n:href="limit! $_limit" n:class="dropdown-item, $_limit === $limit ? active">{$_limit}</a>
-			</li>
+		<ul class="dropdown-menu dropdown-menu-end" style="min-width: auto" n:inner-foreach="$limits as $_limit">
+			<li><a n:href="limit! $_limit" n:class="dropdown-item, $_limit === $limit ? active">{$_limit}</a></li>
 		</ul>
 	</div>
 </div>

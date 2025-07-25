@@ -22,18 +22,13 @@ trait Pagination
 	/** @var int[] */
 	private array $limits = [10, 20, 40, 60, 80];
 
-	private Paginator $paginator;
-
 
 	// todo: allow showing all the rows somehow
-	// todo: allow indetermined pagination when count is not known
 
 
 	public function handlePage(int $page): void
 	{
-		// todo: check page validity
-
-		$this->page = $page;
+		$this->page = max($page, 1);
 
 		$this->redirect('this');
 	}
@@ -47,6 +42,7 @@ trait Pagination
 		}
 
 		$this->limit = $limit;
+		$this->page = 1;
 
 		if ($this->isLimitDefault()) {
 			$this->limit = null;
@@ -109,6 +105,18 @@ trait Pagination
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/../templates/table-pages.latte');
 
+		if (!isset($this->source)) {
+			throw new \Exception('No source set');
+		}
+
+		$pages = new Paginator;
+		$pages->setPage($this->page);
+		$pages->setItemsPerPage($this->getCurrentLimit());
+		// todo: allow indetermined pagination when count is not known
+		$pages->setItemCount($this->source->totalCount());
+
+		$template->add('steps', $this->createSteps($pages));
+		$template->add('pages', $pages);
 		$template->add('page', $this->page);
 
 		$template->render();
@@ -121,9 +129,59 @@ trait Pagination
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/../templates/table-limiter.latte');
 
+		// todo: add some numbers for the overview field
 		$template->add('limit', $this->getCurrentLimit());
 		$template->add('limits', $this->limits);
 
 		$template->render();
+	}
+
+
+	/**
+	 * @return array<int, int|null>
+	 */
+	protected function createSteps(Paginator $pages, int $steps = 7): array
+	{
+		$pageCount = $pages->getPageCount();
+		$page = $pages->getPage();
+
+		if ($pageCount <= 1) {
+			return [];
+		}
+
+		if ($pageCount <= $steps) {
+			return range(
+				$pages->getFirstPage(),
+				$pageCount,
+			);
+		}
+
+		$slidingStart = (int) min(
+			$pageCount - $steps + 2,
+			$page - floor(($steps - 3) / 2),
+		);
+
+		if ($slidingStart < 2) $slidingStart = 2;
+
+		$slidingEnd = (int) min(
+			$slidingStart + $steps - 3,
+			$pageCount - 1,
+		);
+
+		$pages = [1];
+
+		if ($slidingStart > 2) {
+			$pages[] = null;
+		}
+
+		$pages = array_merge($pages, range($slidingStart, $slidingEnd));
+
+		if ($slidingEnd < $pageCount - 1) {
+			$pages[] = null;
+		}
+
+		$pages[] = $pageCount;
+
+		return $pages;
 	}
 }
