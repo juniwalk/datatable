@@ -175,6 +175,10 @@ class ArraySource implements Source
 
 	public function limit(int $page, int $limit): void
 	{
+		if ($limit === 0) {
+			return;
+		}
+
 		$this->items = array_slice($this->items, $limit * ($page - 1), $limit, true);
 	}
 }

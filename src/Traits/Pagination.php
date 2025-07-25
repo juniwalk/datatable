@@ -20,10 +20,7 @@ trait Pagination
 	private ?int $limitDefault = null;
 
 	/** @var int[] */
-	private array $limits = [10, 20, 40, 60, 80];
-
-
-	// todo: allow showing all the rows somehow
+	private array $limits = [10, 20, 50];
 
 
 	public function handlePage(int $page): void
@@ -55,7 +52,7 @@ trait Pagination
 	/**
 	 * @param int[] $limits
 	 */
-	public function setLimits(array $limits): self
+	public function setLimits(array $limits, bool $allowAll = false): self
 	{
 		$limits = array_unique(array_filter($limits));
 
@@ -65,6 +62,11 @@ trait Pagination
 		}
 
 		$this->limits = $limits;
+
+		if ($allowAll === true) {
+			$this->limits[] = 0;
+		}
+
 		return $this;
 	}
 
@@ -107,6 +109,11 @@ trait Pagination
 
 		if (!isset($this->source)) {
 			throw new \Exception('No source set');
+		}
+
+		// todo: do not allow showing all rows with indetermined paginator
+		if ($this->limit === 0) {
+			return;
 		}
 
 		$pages = new Paginator;
