@@ -8,6 +8,7 @@
 namespace JuniWalk\DataTable\Traits;
 
 use Nette\Application\Attributes\Persistent;
+use Nette\Utils\Paginator;
 
 trait Pagination
 {
@@ -20,6 +21,8 @@ trait Pagination
 
 	/** @var int[] */
 	private array $perPage = [10, 20, 40, 60, 80];
+
+	private Paginator $paginator;
 
 
 	// todo: allow showing all the rows somehow
@@ -85,5 +88,32 @@ trait Pagination
 
 		$this->limitDefault = $limit;
 		return $this;
+	}
+
+
+	public function renderPages(): void
+	{
+		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
+		$template = $this->createTemplate();
+		$template->setFile(__DIR__.'/../templates/table-pages.latte');
+
+		$template->add('page', $this->page);
+
+		$template->render();
+	}
+
+
+	public function renderLimiter(): void
+	{
+		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
+		$template = $this->createTemplate();
+		$template->setFile(__DIR__.'/../templates/table-limiter.latte');
+
+		$limit = $this->getCurrentLimit();
+
+		$template->add('perPage', $this->perPage);
+		$template->add('limit', $limit);
+
+		$template->render();
 	}
 }

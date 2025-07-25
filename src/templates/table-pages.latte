@@ -1,0 +1,7 @@
+<div class="btn-group btn-group-sm">
+	<a n:href="page! $page - 1" n:class="btn, btn-outline-secondary, $page === 1 ? disabled">Předchozí</a>
+	<a n:href="page! 1" n:class="btn, $page === 1 ? btn-primary : btn-outline-secondary">1</a>
+	<a n:href="page! 2" n:class="btn, $page === 2 ? btn-primary : btn-outline-secondary">2</a>
+	{* <a n:href="page! 3" n:class="btn, $page === 3 ? btn-primary : btn-outline-secondary">3</a> *}
+	<a n:href="page! $page + 1" n:class="btn, btn-outline-secondary, $page === 2 ? disabled">Další</a>
+</div>

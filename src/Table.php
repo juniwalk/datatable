@@ -62,7 +62,7 @@ class Table extends Control
 		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/templates/table.latte');
-		$template->add('controlName', $this->lookupPath());
+		$template->add('controlName', $this->getUniqueId());
 
 		if (!isset($this->source)) {
 			throw new \Exception('No source set');
@@ -107,12 +107,10 @@ class Table extends Control
 			}
 		}
 
-		$limit = $this->getCurrentLimit();
-
 		// todo: first filter, then sort and then limit
 		$this->source->filter($filters);
 		$this->source->sort($columns);
-		$this->source->limit($this->page, $limit);
+		$this->source->limit($this->page, $this->getCurrentLimit());
 
 		$rows = [];
 
@@ -124,10 +122,6 @@ class Table extends Control
 		$template->add('columns', $columns);
 		$template->add('filters', $filters);
 		$template->add('rows', $rows);
-
-		$template->add('page', $this->page);
-		$template->add('limit', $limit);
-		$template->add('perPage', $this->perPage);
 
 		// bdump($this);
 
