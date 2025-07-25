@@ -16,9 +16,6 @@ use JuniWalk\DataTable\Columns\NumberColumn;
 use JuniWalk\DataTable\Columns\TextColumn;
 use JuniWalk\DataTable\Container;
 
-/**
- * @phpstan-import-type ColumnName from Column
- */
 trait Columns
 {
 	public function addColumnText(string $name, string $label): TextColumn
@@ -75,7 +72,7 @@ trait Columns
 
 
 	/**
-	 * @return array<ColumnName, Column>
+	 * @return array<string, Column>
 	 */
 	public function getColumns(): array
 	{

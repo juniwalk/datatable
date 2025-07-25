@@ -7,7 +7,6 @@
 
 namespace JuniWalk\DataTable\Traits;
 
-use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Container;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
@@ -15,12 +14,9 @@ use JuniWalk\DataTable\Filters\TextFilter;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
 
-/**
- * @phpstan-import-type ColumnName from Column
- */
 trait Filters
 {
-	/** @var array<ColumnName, scalar> */
+	/** @var array<string, scalar> */
 	#[Persistent]
 	public array $filter = [];
 
@@ -28,9 +24,6 @@ trait Filters
 	private ?int $filterColumnCount = null;
 
 
-	/**
-	 * @param ColumnName $column
-	 */
 	public function handleClear(string $column): void
 	{
 		unset($this->filter[$column]);

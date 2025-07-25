@@ -10,9 +10,6 @@ namespace JuniWalk\DataTable;
 use JuniWalk\DataTable\Enums\Align;
 use Nette\ComponentModel\IComponent;
 
-/**
- * @phpstan-type ColumnName non-empty-string
- */
 interface Column extends IComponent
 {
 	/**

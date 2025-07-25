@@ -17,7 +17,6 @@ use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Source;
 
 /**
- * @phpstan-import-type ColumnName from Column
  * @phpstan-import-type Item from Source
  * @phpstan-import-type Items from Source
  */
@@ -128,7 +127,7 @@ class ArraySource implements Source
 
 	/**
 	 * todo: implement custom sorting  -->  https://stackoverflow.com/questions/2699086/sort-a-2d-array-by-a-column-value
-	 * @param array<ColumnName, Column> $columns
+	 * @param array<string, Column> $columns
 	 */
 	public function sort(array $columns): void
 	{

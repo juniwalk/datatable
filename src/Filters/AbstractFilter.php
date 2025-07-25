@@ -7,22 +7,18 @@
 
 namespace JuniWalk\DataTable\Filters;
 
-use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\Utils\Format;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
 
-/**
- * @phpstan-import-type ColumnName from Column
- */
 abstract class AbstractFilter extends Control implements Filter
 {
 	protected bool $isFiltered = false;
 	protected mixed $value;
 
 	/**
-	 * @var ColumnName[]
+	 * @var string[]
 	 */
 	protected array $columns = [];
 
@@ -52,7 +48,7 @@ abstract class AbstractFilter extends Control implements Filter
 	}
 
 	/**
-	 * @return ColumnName[]
+	 * @return string[]
 	 */
 	public function getColumns(): array
 	{

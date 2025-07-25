@@ -8,7 +8,6 @@
 namespace JuniWalk\DataTable;
 
 /**
- * @phpstan-import-type ColumnName from Column
  * @phpstan-type Item object|array<string, mixed>
  * @phpstan-type Items array<int|string, Item>
  */
@@ -30,7 +29,7 @@ interface Source
 	public function filterById(int|string ...$rows): void;
 
 	/**
-	 * @param array<ColumnName, Column> $columns
+	 * @param array<string, Column> $columns
 	 */
 	public function sort(array $columns): void;
 

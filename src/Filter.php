@@ -10,9 +10,6 @@ namespace JuniWalk\DataTable;
 use Nette\Application\UI\Form;
 use Nette\ComponentModel\IComponent;
 
-/**
- * @phpstan-type ColumnName non-empty-string
- */
 interface Filter extends IComponent
 {
 	/**
@@ -23,7 +20,7 @@ interface Filter extends IComponent
 	public function setColumns(string ...$column): self;
 
 	/**
-	 * @return ColumnName[]
+	 * @return string[]
 	 */
 	public function getColumns(): array;
 

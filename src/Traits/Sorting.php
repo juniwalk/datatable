@@ -7,29 +7,22 @@
 
 namespace JuniWalk\DataTable\Traits;
 
-use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Enums\Sort;
 use Nette\Application\Attributes\Persistent;
 
-/**
- * @phpstan-import-type ColumnName from Column
- */
 trait Sorting
 {
-	/** @var array<ColumnName, Sort> */
+	/** @var array<string, Sort> */
 	#[Persistent]
 	public array $sort = [];
 
-	/** @var array<ColumnName, Sort> */
+	/** @var array<string, Sort> */
 	private array $sortDefault = [];
 
 	private bool $isSortable = false;
 	private bool $isSortMultiple = false;
 
 
-	/**
-	 * @param ColumnName $column
-	 */
 	public function handleSort(string $column): void
 	{
 		if (!$column || !$this->getColumn($column, false)) {
@@ -84,7 +77,7 @@ trait Sorting
 
 
 	/**
-	 * @return array<ColumnName, Sort>
+	 * @return array<string, Sort>
 	 */
 	public function getCurrentSort(): array
 	{
@@ -93,7 +86,7 @@ trait Sorting
 
 
 	/**
-	 * @param array<ColumnName, Sort|value-of<Sort>> $sort
+	 * @param array<string, Sort|value-of<Sort>> $sort
 	 */
 	public function setDefaultSort(array $sort): self
 	{
@@ -113,7 +106,7 @@ trait Sorting
 
 
 	/**
-	 * @return array<ColumnName, Sort>
+	 * @return array<string, Sort>
 	 */
 	public function getDefaultSort(): array
 	{

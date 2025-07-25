@@ -14,10 +14,9 @@ use Nette\Application\UI\Control;
 use Nette\ComponentModel\IComponent;
 
 /**
- * @phpstan-import-type ColumnName from Column
  * @phpstan-type State array{
- * 		sort: array<ColumnName, 'asc'|'desc'>,
- * 		filter: array<ColumnName, scalar|scalar[]>,
+ * 		sort: array<string, value-of<Sort>>,
+ * 		filter: array<string, scalar|scalar[]>,
  * }
  */
 class Table extends Control
