@@ -61,7 +61,7 @@ class Table extends Control
 	{
 		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
 		$template = $this->createTemplate();
-		$template->setFile(__DIR__.'/templates/default.latte');
+		$template->setFile(__DIR__.'/templates/table.latte');
 		$template->add('controlName', $this->lookupPath());
 
 		if (!isset($this->source)) {
