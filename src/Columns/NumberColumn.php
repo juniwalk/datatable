@@ -7,14 +7,22 @@
 
 namespace JuniWalk\DataTable\Columns;
 
+use JuniWalk\DataTable\Columns\Interfaces\CustomRenderer;
+use JuniWalk\DataTable\Columns\Interfaces\Filterable;
+use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Row;
 
-class NumberColumn extends AbstractColumn
+class NumberColumn extends AbstractColumn implements Sortable, Filterable, CustomRenderer
 {
+	use Traits\Sorting;
+	use Traits\Filters;
+	use Traits\Renderer;
+
 	protected Align $align = Align::Right;
 
 	protected int $precision = 0;
+
 	protected ?string $separator = '.';
 
 

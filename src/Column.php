@@ -7,9 +7,7 @@
 
 namespace JuniWalk\DataTable;
 
-use Closure;
 use JuniWalk\DataTable\Enums\Align;
-use JuniWalk\DataTable\Enums\Sort;
 use Nette\ComponentModel\IComponent;
 
 /**
@@ -17,35 +15,14 @@ use Nette\ComponentModel\IComponent;
  */
 interface Column extends IComponent
 {
-	public function addFilter(Filter $filter): self;
-
-	/**
-	 * @return array<string, Filter>
-	 */
-	public function getFilters(): array;
-	public function isFiltered(): bool;
-
-
-	public function setSortable(bool|string $sortable): self;
-	public function isSortable(): ?bool;
-
-	public function setSortedBy(?string $sortBy): self;
-	public function getSortedBy(): ?string;
-
-	public function setSorted(?Sort $sort): self;
-	public function isSorted(): ?Sort;
-
-
 	/**
 	 * @param value-of<Align> $align
 	 */
 	public function setAlign(Align|string $align): self;
 	public function getAlign(): Align;
 
-
-	public function setRenderer(?Closure $renderer = null): self;
-	public function getRenderer(): ?Closure;
-
+	public function isFiltered(): bool;
+	public function isSortable(): ?bool;
 
 	public function render(Row $row): void;
 	public function renderValue(Row $row): void;

@@ -10,6 +10,7 @@ namespace JuniWalk\DataTable\Sources;
 use BackedEnum;
 use DateTimeInterface;
 use JuniWalk\DataTable\Column;
+use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Row;
@@ -132,6 +133,10 @@ class ArraySource implements Source
 	public function sort(array $columns): void
 	{
 		foreach ($columns as $name => $column) {
+			if (!$column instanceof Sortable) {
+				continue;
+			}
+
 			if (!$sort = $column->isSorted()) {
 				continue;
 			}

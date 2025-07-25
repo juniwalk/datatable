@@ -7,6 +7,8 @@
 
 namespace JuniWalk\DataTable;
 
+use JuniWalk\DataTable\Columns\Interfaces\Filterable;
+use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Sort;
 use Nette\Application\UI\Control;
 use Nette\ComponentModel\IComponent;
@@ -82,12 +84,22 @@ class Table extends Control
 			$filter->setValue($this->filter[$name] ?? null);
 
 			foreach ($filter->getColumns() as $column) {
+				// todo: make sure $columns[$column] exists
+
+				if (!$columns[$column] instanceof Filterable) {
+					continue;
+				}
+
 				$columns[$column]->addFilter($filter);
 			}
 		}
 
 
 		foreach ($columns as $name => $column) {
+			if (!$column instanceof Sortable) {
+				continue;
+			}
+
 			$column->setSorted($sort[$name] ?? null);
 
 			// ? Set column as sortable only if there is no override

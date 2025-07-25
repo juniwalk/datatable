@@ -8,11 +8,19 @@
 namespace JuniWalk\DataTable\Columns;
 
 use BackedEnum;
+use JuniWalk\DataTable\Columns\Interfaces\CustomRenderer;
+use JuniWalk\DataTable\Columns\Interfaces\Filterable;
+use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Row;
 use Stringable;
 
-class TextColumn extends AbstractColumn
+class TextColumn extends AbstractColumn implements Sortable, Filterable, CustomRenderer
 {
+	use Traits\Sorting;
+	use Traits\Filters;
+	use Traits\Renderer;
+
+
 	public function renderValue(Row $row): void
 	{
 		$text = $row->getValue($this);
