@@ -7,19 +7,11 @@
 
 namespace JuniWalk\DataTable;
 
-use JuniWalk\DataTable\Columns\Interfaces\Filterable;
-use JuniWalk\DataTable\Columns\Interfaces\Sortable;
-use JuniWalk\DataTable\Enums\Sort;
 use Nette\Application\UI\Control;
+use Nette\Application\UI\Presenter;
 use Nette\ComponentModel\IComponent;
+use Nette\ComponentModel\IContainer;
 
-/**
- * @phpstan-type State array{
- * 		limit?: numeric-string,
- * 		sort: array<string, value-of<Sort>>,
- * 		filter: array<string, scalar|scalar[]>,
- * }
- */
 class Table extends Control
 {
 	use Traits\Actions;
@@ -34,19 +26,12 @@ class Table extends Control
 
 
 	/**
-	 * @param State $params
+	 * @param array<string, scalar|scalar[]> $params
 	 */
 	public function loadState(array $params): void
 	{
-		$limit = $params['limit'] ?? null;
-
-		if ($limit && !in_array($limit, $this->limits)) {
-			$params['limit'] = null;
-		}
-
-		foreach ($params['sort'] ?? [] as $column => $order) {
-			$params['sort'][$column] = Sort::make($order, false);
-		}
+		$params = $this->sortingPrepare($params);
+		$params = $this->filtersPrepare($params);
 
 		parent::loadState($params);
 	}
@@ -65,44 +50,12 @@ class Table extends Control
 		$template->setFile(__DIR__.'/templates/table.latte');
 		$template->add('controlName', $this->getUniqueId());
 
-		if (!isset($this->source)) {
-			throw new \Exception('No source set');
-		}
-
 		if ($actions = $this->getActions()) {
 			$this->addColumnAction('actions', 'Akce', $actions);
 		}
 
-		$sort = $this->getCurrentSort();
 		$columns = $this->getColumns();
 		$filters = $this->getFilters();
-
-		foreach ($filters as $name => $filter) {
-			$filter->setValue($this->filter[$name] ?? null);
-
-			foreach ($filter->getColumns() as $column) {
-				$column = $columns[$column] ?? null;
-
-				if (!$column || !$column instanceof Filterable) {
-					continue;
-				}
-
-				$column->addFilter($filter);
-			}
-		}
-
-		foreach ($columns as $name => $column) {
-			if (!$column instanceof Sortable) {
-				continue;
-			}
-
-			$column->setSorted($sort[$name] ?? null);
-
-			// ? Set column as sortable only if there is no override
-			if ($this->isSortable() && $column->isSortable() === null) {
-				$column->setSortable(true);
-			}
-		}
 
 		// todo: first filter, then sort and then limit
 		$this->source->filter($filters);
@@ -123,6 +76,17 @@ class Table extends Control
 		// bdump($this);
 
 		$template->render();
+	}
+
+
+	protected function validateParent(IContainer $parent): void
+	{
+		// ? Parent has to be validated first so the loadState is called
+		parent::validateParent($parent);
+
+		$this->monitor(Presenter::class, fn() => $this->sortingProcess());
+		$this->monitor(Presenter::class, fn() => $this->filtersProcess());
+		$this->monitor(Presenter::class, fn() => $this->sourcesProcess());
 	}
 
 

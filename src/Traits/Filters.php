@@ -8,6 +8,7 @@
 namespace JuniWalk\DataTable\Traits;
 
 use BackedEnum;
+use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Container;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
@@ -28,7 +29,16 @@ trait Filters
 
 	public function handleClear(string $column): void
 	{
-		unset($this->filter[$column]);
+		$column = $this->getColumn($column);
+
+		if (!$column instanceof Filterable) {
+			// todo: InvalidStateException
+			throw new \Exception;
+		}
+
+		foreach ($column->getFilters() as $name => $filter) {
+			unset($this->filter[$name]);
+		}
 
 		$this->redirect('this');
 	}
@@ -160,6 +170,37 @@ trait Filters
 		};
 
 		return $form->setDefaults($this->filter);
+	}
+
+
+	/**
+	 * @param  array<string, mixed> $state
+	 * @return array<string, mixed>
+	 */
+	protected function filtersPrepare(array $state): array
+	{
+		return $state;
+	}
+
+
+	protected function filtersProcess(): void
+	{
+		$columns = $this->getColumns();
+		$filters = $this->getFilters();
+
+		foreach ($filters as $name => $filter) {
+			$filter->setValue($this->filter[$name] ?? null);
+
+			foreach ($filter->getColumns() as $column) {
+				$column = $columns[$column] ?? null;
+
+				if (!$column || !$column instanceof Filterable) {
+					continue;
+				}
+
+				$column->addFilter($filter);
+			}
+		}
 	}
 
 

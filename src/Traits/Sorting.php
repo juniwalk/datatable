@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Traits;
 
+use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Sort;
 use Nette\Application\Attributes\Persistent;
 
@@ -121,5 +122,50 @@ trait Sorting
 			$this->sortDefault,
 			fn($a, $b) => $a <=> $b,
 		);
+	}
+
+
+	/**
+	 * @param  array<string, mixed> $state
+	 * @return array<string, mixed>
+	 */
+	protected function sortingPrepare(array $state): array
+	{
+		$state['sort'] = (array) ($state['sort'] ?? []);
+		$state['limit'] ??= null;
+
+		if ($state['limit'] && !in_array($state['limit'], $this->limits)) {
+			unset($state['limit']);
+		}
+
+		foreach ($state['sort'] as $column => $order) {
+			unset($state['sort'][$column]);
+
+			if ($sort = Sort::make($order, false)) {
+				$state['sort'][$column] = $sort;
+			}
+		}
+
+		return $state;
+	}
+
+
+	protected function sortingProcess(): void
+	{
+		$columns = $this->getColumns();
+		$sort = $this->getCurrentSort();
+
+		foreach ($columns as $name => $column) {
+			if (!$column instanceof Sortable) {
+				continue;
+			}
+
+			$column->setSorted($sort[$name] ?? null);
+
+			// ? Set column as sortable only if there is no override
+			if ($this->isSortable() && $column->isSortable() === null) {
+				$column->setSortable(true);
+			}
+		}
 	}
 }

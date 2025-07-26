@@ -27,11 +27,26 @@ trait Sources
 	// todo: allow dynamic source creation from given data type (in different method)
 	public function setSource(Source $source): self
 	{
-		if (!$source->getPrimaryKey()) {
-			$source->setPrimaryKey($this->primaryKey);
-		}
-
 		$this->source = $source;
 		return $this;
+	}
+
+
+	public function getSource(): ?Source
+	{
+		return $this->source ?? null;
+	}
+
+
+	protected function sourcesProcess(): void
+	{
+		if (!isset($this->source)) {
+			// todo: throw SourceMissingException
+			throw new \Exception('No source set');
+		}
+
+		if (!$this->source->getPrimaryKey()) {
+			$this->source->setPrimaryKey($this->primaryKey);
+		}
 	}
 }
