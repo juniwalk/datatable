@@ -13,22 +13,16 @@ use Nette\ComponentModel\IComponent;
 interface Filter extends IComponent
 {
 	/**
-	 * @return array<string, mixed>
-	 */
-	public function getConditions(): array;
-
-	public function setColumns(string ...$column): self;
-
-	/**
 	 * @return string[]
 	 */
 	public function getColumns(): array;
-
-	public function setFiltered(bool $filtered): self;
-	public function isFiltered(): bool;
+	public function setColumns(string ...$column): self;
 
 	public function setValue(mixed $filter): self;
 	public function getValue(): mixed;
+
+	public function isMatching(Row $row): bool;
+	public function isFiltered(): bool;
 
 	public function createInput(Form $form): void;
 	public function render(Form $form): void;

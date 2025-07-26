@@ -7,9 +7,11 @@
 
 namespace JuniWalk\DataTable\Traits;
 
+use BackedEnum;
 use JuniWalk\DataTable\Container;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
+use JuniWalk\DataTable\Filters\EnumFilter;
 use JuniWalk\DataTable\Filters\TextFilter;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
@@ -88,6 +90,15 @@ trait Filters
 
 
 	/**
+	 * @param class-string<BackedEnum> $enum
+	 */
+	public function addFilterEnum(string $name, string $label, string $enum): EnumFilter
+	{
+		return $this->addFilter($name, new EnumFilter($label, $enum));
+	}
+
+
+	/**
 	 * @template T of Filter
 	 * @param  T $filter
 	 * @return T
@@ -144,8 +155,6 @@ trait Filters
 		};
 
 		$form->onSuccess[] = function($form, $data) {
-			// todo: add value formatting for each filter || stringify each value using Format class
-
 			$this->filter = (array) $data;
 			$this->redirect('this');
 		};

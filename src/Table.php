@@ -73,27 +73,23 @@ class Table extends Control
 			$this->addColumnAction('actions', 'Akce', $actions);
 		}
 
-
 		$sort = $this->getCurrentSort();
 		$columns = $this->getColumns();
 		$filters = $this->getFilters();
 
-
 		foreach ($filters as $name => $filter) {
-			$filter->setFiltered((bool) ($this->filter[$name] ?? false));
 			$filter->setValue($this->filter[$name] ?? null);
 
 			foreach ($filter->getColumns() as $column) {
-				// todo: make sure $columns[$column] exists
+				$column = $columns[$column] ?? null;
 
-				if (!$columns[$column] instanceof Filterable) {
+				if (!$column || !$column instanceof Filterable) {
 					continue;
 				}
 
-				$columns[$column]->addFilter($filter);
+				$column->addFilter($filter);
 			}
 		}
-
 
 		foreach ($columns as $name => $column) {
 			if (!$column instanceof Sortable) {

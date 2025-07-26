@@ -8,6 +8,7 @@
 namespace JuniWalk\DataTable\Filters;
 
 use JuniWalk\DataTable\Filter;
+use JuniWalk\DataTable\Row;
 use JuniWalk\Utils\Format;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
@@ -28,50 +29,27 @@ abstract class AbstractFilter extends Control implements Filter
 	}
 
 
-	public function getConditions(): array
-	{
-		$columns = $this->columns ?: [$this->name];
-		$condition = [];
-
-		foreach ($columns as $column) {
-			$condition[$column] = $this->value;
-		}
-
-		return $condition;
-	}
-
-
 	public function setColumns(string ...$columns): self
 	{
-		$this->columns = array_filter($columns);
+		$this->columns = array_unique(array_filter($columns));
 		return $this;
 	}
+
 
 	/**
 	 * @return string[]
 	 */
 	public function getColumns(): array
 	{
-		return $this->columns;
-	}
-
-
-	public function setFiltered(bool $filtered): self
-	{
-		$this->isFiltered = $filtered;
-		return $this;
-	}
-
-
-	public function isFiltered(): bool
-	{
-		return $this->isFiltered;
+		return $this->columns ?: [$this->name];
 	}
 
 
 	public function setValue(mixed $value): self
 	{
+		$this->isFiltered = $value !== '' && $value !== null;
 		$this->value = $value;
+
 		return $this;
 	}
 
@@ -79,6 +57,33 @@ abstract class AbstractFilter extends Control implements Filter
 	public function getValue(): mixed
 	{
 		return $this->value ?? null;
+	}
+
+
+	public function isMatching(Row $row): bool
+	{
+		if (!$this->isFiltered) {
+			return false;
+		}
+
+		foreach ($this->getColumns() as $column) {
+			$value = $row->getValue($column);
+
+			$query = Format::stringify($this->value);
+			$value = Format::stringify($value);
+
+			if (!strcasecmp($query, $value) <> 0) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+
+	public function isFiltered(): bool
+	{
+		return $this->isFiltered;
 	}
 
 

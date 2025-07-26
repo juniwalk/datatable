@@ -68,41 +68,23 @@ class ArraySource implements Source
 	 */
 	public function filter(array $filters): void
 	{
-		$items = $conditions = [];
-
-		foreach ($filters as $filter) {
-			if (!$filter->isFiltered()) {
-				continue;
-			}
-
-			$conditions = array_merge($conditions, $filter->getConditions());
-		}
-
-		if (empty($conditions)) {
+		if (empty($this->items)) {
 			return;
 		}
 
 		foreach ($this->items as $key => $item) {
 			$row = new Row($item, $this->primaryKey);
 
-			foreach ($conditions as $field => $query) {
-				$value = $row->getValue($field);
-				// todo: query should be scalar|scalar[]
-				$query = (string) $query; // @phpstan-ignore cast.string
-
-				if (is_string($value) && strcasecmp($query, $value) <> 0) {
-					continue;
-
-				} elseif (!is_string($value) && $query <> $value) {
+			foreach ($filters as $filter) {
+				if (!$filter->isMatching($row)) {
 					continue;
 				}
 
-				$items[$key] = $item;
-				break;
+				unset($this->items[$key]);
 			}
 		}
 
-		$this->items = $items;
+		$this->totalCount = sizeof($this->items);
 	}
 
 
