@@ -31,4 +31,13 @@ enum Sort: string implements LabeledEnum
 			self::DESC => 'fa-sort-down',
 		};
 	}
+
+
+	public function order(): int
+	{
+		return match ($this) {
+			self::ASC => SORT_ASC,
+			self::DESC => SORT_DESC,
+		};
+	}
 }

@@ -7,14 +7,13 @@
 
 namespace JuniWalk\DataTable\Sources;
 
-use BackedEnum;
-use DateTimeInterface;
 use JuniWalk\DataTable\Column;
+use JuniWalk\DataTable\Columns;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
-use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Source;
+use JuniWalk\Utils\Format;
 
 /**
  * @phpstan-import-type Item from Source
@@ -126,49 +125,39 @@ class ArraySource implements Source
 
 
 	/**
-	 * todo: implement custom sorting  -->  https://stackoverflow.com/questions/2699086/sort-a-2d-array-by-a-column-value
 	 * @param array<string, Column> $columns
 	 */
 	public function sort(array $columns): void
 	{
-		foreach ($columns as $name => $column) {
-			if (!$column instanceof Sortable) {
-				continue;
-			}
+		if (empty($this->items)) {
+			return;
+		}
 
-			if (!$sort = $column->isSorted()) {
+		foreach ($columns as $name => $column) {
+			if (!$column instanceof Sortable || !$sort = $column->isSorted()) {
 				continue;
 			}
 
 			$field = $column->getSortedBy() ?? $name;
-			$items = $result = [];
+			$type = match (true) {
+				$column instanceof Columns\NumberColumn => SORT_NUMERIC,
+				$column instanceof Columns\DateColumn,
+				$column instanceof Columns\EnumColumn => SORT_NATURAL,
+				default => SORT_LOCALE_STRING,
+			};
 
-			foreach ($this->items as $key => $item) {
-				$row = new Row($item, $this->primaryKey);
-				$value = $row->getValue($field) ?? '';
+			// todo: try to use Row::getValue to get the keys for sorting (to be more universal)
+			$keys = array_map(
+				fn($key) => Format::stringify($key),
+				array_column($this->items, $field),
+			);
 
-				$sortBy = match (true) {
-					$value instanceof DateTimeInterface => $value->format('Y-m-d H:i:s'),
-					$value instanceof BackedEnum => $value->value,
-					default => (string) $value,	// @phpstan-ignore cast.string
-				};
-
-				$result[$sortBy][$key] = $item;
+			if (empty($keys)) {
+				// todo: throw ColumnFieldNotFoundException
+				throw new \Exception;
 			}
 
-			if ($sort === Sort::ASC) {
-				ksort($result, SORT_LOCALE_STRING);
-			} else {
-				krsort($result, SORT_LOCALE_STRING);
-			}
-
-			foreach ($result as $sortBy => $rows) {
-				foreach ($rows as $key => $item) {
-					$items[$key] = $item;
-				}
-			}
-
-			$this->items = $items;
+			array_multisort($keys, $sort->order(), $type, $this->items);
 		}
 	}
 
