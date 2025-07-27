@@ -8,7 +8,6 @@
 namespace JuniWalk\DataTable\Filters;
 
 use JuniWalk\DataTable\Filter;
-use JuniWalk\DataTable\Row;
 use JuniWalk\Utils\Format;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
@@ -57,27 +56,6 @@ abstract class AbstractFilter extends Control implements Filter
 	public function getValue(): mixed
 	{
 		return $this->value ?? null;
-	}
-
-
-	public function isMatching(Row $row): bool
-	{
-		if (!$this->isFiltered) {
-			return false;
-		}
-
-		foreach ($this->getColumns() as $column) {
-			$value = $row->getValue($column);
-
-			$query = Format::stringify($this->value);
-			$value = Format::stringify($value);
-
-			if (!strcasecmp($query, $value) <> 0) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 

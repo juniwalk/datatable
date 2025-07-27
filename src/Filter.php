@@ -21,7 +21,6 @@ interface Filter extends IComponent
 	public function setValue(mixed $filter): self;
 	public function getValue(): mixed;
 
-	public function isMatching(Row $row): bool;
 	public function isFiltered(): bool;
 
 	public function createInput(Form $form): void;

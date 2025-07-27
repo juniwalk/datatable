@@ -76,7 +76,13 @@ class ArraySource implements Source
 			$row = new Row($item, $this->primaryKey);
 
 			foreach ($filters as $filter) {
-				if (!$filter->isMatching($row)) {
+				if (!$filter->isFiltered()) {
+					continue;
+				}
+
+				// todo: handle custom filter condition
+
+				if (!$this->isMatching($row, $filter)) {
 					continue;
 				}
 
@@ -151,5 +157,26 @@ class ArraySource implements Source
 		}
 
 		$this->items = array_slice($this->items, $limit * ($page - 1), $limit, true);
+	}
+
+
+	private function isMatching(Row $row, Filter $filter): bool
+	{
+		if (!$filter->isFiltered()) {
+			return false;
+		}
+
+		$query = Format::stringify($filter->getValue());
+
+		foreach ($filter->getColumns() as $column) {
+			$value = $row->getValue($column);
+			$value = Format::stringify($value);
+
+			if (!strcasecmp($query, $value) <> 0) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }
