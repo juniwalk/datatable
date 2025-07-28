@@ -106,6 +106,7 @@ trait Filters
 	 */
 	public function addFilter(string $name, Filter $filter): Filter
 	{
+		/** @var T */
 		return $this->__filters()->add($name, $filter);
 	}
 

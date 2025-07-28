@@ -58,6 +58,7 @@ trait Columns
 	 */
 	public function addColumn(string $name, Column $column): Column
 	{
+		/** @var T */
 		return $this->__columns()->add($name, $column);
 	}
 

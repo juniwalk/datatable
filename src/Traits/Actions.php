@@ -31,6 +31,7 @@ trait Actions
 	 */
 	public function addAction(string $name, Action $action): Action
 	{
+		/** @var T */
 		return $this->__actions()->add($name, $action);
 	}
 

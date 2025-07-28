@@ -7,7 +7,6 @@
 
 namespace JuniWalk\DataTable\Traits;
 
-use Nette\Application\UI\Component;
 use Nette\Application\UI\InvalidLinkException;
 use Nette\Application\UI\Link;
 
@@ -41,11 +40,11 @@ trait Linking
 		do {
 			$presenter->invalidLinkMode = $presenter::InvalidLinkException;
 
-			try {
-				if (!$component instanceof Component) {
-					break;
-				}
+			if (!method_exists($component, 'link')) {
+				continue;
+			}
 
+			try {
 				return $component->link($dest, $args);
 
 			} catch (InvalidLinkException) {
