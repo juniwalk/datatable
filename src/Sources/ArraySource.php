@@ -22,13 +22,13 @@ use JuniWalk\Utils\Format;
 class ArraySource implements Source
 {
 	private int $totalCount;
-	private string $primaryKey;
 
 	/**
 	 * @param Items $items
 	 */
 	public function __construct(
 		private array $items,
+		private string $primaryKey = 'id',
 	) {
 		$this->totalCount = sizeof($items);
 	}
@@ -41,9 +41,9 @@ class ArraySource implements Source
 	}
 
 
-	public function getPrimaryKey(): ?string
+	public function getPrimaryKey(): string
 	{
-		return $this->primaryKey ?? null;
+		return $this->primaryKey;
 	}
 
 
@@ -73,7 +73,7 @@ class ArraySource implements Source
 		}
 
 		foreach ($this->items as $key => $item) {
-			$row = new Row($item, $this->primaryKey);
+			$row = new Row($item, $this);
 
 			foreach ($filters as $filter) {
 				if (!$filter->isFiltered()) {
@@ -99,7 +99,7 @@ class ArraySource implements Source
 		$items = [];
 
 		foreach ($this->items as $key => $item) {
-			$row = new Row($item, $this->primaryKey);
+			$row = new Row($item, $this);
 
 			if (!in_array($row->getId(), $rows)) {
 				continue;

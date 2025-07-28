@@ -24,7 +24,7 @@ class EnumFilter extends AbstractFilter
 	}
 
 
-	public function createInput(Form $form): void
+	public function attachToForm(Form $form): void
 	{
 		$items = [];
 
@@ -40,5 +40,23 @@ class EnumFilter extends AbstractFilter
 
 		$form->addSelect($this->name, $this->label)->setPrompt('Vše…')
 			->setItems($items);
+
+		$form->onSuccess[] = function($form, $data) {
+			$this->value = $this->format($data[$this->name] ?? '');
+		};
+	}
+
+
+	public function format(mixed $value): string
+	{
+		if ($value instanceof BackedEnum) {
+			$value = (string) $value->value;
+		}
+
+		if (is_string($value)) {
+			return $value;
+		}
+
+		return '';
 	}
 }

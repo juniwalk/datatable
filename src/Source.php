@@ -14,7 +14,7 @@ namespace JuniWalk\DataTable;
 interface Source
 {
 	public function setPrimaryKey(string $primaryKey): self;
-	public function getPrimaryKey(): ?string;
+	public function getPrimaryKey(): string;
 
 	/**
 	 * @return Items

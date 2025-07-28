@@ -11,8 +11,12 @@ use Nette\Application\UI\Form;
 
 class TextFilter extends AbstractFilter
 {
-	public function createInput(Form $form): void
+	public function attachToForm(Form $form): void
 	{
 		$form->addText($this->name, $this->label)->setNullable(true);
+
+		$form->onSuccess[] = function($form, $data) {
+			$this->value = $this->format($data[$this->name] ?? '');
+		};
 	}
 }

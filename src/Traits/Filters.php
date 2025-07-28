@@ -14,6 +14,7 @@ use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\EnumFilter;
 use JuniWalk\DataTable\Filters\TextFilter;
+use JuniWalk\Utils\Arrays;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
 
@@ -27,26 +28,16 @@ trait Filters
 	private ?int $filterColumnCount = null;
 
 
-	public function handleClear(string $column): void
+	public function handleClear(?string $column = null): void
 	{
-		$column = $this->getColumn($column);
+		foreach ($this->getFilters() as $name => $filter) {
+			if ($column && !in_array($column, $filter->getColumns())) {
+				continue;
+			}
 
-		if (!$column instanceof Filterable) {
-			// todo: InvalidStateException
-			throw new \Exception;
-		}
-
-		foreach ($column->getFilters() as $name => $filter) {
 			unset($this->filter[$name]);
+			$filter->setValue(null);
 		}
-
-		$this->redirect('this');
-	}
-
-
-	public function handleClearAll(): void
-	{
-		$this->filter = [];
 
 		$this->redirect('this');
 	}
@@ -155,17 +146,14 @@ trait Filters
 		$form->addSubmit('submit');
 
 		foreach ($this->getFilters() as $filter) {
-			$filter->createInput($form);
+			$filter->attachToForm($form);
 		}
 
 		$form->onError[] = function($form) {
-			foreach ($form->getErrors() as $message) {
-				$this->flashMessage($message, 'danger');
-			}
+			Arrays::map($form->getErrors(), fn($msg) => $this->flashMessage($msg, 'danger'));
 		};
 
-		$form->onSuccess[] = function($form, $data) {
-			$this->filter = (array) $data;
+		$form->onSuccess[] = function() {
 			$this->redirect('this');
 		};
 
@@ -177,13 +165,31 @@ trait Filters
 	 * @param  array<string, mixed> $state
 	 * @return array<string, mixed>
 	 */
-	protected function filtersPrepare(array $state): array
+	protected function loadStateFilters(array $state): array
 	{
 		return $state;
 	}
 
 
-	protected function filtersProcess(): void
+	/**
+	 * @param  array<string, mixed> $state
+	 * @return array<string, mixed>
+	 */
+	protected function saveStateFilters(array $state): array
+	{
+		$state['filter'] = (array) ($state['filter'] ?? []);
+
+		foreach ($this->getFilters() as $name => $filter) {
+			$state['filter'][$name] = $filter->getValue();
+		}
+
+		$state['filter'] = array_filter($state['filter'], fn($x) => $x !== '');
+
+		return $state;
+	}
+
+
+	protected function validateFilters(): void
 	{
 		$columns = $this->getColumns();
 		$filters = $this->getFilters();

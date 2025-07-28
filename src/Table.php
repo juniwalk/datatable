@@ -26,14 +26,27 @@ class Table extends Control
 
 
 	/**
-	 * @param array<string, scalar|scalar[]> $params
+	 * @param array<string, mixed> $params
 	 */
 	public function loadState(array $params): void
 	{
-		$params = $this->sortingPrepare($params);
-		$params = $this->filtersPrepare($params);
+		$params = $this->loadStateSorting($params);
+		$params = $this->loadStateFilters($params);
 
 		parent::loadState($params);
+	}
+
+
+	/**
+	 * @param array<string, mixed> $params
+	 * @param-out array<string, mixed> $params
+	 */
+	public function saveState(array &$params): void
+	{
+		$params = $this->saveStateSorting($params);
+		$params = $this->saveStateFilters($params);
+
+		parent::saveState($params);	// @phpstan-ignore paramOut.type (No control over this)
 	}
 
 
@@ -50,6 +63,11 @@ class Table extends Control
 		$template->setFile(__DIR__.'/templates/table.latte');
 		$template->add('controlName', $this->getUniqueId());
 
+		if (!$source = $this->getSource()) {
+			// todo: throw SourceMissingException
+			throw new \Exception('No source set');
+		}
+
 		if ($actions = $this->getActions()) {
 			$this->addColumnAction('actions', 'Akce', $actions);
 		}
@@ -58,14 +76,16 @@ class Table extends Control
 		$filters = $this->getFilters();
 
 		// todo: first filter, then sort and then limit
-		$this->source->filter($filters);
-		$this->source->sort($columns);
-		$this->source->limit($this->page, $this->getCurrentLimit());
+		// $source->filterById($listOfRowsToRedraw);	// ? choose which method to call
+		$source->filter($filters);
+
+		$source->sort($columns);
+		$source->limit($this->page, $this->getCurrentLimit());
 
 		$rows = [];
 
-		foreach ($this->source->fetchItems() as $item) {
-			$row = new Row($item, $this->primaryKey);
+		foreach ($source->fetchItems() as $item) {
+			$row = new Row($item, $source);
 			$rows[$row->getId()] = $row;
 		}
 
@@ -84,9 +104,9 @@ class Table extends Control
 		// ? Parent has to be validated first so the loadState is called
 		parent::validateParent($parent);
 
-		$this->monitor(Presenter::class, fn() => $this->sortingProcess());
-		$this->monitor(Presenter::class, fn() => $this->filtersProcess());
-		$this->monitor(Presenter::class, fn() => $this->sourcesProcess());
+		$this->monitor(Presenter::class, fn() => $this->validateSorting());
+		$this->monitor(Presenter::class, fn() => $this->validateFilters());
+		$this->monitor(Presenter::class, fn() => $this->validateSources());
 	}
 
 

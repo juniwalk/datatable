@@ -23,6 +23,8 @@ interface Filter extends IComponent
 
 	public function isFiltered(): bool;
 
-	public function createInput(Form $form): void;
+	public function attachToForm(Form $form): void;
+	public function format(mixed $value): string;
+
 	public function render(Form $form): void;
 }

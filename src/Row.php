@@ -23,11 +23,11 @@ class Row
 	 */
 	public function __construct(
 		private object|array $item,
-		private string $primaryKey,	// @phpstan-ignore property.onlyWritten
+		private readonly Source $source,	// @phpstan-ignore property.onlyWritten
 	) {
 		$this->reader = PropertyAccess::createPropertyAccessor();
 
-		$id = $this->getValue($primaryKey);
+		$id = $this->getValue($source->getPrimaryKey());
 
 		if (!is_string($id) && !is_int($id)) {
 			// todo: throw IdentifierInvalidException

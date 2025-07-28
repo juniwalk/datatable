@@ -13,7 +13,7 @@
 				<button class="btn btn-sm btn-info collapsed" data-bs-toggle="collapse" data-bs-target="#{$controlName}-filters" aria-expanded="false">
 					<i class="fas fa-filter fa-fw"></i> Filtrace
 				</button>
-				<a n:href="clearAll!" class="btn btn-sm btn-info" title="Zrušit filtraci" n:if="$control->shouldShowFilters()"><i class="fas fa-times fa-fw"></i></a>
+				<a n:href="clear!" class="btn btn-sm btn-info" title="Zrušit filtraci" n:if="$control->shouldShowFilters()"><i class="fas fa-times fa-fw"></i></a>
 			</div>
 
 			<div class="btn-group" role="group">
@@ -83,7 +83,7 @@
 
 		<div class="d-flex gap-2">
 
-			<a n:href="clearAll!" class="btn btn-sm btn-danger text-nowrap" n:if="$control->shouldShowFilters()">
+			<a n:href="clear!" class="btn btn-sm btn-danger text-nowrap" n:if="$control->shouldShowFilters()">
 				<i class="fas fa-filter-circle-xmark fa-fw"></i> Zrušit filtraci
 			</a>
 

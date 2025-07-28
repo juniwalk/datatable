@@ -17,9 +17,7 @@ abstract class AbstractFilter extends Control implements Filter
 	protected bool $isFiltered = false;
 	protected mixed $value;
 
-	/**
-	 * @var string[]
-	 */
+	/** @var string[] */
 	protected array $columns = [];
 
 	public function __construct(
@@ -62,6 +60,12 @@ abstract class AbstractFilter extends Control implements Filter
 	public function isFiltered(): bool
 	{
 		return $this->isFiltered;
+	}
+
+
+	public function format(mixed $value): string
+	{
+		return Format::stringify($value);
 	}
 
 

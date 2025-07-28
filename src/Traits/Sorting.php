@@ -129,7 +129,7 @@ trait Sorting
 	 * @param  array<string, mixed> $state
 	 * @return array<string, mixed>
 	 */
-	protected function sortingPrepare(array $state): array
+	protected function loadStateSorting(array $state): array
 	{
 		$state['sort'] = (array) ($state['sort'] ?? []);
 		$state['limit'] ??= null;
@@ -150,7 +150,17 @@ trait Sorting
 	}
 
 
-	protected function sortingProcess(): void
+	/**
+	 * @param  array<string, mixed> $state
+	 * @return array<string, mixed>
+	 */
+	protected function saveStateSorting(array $state): array
+	{
+		return $state;
+	}
+
+
+	protected function validateSorting(): void
 	{
 		$columns = $this->getColumns();
 		$sort = $this->getCurrentSort();
