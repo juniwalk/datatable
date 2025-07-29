@@ -17,7 +17,4 @@ interface Sortable extends Column
 
 	public function setSorted(?Sort $sort): self;
 	public function isSorted(): ?Sort;
-
-	public function setSortedBy(?string $sortBy): self;
-	public function getSortedBy(): ?string;
 }

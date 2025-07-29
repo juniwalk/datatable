@@ -12,6 +12,9 @@ use Nette\ComponentModel\IComponent;
 
 interface Column extends IComponent
 {
+	public function setField(?string $field): self;
+	public function getField(): ?string;
+
 	/**
 	 * @param value-of<Align> $align
 	 */

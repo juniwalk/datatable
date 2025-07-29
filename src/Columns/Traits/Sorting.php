@@ -20,13 +20,11 @@ trait Sorting
 
 	protected ?Sort $sort = null;
 
-	protected ?string $sortBy = null;
-
 
 	public function setSortable(bool|string $sortable): self
 	{
 		if (is_string($sortable) && $sortable <> '') {
-			$this->sortBy = $sortable;
+			$this->field ??= $sortable;
 		}
 
 		$this->isSortable = (bool) $sortable;
@@ -50,18 +48,5 @@ trait Sorting
 	public function isSorted(): ?Sort
 	{
 		return $this->sort;
-	}
-
-
-	public function setSortedBy(?string $sortBy): self
-	{
-		$this->sortBy = $sortBy;
-		return $this;
-	}
-
-
-	public function getSortedBy(): ?string
-	{
-		return $this->sortBy;
 	}
 }

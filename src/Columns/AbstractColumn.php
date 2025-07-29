@@ -19,10 +19,25 @@ abstract class AbstractColumn extends Control implements Column
 {
 	protected Align $align = Align::Left;
 
+	protected ?string $field = null;
+
 
 	public function __construct(
 		protected string $label,
 	) {
+	}
+
+
+	public function setField(?string $field): self
+	{
+		$this->field = $field;
+		return $this;
+	}
+
+
+	public function getField(): ?string
+	{
+		return $this->field;
 	}
 
 
@@ -42,12 +57,14 @@ abstract class AbstractColumn extends Control implements Column
 	}
 
 
+	// ? Overriden using {Filters|Sorting} traits
 	public function isSortable(): ?bool
 	{
 		return false;
 	}
 
 
+	// ? Overriden using {Filters|Sorting} traits
 	public function isFiltered(): bool
 	{
 		return false;
