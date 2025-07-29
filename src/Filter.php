@@ -13,10 +13,10 @@ use Nette\ComponentModel\IComponent;
 interface Filter extends IComponent
 {
 	/**
-	 * @return string[]
+	 * @return array<string, Column>
 	 */
 	public function getColumns(): array;
-	public function setColumns(string ...$column): self;
+	public function setColumns(Column ...$column): self;
 
 	public function setValue(mixed $filter): self;
 	public function getValue(): mixed;

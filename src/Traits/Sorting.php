@@ -162,10 +162,9 @@ trait Sorting
 
 	protected function validateSorting(): void
 	{
-		$columns = $this->getColumns();
 		$sort = $this->getCurrentSort();
 
-		foreach ($columns as $name => $column) {
+		foreach ($this->getColumns() as $name => $column) {
 			if (!$column instanceof Sortable) {
 				continue;
 			}

@@ -8,6 +8,7 @@
 namespace JuniWalk\DataTable\Traits;
 
 use BackedEnum;
+use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Container;
 use JuniWalk\DataTable\Filter;
@@ -78,36 +79,56 @@ trait Filters
 	}
 
 
-	public function addFilterText(string $name, string $label): TextFilter
+	/**
+	 * @param string|string[] $columns
+	 */
+	public function addFilterText(string $name, string $label, string|array $columns = []): TextFilter
 	{
-		return $this->addFilter($name, new TextFilter($label));
+		return $this->addFilter($name, new TextFilter($label), $columns);
 	}
 
 
-	public function addFilterDate(string $name, string $label): DateFilter
+	/**
+	 * @param string|string[] $columns
+	 */
+	public function addFilterDate(string $name, string $label, string|array $columns = []): DateFilter
 	{
-		return $this->addFilter($name, new DateFilter($label));
+		return $this->addFilter($name, new DateFilter($label), $columns);
 	}
 
 
 	/**
 	 * @param class-string<BackedEnum> $enum
+	 * @param string|string[] $columns
 	 */
-	public function addFilterEnum(string $name, string $label, string $enum): EnumFilter
+	public function addFilterEnum(string $name, string $label, string $enum, string|array $columns = []): EnumFilter
 	{
-		return $this->addFilter($name, new EnumFilter($label, $enum));
+		return $this->addFilter($name, new EnumFilter($label, $enum), $columns);
 	}
 
 
 	/**
 	 * @template T of Filter
 	 * @param  T $filter
+	 * @param  string|string[] $columns
 	 * @return T
 	 */
-	public function addFilter(string $name, Filter $filter): Filter
+	public function addFilter(string $name, Filter $filter, string|array $columns = []): Filter
 	{
+		$columns = (array) $columns;
+		$columns[] = $name;
+
+		foreach ($columns as $key => $column) {
+			$columns[$key] = $this->getColumn($column, false);
+		}
+
+		$columns = array_filter($columns, fn($x) => $x instanceof Column);
+
 		/** @var T */
-		return $this->__filters()->add($name, $filter);
+		$filter = $this->__filters()->add($name, $filter);
+		$filter->setColumns(...$columns);
+
+		return $filter;
 	}
 
 
@@ -181,6 +202,7 @@ trait Filters
 		$state['filter'] = (array) ($state['filter'] ?? []);
 
 		foreach ($this->getFilters() as $name => $filter) {
+			// todo: ignore default filter values
 			$state['filter'][$name] = $filter->getValue();
 		}
 
@@ -192,21 +214,20 @@ trait Filters
 
 	protected function validateFilters(): void
 	{
-		$columns = $this->getColumns();
-		$filters = $this->getFilters();
+		// todo: use current filter (including defaults)
+		// $filters = $this->getCurrentFilter();
+		$filters = $this->filter;
 
-		foreach ($filters as $name => $filter) {
-			$filter->setValue($this->filter[$name] ?? null);
+		foreach ($this->getFilters() as $name => $filter) {
+			$filter->setValue($filters[$name] ?? null);
+		}
 
-			foreach ($filter->getColumns() as $column) {
-				$column = $columns[$column] ?? null;
-
-				if (!$column || !$column instanceof Filterable) {
-					continue;
-				}
-
-				$column->addFilter($filter);
+		foreach ($this->getColumns() as $column) {
+			if (!$column instanceof Filterable) {
+				continue;
 			}
+
+			$column->detectFilteredStatus();
 		}
 	}
 

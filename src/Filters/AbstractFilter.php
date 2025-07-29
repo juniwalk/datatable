@@ -7,6 +7,8 @@
 
 namespace JuniWalk\DataTable\Filters;
 
+use JuniWalk\DataTable\Column;
+use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\Utils\Format;
 use Nette\Application\UI\Control;
@@ -17,8 +19,9 @@ abstract class AbstractFilter extends Control implements Filter
 	protected bool $isFiltered = false;
 	protected mixed $value;
 
-	/** @var string[] */
-	protected array $columns = [];
+	/** @var array<string, Column> */
+	protected array $columns;
+
 
 	public function __construct(
 		protected string $label,
@@ -26,19 +29,28 @@ abstract class AbstractFilter extends Control implements Filter
 	}
 
 
-	public function setColumns(string ...$columns): self
+	public function setColumns(Column ...$columns): self
 	{
-		$this->columns = array_unique(array_filter($columns));
+		$this->columns = [];
+
+		foreach ($columns as $column) {
+			if (!$column instanceof Filterable) {
+				continue;
+			}
+
+			$this->columns[$column->getName()] = $column->addFilter($this);
+		}
+
 		return $this;
 	}
 
 
 	/**
-	 * @return string[]
+	 * @return array<string, Column>
 	 */
 	public function getColumns(): array
 	{
-		return $this->columns ?: [$this->name];
+		return $this->columns;
 	}
 
 
