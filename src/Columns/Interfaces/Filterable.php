@@ -8,7 +8,6 @@
 namespace JuniWalk\DataTable\Columns\Interfaces;
 
 use JuniWalk\DataTable\Column;
-use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Filter;
 
 interface Filterable extends Column
@@ -21,4 +20,6 @@ interface Filterable extends Column
 	 * @return array<string, Filter>
 	 */
 	public function getFilters(): array;
+
+	public function detectFilteredStatus(): void;
 }

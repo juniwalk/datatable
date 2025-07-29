@@ -47,4 +47,19 @@ trait Filters
 	{
 		return $this->filters;
 	}
+
+
+	public function detectFilteredStatus(): void
+	{
+		$this->isFiltered = false;
+
+		foreach ($this->filters as $filter) {
+			if (!$filter->isFiltered()) {
+				continue;
+			}
+
+			$this->isFiltered = true;
+			break;
+		}
+	}
 }
