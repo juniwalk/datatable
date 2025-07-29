@@ -12,6 +12,7 @@ use JuniWalk\DataTable\Columns\Interfaces\CustomRenderer;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Align;
+use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Row;
 
 class DateColumn extends AbstractColumn implements Sortable, Filterable, CustomRenderer
@@ -38,6 +39,9 @@ class DateColumn extends AbstractColumn implements Sortable, Filterable, CustomR
 	}
 
 
+	/**
+	 * @throws FieldInvalidException
+	 */
 	public function renderValue(Row $row): void
 	{
 		$date = $row->getValue($this);
@@ -45,8 +49,7 @@ class DateColumn extends AbstractColumn implements Sortable, Filterable, CustomR
 		// todo: try to make DateTime from other value types
 
 		if (!$date instanceof DateTimeInterface) {
-			// todo: throw ColumnValueTypeException
-			throw new \Exception;
+			throw FieldInvalidException::fromColumn($this, $date, DateTimeInterface::class);
 		}
 
 		echo $date->format($this->format);

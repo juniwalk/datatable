@@ -14,6 +14,7 @@ use Nette\ComponentModel\Component;
 use Nette\ComponentModel\IComponent;
 use Nette\ComponentModel\IContainer;
 
+// todo: move this class outside the repository?
 // todo: implement name checking
 
 /**

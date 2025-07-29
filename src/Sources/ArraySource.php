@@ -10,6 +10,7 @@ namespace JuniWalk\DataTable\Sources;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
+use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Source;
@@ -113,7 +114,8 @@ class ArraySource implements Source
 
 
 	/**
-	 * @param array<string, Column> $columns
+	 * @param  array<string, Column> $columns
+	 * @throws FieldNotFoundException
 	 */
 	public function sort(array $columns): void
 	{
@@ -141,8 +143,8 @@ class ArraySource implements Source
 			);
 
 			if (empty($keys)) {
-				// todo: throw ColumnFieldNotFoundException
-				throw new \Exception;
+				// todo: if Row::getValue is used, this is gonna be thrown there instead
+				throw FieldNotFoundException::fromName($field);
 			}
 
 			array_multisort($keys, $sort->order(), $type, $this->items);

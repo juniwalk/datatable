@@ -11,6 +11,7 @@ use JuniWalk\DataTable\Columns\Interfaces\CustomRenderer;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Align;
+use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Row;
 
 class NumberColumn extends AbstractColumn implements Sortable, Filterable, CustomRenderer
@@ -46,13 +47,15 @@ class NumberColumn extends AbstractColumn implements Sortable, Filterable, Custo
 	}
 
 
+	/**
+	 * @throws FieldInvalidException
+	 */
 	public function renderValue(Row $row): void
 	{
 		$number = $row->getValue($this);
 
 		if (!is_numeric($number)) {
-			// todo: throw ColumnValueTypeException
-			throw new \Exception;
+			throw FieldInvalidException::fromColumn($this, $number, 'numeric');
 		}
 
 		echo number_format((float) $number, $this->precision, $this->separator, ' ');

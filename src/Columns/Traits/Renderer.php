@@ -9,6 +9,7 @@ namespace JuniWalk\DataTable\Columns\Traits;
 
 use Closure;
 use JuniWalk\DataTable\Columns\Interfaces\CustomRenderer;
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Row;
 
 /**
@@ -38,11 +39,13 @@ trait Renderer
 	}
 
 
+	/**
+	 * @throws InvalidStateException
+	 */
 	public function renderCustom(Row $row): mixed
 	{
 		if (!is_callable($this->renderer)) {
-			// todo: throw ColumnRendererException
-			throw new \Exception;
+			throw InvalidStateException::columnCustomRendererMissing($this);
 		}
 
 		return call_user_func($this->renderer, $row->getItem());

@@ -9,6 +9,7 @@ namespace JuniWalk\DataTable\Traits;
 
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Sort;
+use JuniWalk\DataTable\Exceptions\ColumnNotFoundException;
 use Nette\Application\Attributes\Persistent;
 
 trait Sorting
@@ -24,11 +25,13 @@ trait Sorting
 	private bool $isSortMultiple = false;
 
 
+	/**
+	 * @throws ColumnNotFoundException
+	 */
 	public function handleSort(string $column): void
 	{
 		if (!$column || !$this->getColumn($column, false)) {
-			// todo: throw new ColumnNotFoundException($column)
-			throw new \Exception;
+			throw ColumnNotFoundException::fromName($column);
 		}
 
 		$sort = $this->getCurrentSort();
@@ -87,7 +90,8 @@ trait Sorting
 
 
 	/**
-	 * @param array<string, Sort|value-of<Sort>> $sort
+	 * @param  array<string, Sort|value-of<Sort>> $sort
+	 * @throws ColumnNotFoundException
 	 */
 	public function setDefaultSort(array $sort): self
 	{
@@ -95,8 +99,7 @@ trait Sorting
 
 		foreach ($sort as $column => $sort) {
 			if (!$column || !$this->getColumn($column, false)) {
-				// todo: throw new ColumnNotFoundException($column)
-				throw new \Exception;
+				throw ColumnNotFoundException::fromName($column);
 			}
 
 			$this->sortDefault[$column] = Sort::make($sort, true);

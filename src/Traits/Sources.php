@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Traits;
 
+use JuniWalk\DataTable\Exceptions\SourceMissingException;
 use JuniWalk\DataTable\Source;
 
 trait Sources
@@ -30,8 +31,8 @@ trait Sources
 	protected function validateSources(): void
 	{
 		if (!isset($this->source)) {
-			// todo: throw SourceMissingException
-			throw new \Exception('No source set');
+			// todo: give more details with the exception
+			throw new SourceMissingException;
 		}
 	}
 }

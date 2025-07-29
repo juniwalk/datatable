@@ -11,6 +11,7 @@ use BackedEnum;
 use JuniWalk\DataTable\Columns\Interfaces\CustomRenderer;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
+use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Row;
 use Stringable;
 
@@ -21,6 +22,9 @@ class TextColumn extends AbstractColumn implements Sortable, Filterable, CustomR
 	use Traits\Renderer;
 
 
+	/**
+	 * @throws FieldInvalidException
+	 */
 	public function renderValue(Row $row): void
 	{
 		$text = $row->getValue($this);
@@ -34,8 +38,7 @@ class TextColumn extends AbstractColumn implements Sortable, Filterable, CustomR
 		}
 
 		if (!is_scalar($text)) {
-			// todo: throw ColumnValueTypeException
-			throw new \Exception;
+			throw FieldInvalidException::fromColumn($this, $text, 'string');
 		}
 
 		// convert to string

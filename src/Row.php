@@ -7,6 +7,8 @@
 
 namespace JuniWalk\DataTable;
 
+use JuniWalk\DataTable\Exceptions\FieldInvalidException;
+use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -19,19 +21,21 @@ class Row
 	private PropertyAccessor $reader;
 
 	/**
-	 * @param Item $item
+	 * @param  Item $item
+	 * @throws FieldNotFoundException
+	 * @throws FieldInvalidException
 	 */
 	public function __construct(
 		private object|array $item,
 		private readonly Source $source,	// @phpstan-ignore property.onlyWritten
 	) {
 		$this->reader = PropertyAccess::createPropertyAccessor();
+		$primaryKey = $source->getPrimaryKey();
 
-		$id = $this->getValue($source->getPrimaryKey());
+		$id = $this->getValue($primaryKey);
 
 		if (!is_string($id) && !is_int($id)) {
-			// todo: throw IdentifierInvalidException
-			throw new \Exception;
+			throw FieldInvalidException::fromName($primaryKey, $id, 'int|string');
 		}
 
 		$this->id = $id;
@@ -53,6 +57,9 @@ class Row
 	}
 
 
+	/**
+	 * @throws FieldNotFoundException
+	 */
 	public function getValue(Column|string $column): mixed
 	{
 		if ($column instanceof Column) {
@@ -60,8 +67,7 @@ class Row
 		}
 
 		if (!$column) {
-			// todo: throw ColumnWithoutNameException
-			throw new \Exception;
+			throw FieldNotFoundException::fromName($column ?? '');
 		}
 
 		$path = match (true) {

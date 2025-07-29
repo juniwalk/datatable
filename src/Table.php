@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable;
 
+use JuniWalk\DataTable\Exceptions\SourceMissingException;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
 use Nette\ComponentModel\IComponent;
@@ -56,6 +57,9 @@ class Table extends Control
 	}
 
 
+	/**
+	 * @throws SourceMissingException
+	 */
 	public function render(): void
 	{
 		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
@@ -64,8 +68,8 @@ class Table extends Control
 		$template->add('controlName', $this->getUniqueId());
 
 		if (!$source = $this->getSource()) {
-			// todo: throw SourceMissingException
-			throw new \Exception('No source set');
+			// todo: give more details with the exception
+			throw new SourceMissingException;
 		}
 
 		if ($actions = $this->getActions()) {

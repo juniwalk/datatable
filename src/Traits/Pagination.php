@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Traits;
 
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use Nette\Application\Attributes\Persistent;
 use Nette\Utils\Paginator;
 
@@ -31,11 +32,13 @@ trait Pagination
 	}
 
 
+	/**
+	 * @throws InvalidStateException
+	 */
 	public function handleLimit(int $limit): void
 	{
 		if (!in_array($limit, $this->limits)) {
-			// todo: throw LimitInvalidException
-			throw new \Exception;
+			throw InvalidStateException::limitUnknown($limit, $this->limits);
 		}
 
 		$this->limit = $limit;
@@ -50,15 +53,16 @@ trait Pagination
 
 
 	/**
-	 * @param int[] $limits
+	 * @param  int[] $limits
+	 * @throws InvalidStateException
 	 */
 	public function setLimits(array $limits, bool $allowAll = false): self
 	{
+		$limits = array_filter($limits, fn($i) => $i > 0);
 		$limits = array_unique(array_filter($limits));
 
 		if (empty($limits)) {
-			// todo: throw PerPageListException
-			throw new \Exception;
+			throw InvalidStateException::limitsEmpty();
 		}
 
 		$this->limits = $limits;
@@ -77,11 +81,13 @@ trait Pagination
 	}
 
 
+	/**
+	 * @throws InvalidStateException
+	 */
 	public function setDefaultLimit(?int $limit): self
 	{
 		if (!in_array($limit, $this->limits)) {
-			// todo: throw LimitInvalidException
-			throw new \Exception;
+			throw InvalidStateException::limitUnknown($limit, $this->limits);
 		}
 
 		$this->limitDefault = $limit;

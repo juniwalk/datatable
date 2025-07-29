@@ -9,6 +9,7 @@ namespace JuniWalk\DataTable\Filters;
 
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\Utils\Format;
 use Nette\Application\UI\Control;
@@ -81,11 +82,14 @@ abstract class AbstractFilter extends Control implements Filter
 	}
 
 
+	/**
+	 * @throws InvalidStateException
+	 */
 	public function render(Form $form): void
 	{
+		// todo: Form::getComponent might throw its own exception
 		if (!$input = $form->getComponent($this->name)) {
-			// todo: throw FilterInputException
-			throw new \Exception;
+			throw InvalidStateException::filterInputMissing($this);
 		}
 
 		$className = Format::className($this, suffix: 'Filter');

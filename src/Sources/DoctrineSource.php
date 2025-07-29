@@ -12,10 +12,12 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
+use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
+use JuniWalk\DataTable\Exceptions\FilterUnknownException;
+use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters;
 use JuniWalk\DataTable\Source;
-use JuniWalk\Utils\Strings;
 
 /**
  * @phpstan-import-type Item from Source
@@ -104,8 +106,7 @@ class DoctrineSource implements Source
 				$filter instanceof Filters\EnumFilter => $this->applyEnumFilter($filter),
 				$filter instanceof Filters\TextFilter => $this->applyTextFilter($filter),
 
-				// todo: UnknownFilterException
-				default => throw new \Exception,
+				default => throw FilterUnknownException::fromFilter($filter),
 			};
 		}
 	}
@@ -156,22 +157,24 @@ class DoctrineSource implements Source
 	}
 
 
-	protected function checkAlias(string $column): string
+	/**
+	 * @throws FieldNotFoundException
+	 */
+	protected function checkAlias(string $field): string
 	{
-		if (str_contains($column, '.')) {
-			[$alias, $column] = explode('.', $column, 2);
+		if (str_contains($field, '.')) {
+			[$alias, $field] = explode('.', $field, 2);
 		}
 
 		$aliases = $this->queryBuilder->getAllAliases();
 		$alias ??= $aliases[0] ?? null;
 
 		// ? InArray search is case sensitive - might cause issues
-		if (!$column || !$alias || !in_array($alias, $aliases)) {
-			// todo: throw
-			throw new \Exception;
+		if (!$field || !$alias || !in_array($alias, $aliases)) {
+			throw FieldNotFoundException::fromName($field);
 		}
 
-		return $alias.'.'.$column;
+		return $alias.'.'.$field;
 	}
 
 
@@ -193,13 +196,15 @@ class DoctrineSource implements Source
 	}
 
 
+	/**
+	 * @throws FilterValueInvalidException
+	 */
 	protected function applyDateFilter(Filters\DateFilter $filter): void
 	{
 		$query = $filter->getValue();
 
 		if (!is_string($query)) {
-			// todo:
-			throw new \Exception;
+			throw FilterValueInvalidException::fromFilter($filter, 'string');
 		}
 
 		$start = new \DateTime($query)->modify('midnight');
@@ -220,6 +225,8 @@ class DoctrineSource implements Source
 	{
 		$query = $filter->getValue();
 
+		// todo: check value
+
 		foreach ($filter->getColumns() as $name => $column) {
 			$field = $this->checkAlias($column->getField() ?? $name);
 			$param = $this->getPlaceholder();
@@ -230,13 +237,15 @@ class DoctrineSource implements Source
 	}
 
 
+	/**
+	 * @throws FilterValueInvalidException
+	 */
 	protected function applyTextFilter(Filters\TextFilter $filter): void
 	{
 		$query = $filter->getValue();
 
 		if (!is_string($query)) {
-			// todo:
-			throw new \Exception;
+			throw FilterValueInvalidException::fromFilter($filter, 'string');
 		}
 
 		foreach ($filter->getColumns() as $name => $column) {

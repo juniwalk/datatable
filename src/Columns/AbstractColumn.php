@@ -10,9 +10,11 @@ namespace JuniWalk\DataTable\Columns;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\CustomRenderer;
 use JuniWalk\DataTable\Enums\Align;
+use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Row;
 use Nette\Application\UI\Control;
 use Nette\Utils\Helpers;
+use Stringable;
 use Throwable;
 
 abstract class AbstractColumn extends Control implements Column
@@ -71,23 +73,24 @@ abstract class AbstractColumn extends Control implements Column
 	}
 
 
+	/**
+	 * @throws FieldInvalidException
+	 */
 	public function render(Row $row): void
 	{
-		try {
-			if (!$this instanceof CustomRenderer) {
-				// todo: throw ColumnRendererException
-				throw new \Exception;
-			}
+		$value = Helpers::capture(fn() => $this->renderValue($row));
 
+		if ($this instanceof CustomRenderer && $this->hasRenderer()) {
 			$value = $this->renderCustom($row);
+		}
 
-		} catch (Throwable) {
-			$value = Helpers::capture(fn() => $this->renderValue($row));
+		// todo: consider using Format::stringify
+		if ($value instanceof Stringable) {
+			$value = (string) $value;
 		}
 
 		if ($value !== null && !is_scalar($value)) {
-			// todo: throw ColumnValueTypeException
-			throw new \Exception;
+			throw FieldInvalidException::fromColumn($this, $value, 'scalar');
 		}
 
 		echo $value;

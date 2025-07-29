@@ -12,6 +12,7 @@ use JuniWalk\DataTable\Columns\Interfaces\CustomRenderer;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Align;
+use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Row;
 use JuniWalk\Utils\Enums\Interfaces\LabeledEnum;
 use JuniWalk\Utils\Html;
@@ -25,13 +26,15 @@ class EnumColumn extends AbstractColumn implements Sortable, Filterable, CustomR
 	protected Align $align = Align::Right;
 
 
+	/**
+	 * @throws FieldInvalidException
+	 */
 	public function renderValue(Row $row): void
 	{
 		$enum = $row->getValue($this);
 
 		if (!$enum instanceof BackedEnum) {
-			// todo: throw ColumnValueTypeException
-			throw new \Exception;
+			throw FieldInvalidException::fromColumn($this, $enum, BackedEnum::class);
 		}
 
 		echo match (true) {
