@@ -126,7 +126,7 @@ class ArraySource implements Source
 				continue;
 			}
 
-			$field = $column->getSortedBy() ?? $name;
+			$field = $column->getField() ?? $name;
 			$type = match (true) {
 				$column instanceof Columns\NumberColumn => SORT_NUMERIC,
 				$column instanceof Columns\DateColumn,
