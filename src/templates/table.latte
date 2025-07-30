@@ -41,7 +41,7 @@
 	</div>
 
 	<div class="card-body table-responsive p-0">
-	<table class="table table-striped table-hover table-sm">
+	<table n:class="table, table-striped, table-sm, $rows ? table-hover">
 
 		<thead>
 			<tr>
@@ -62,11 +62,17 @@
 		</thead>
 
 		<tbody>
+
 			<tr n:foreach="$rows as $row">
-
 				<td n:foreach="$columns as $name => $column" n:class="'col-'.$name, $column->getAlign()->class()">{control $column, $row}</td>
-
 			</tr>
+
+			<tr n:if="empty($rows)">
+				<td class="col-no-rows py-3" colspan="{sizeof($columns)}">
+					<em class="text-secondary">Nic nenalezeno…</em>
+				</td>
+			</tr>
+
 		</tbody>
 
 	</table>
