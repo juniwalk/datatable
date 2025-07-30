@@ -15,6 +15,7 @@ use JuniWalk\DataTable\Columns\EnumColumn;
 use JuniWalk\DataTable\Columns\NumberColumn;
 use JuniWalk\DataTable\Columns\TextColumn;
 use JuniWalk\DataTable\Container;
+use JuniWalk\DataTable\Enums\Storage;
 
 trait Columns
 {
@@ -92,6 +93,6 @@ trait Columns
 	 */
 	private function __columns(): Container
 	{
-		return $this->getComponent(Container::Columns);
+		return $this->getComponent(Storage::Columns->value);
 	}
 }

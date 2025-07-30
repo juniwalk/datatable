@@ -10,6 +10,7 @@ namespace JuniWalk\DataTable\Traits;
 use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Actions\LinkAction;
 use JuniWalk\DataTable\Container;
+use JuniWalk\DataTable\Enums\Storage;
 
 trait Actions
 {
@@ -65,6 +66,6 @@ trait Actions
 	 */
 	private function __actions(): Container
 	{
-		return $this->getComponent(Container::Actions);
+		return $this->getComponent(Storage::Actions->value);
 	}
 }

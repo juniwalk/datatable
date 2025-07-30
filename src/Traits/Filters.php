@@ -11,6 +11,7 @@ use BackedEnum;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Container;
+use JuniWalk\DataTable\Enums\Storage;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\EnumFilter;
@@ -237,6 +238,6 @@ trait Filters
 	 */
 	private function __filters(): Container
 	{
-		return $this->getComponent(Container::Filters);
+		return $this->getComponent(Storage::Filters->value);
 	}
 }

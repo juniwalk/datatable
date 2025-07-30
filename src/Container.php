@@ -22,11 +22,6 @@ use Nette\ComponentModel\IContainer;
  */
 class Container extends Component implements IContainer, SignalReceiver, StatePersistent
 {
-	// todo: move this into Enum
-	public const string Actions = 'actions';
-	public const string Columns = 'columns';
-	public const string Filters = 'filters';
-
 	/** @var array<string, T> */
 	private array $components = [];
 

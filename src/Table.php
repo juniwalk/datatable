@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable;
 
+use JuniWalk\DataTable\Enums\Storage;
 use JuniWalk\DataTable\Exceptions\SourceMissingException;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
@@ -116,13 +117,7 @@ class Table extends Control
 
 	protected function createComponent(string $name): ?IComponent
 	{
-		static $containers = [
-			Container::Actions,
-			Container::Columns,
-			Container::Filters,
-		];
-
-		if (in_array($name, $containers)) {
+		if (Storage::tryFrom($name)) {
 			return new Container;
 		}
 
