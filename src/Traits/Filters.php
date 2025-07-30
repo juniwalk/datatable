@@ -26,7 +26,7 @@ trait Filters
 	#[Persistent]
 	public array $filter = [];
 
-	private bool $isFilterShown = false;
+	private ?bool $isFilterShown = null;
 	private ?int $filterColumnCount = null;
 
 
@@ -45,15 +45,14 @@ trait Filters
 	}
 
 
-	// todo: Enum::Always | Enum::WhenFiltered | Enum::Hide
-	public function setFilterShown(bool $filterShown = true): self
+	public function setFilterShown(?bool $filterShown = true): self
 	{
 		$this->isFilterShown = $filterShown;
 		return $this;
 	}
 
 
-	public function isFilterShown(): bool
+	public function isFilterShown(): ?bool
 	{
 		return $this->isFilterShown;
 	}
@@ -61,9 +60,11 @@ trait Filters
 
 	public function shouldShowFilters(): bool
 	{
-		// todo: handle Enum::Always etc
+		if ($this->isFilterShown !== null) {
+			return $this->isFilterShown;
+		}
 
-		return $this->isFilterShown && !empty($this->filter);	// && !$this->isDefaultFilter();
+		return !empty($this->filter);	// && !$this->isDefaultFilter();
 	}
 
 
