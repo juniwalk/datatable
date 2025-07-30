@@ -108,9 +108,9 @@ class Table extends Control
 		// ? Parent has to be validated first so the loadState is called
 		parent::validateParent($parent);
 
-		$this->monitor(Presenter::class, fn() => $this->validateSorting());
-		$this->monitor(Presenter::class, fn() => $this->validateFilters());
 		$this->monitor(Presenter::class, fn() => $this->validateSources());
+		$this->monitor(Presenter::class, fn() => $this->validateFilters());
+		$this->monitor(Presenter::class, fn() => $this->validateSorting());
 	}
 
 

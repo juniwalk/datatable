@@ -8,13 +8,15 @@
 namespace JuniWalk\DataTable\Traits;
 
 use JuniWalk\DataTable\Exceptions\SourceMissingException;
+use JuniWalk\DataTable\Exceptions\SourceUnknownException;
 use JuniWalk\DataTable\Source;
+use JuniWalk\DataTable\SourceFactory;
 
 trait Sources
 {
 	private Source $source;
 
-	// todo: allow dynamic source creation from given data type (in different method)
+
 	public function setSource(Source $source): self
 	{
 		$this->source = $source;
@@ -28,8 +30,22 @@ trait Sources
 	}
 
 
+	protected function createModel(): mixed { return null; }
+	protected function createTable(): void {}
+
+
+	/**
+	 * @throws SourceMissingException
+	 * @throws SourceUnknownException
+	 */
 	protected function validateSources(): void
 	{
+		if ($model = $this->createModel()) {
+			$this->source = SourceFactory::fromModel($model);
+		}
+
+		$this->createTable();
+
 		if (!isset($this->source)) {
 			// todo: give more details with the exception
 			throw new SourceMissingException;
