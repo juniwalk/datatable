@@ -13,7 +13,7 @@
 				<button class="btn btn-sm btn-info collapsed" data-bs-toggle="collapse" data-bs-target="#{$controlName}-filters" aria-expanded="false">
 					<i class="fas fa-filter fa-fw"></i> Filtrace
 				</button>
-				<a n:href="clear!" class="btn btn-sm btn-info" title="Zrušit filtraci" data-bs-toggle="tooltip"><i class="fas fa-times fa-fw"></i></a>
+				<a n:href="clear!" class="btn btn-sm btn-info" n:if="$control->shouldShowFilters()" title="Zrušit filtraci" data-bs-toggle="tooltip"><i class="fas fa-times fa-fw"></i></a>
 			</div>
 
 			<div class="btn-group" role="group">
