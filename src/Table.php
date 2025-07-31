@@ -21,10 +21,8 @@ class Table extends Control
 	use Traits\Filters;
 	use Traits\Sorting;
 	use Traits\Sources;
+	use Traits\Session;
 	use Traits\Pagination;
-
-
-	// todo: implement optional state store / restore from session
 
 
 	/**
@@ -80,10 +78,8 @@ class Table extends Control
 		$columns = $this->getColumns();
 		$filters = $this->getFilters();
 
-		// todo: first filter, then sort and then limit
-		// $source->filterById($listOfRowsToRedraw);	// ? choose which method to call
-		$source->filter($filters);
-
+		// ! first filter, then sort and then limit
+		$source->filter($filters);	// $source->filterById($listOfRowsToRedraw);	// ? choose which method to call
 		$source->sort($columns);
 		$source->limit($this->page, $this->getCurrentLimit());
 
@@ -109,6 +105,7 @@ class Table extends Control
 		// ? Parent has to be validated first so the loadState is called
 		parent::validateParent($parent);
 
+		$this->monitor(Presenter::class, fn() => $this->validateSession());
 		$this->monitor(Presenter::class, fn() => $this->validateSources());
 		$this->monitor(Presenter::class, fn() => $this->validateFilters());
 		$this->monitor(Presenter::class, fn() => $this->validateSorting());
