@@ -12,6 +12,7 @@ use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Container;
 use JuniWalk\DataTable\Enums\Storage;
+use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\EnumFilter;
@@ -26,18 +27,20 @@ trait Filters
 	#[Persistent]
 	public array $filter = [];
 
+	/** @var array<string, scalar> */
+	private array $filterDefault = [];
+
 	private ?bool $isFilterShown = null;
 	private ?int $filterColumnCount = null;
 
 
 	public function handleClear(?string $column = null): void
 	{
-		foreach ($this->getFilters() as $name => $filter) {
-			if ($column && !in_array($column, $filter->getColumns())) {
+		foreach ($this->getFilters() as $filter) {
+			if ($column && !array_key_exists($column, $filter->getColumns())) {
 				continue;
 			}
 
-			unset($this->filter[$name]);
 			$filter->setValue(null);
 		}
 
@@ -64,7 +67,7 @@ trait Filters
 			return $this->isFilterShown;
 		}
 
-		return !empty($this->filter);	// && !$this->isDefaultFilter();
+		return !empty($this->filter) && !$this->isDefaultFilter();
 	}
 
 
@@ -158,10 +161,59 @@ trait Filters
 	}
 
 
-	// todo: getCurrentFilter
-	// todo: setDefaultFilter - default filters
-	// todo: getDefaultFilter
-	// todo: isDefaultFilter
+	/**
+	 * @return array<string, scalar>
+	 */
+	public function getCurrentFilter(): array
+	{
+		$hasFiltered = true;
+
+		if ($this->filter || $hasFiltered) {
+			return $this->filter;
+		}
+
+		return $this->filterDefault;
+	}
+
+
+	/**
+	 * @param  array<string, scalar> $filters
+	 * @throws FilterNotFoundException
+	 */
+	public function setDefaultFilter(array $filters): self
+	{
+		$this->filterDefault = [];
+
+		foreach ($filters as $filter => $query) {
+			if (!$filter || !$this->getFilter($filter, false)) {
+				throw FilterNotFoundException::fromName($filter);
+			}
+
+			$this->filterDefault[$filter] = $query;
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @return array<string, scalar>
+	 */
+	public function getDefaultFilter(): array
+	{
+		return $this->filterDefault;
+	}
+
+
+	// todo: this needs to be writen for filters which can be array
+	public function isDefaultFilter(): bool
+	{
+		return !array_udiff_assoc(
+			$this->getCurrentFilter(),
+			$this->filterDefault,
+			fn($a, $b) => $a <=> $b,
+		);
+	}
 
 
 	protected function createComponentFilterForm(): Form
@@ -201,14 +253,13 @@ trait Filters
 	 */
 	protected function saveStateFilters(array $state): array
 	{
-		$state['filter'] = (array) ($state['filter'] ?? []);
+		$state['filter'] = [];
 
 		foreach ($this->getFilters() as $name => $filter) {
-			// todo: ignore default filter values
 			$state['filter'][$name] = $filter->getValue();
 		}
 
-		$state['filter'] = array_filter($state['filter'], fn($x) => $x !== '');
+		// todo: if $state[filter] === $filterDefault
 
 		return $state;
 	}
@@ -216,9 +267,7 @@ trait Filters
 
 	protected function validateFilters(): void
 	{
-		// todo: use current filter (including defaults)
-		// $filters = $this->getCurrentFilter();
-		$filters = $this->filter;
+		$filters = $this->getCurrentFilter();
 
 		foreach ($this->getFilters() as $name => $filter) {
 			$filter->setValue($filters[$name] ?? null);

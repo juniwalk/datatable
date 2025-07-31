@@ -18,12 +18,12 @@ class DateFilter extends AbstractFilter
 		$form->addDate($this->name, $this->label);
 
 		$form->onSuccess[] = function($form, $data) {
-			$this->value = $this->format($data[$this->name] ?? '');
+			$this->value = $this->format($data[$this->name] ?? null);
 		};
 	}
 
 
-	public function format(mixed $value): string
+	public function format(mixed $value): ?string
 	{
 		if (is_string($value)) {
 			$value = new DateTimeImmutable($value);
@@ -33,6 +33,6 @@ class DateFilter extends AbstractFilter
 			return $value->format('Y-m-d');
 		}
 
-		return '';
+		return null;
 	}
 }

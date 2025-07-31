@@ -76,9 +76,9 @@ abstract class AbstractFilter extends Control implements Filter
 	}
 
 
-	public function format(mixed $value): string
+	public function format(mixed $value): ?string
 	{
-		return Format::stringify($value);
+		return Format::stringify($value) ?: null;
 	}
 
 

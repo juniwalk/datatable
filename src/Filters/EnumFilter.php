@@ -42,12 +42,12 @@ class EnumFilter extends AbstractFilter
 			->setItems($items);
 
 		$form->onSuccess[] = function($form, $data) {
-			$this->value = $this->format($data[$this->name] ?? '');
+			$this->value = $this->format($data[$this->name] ?? null);
 		};
 	}
 
 
-	public function format(mixed $value): string
+	public function format(mixed $value): ?string
 	{
 		if ($value instanceof BackedEnum) {
 			$value = (string) $value->value;
@@ -57,6 +57,6 @@ class EnumFilter extends AbstractFilter
 			return $value;
 		}
 
-		return '';
+		return null;
 	}
 }

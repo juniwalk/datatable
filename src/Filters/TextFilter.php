@@ -16,7 +16,7 @@ class TextFilter extends AbstractFilter
 		$form->addText($this->name, $this->label)->setNullable(true);
 
 		$form->onSuccess[] = function($form, $data) {
-			$this->value = $this->format($data[$this->name] ?? '');
+			$this->value = $this->format($data[$this->name] ?? null);
 		};
 	}
 }
