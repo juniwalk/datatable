@@ -49,7 +49,7 @@
 				<th n:foreach="$columns as $name => $column" n:class="'col-'.$name">
 					<div class="d-flex gap-2 justify-content-between">
 						<div n:class="flex-fill, $column->getAlign()->class()">
-						<a n:tag-if="$column->isSortable()" n:href="sort! $name">
+						<a n:tag-if="$column->isSortable()" n:href="sort! $name" class="text-nowrap">
 							<i n:if="$column->isSortable()" n:class="fa-solid, $column->isSorted()?->icon() ?? fa-sort, fa-fw"></i>
 							<small>{control $column:label}</small>
 						</a>
