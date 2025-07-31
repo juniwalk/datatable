@@ -17,6 +17,7 @@ interface Filter extends IComponent
 	 */
 	public function getColumns(): array;
 	public function setColumns(Column ...$column): self;
+	public function hasColumn(string $columnName): bool;
 
 	public function setValue(mixed $filter): self;
 	public function getValue(): mixed;

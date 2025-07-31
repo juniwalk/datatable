@@ -55,6 +55,12 @@ abstract class AbstractFilter extends Control implements Filter
 	}
 
 
+	public function hasColumn(string $columnName): bool
+	{
+		return array_key_exists($columnName, $this->columns);
+	}
+
+
 	public function setValue(mixed $value): self
 	{
 		$this->isFiltered = $value !== '' && $value !== null;
