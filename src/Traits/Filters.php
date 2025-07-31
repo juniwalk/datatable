@@ -11,8 +11,10 @@ use BackedEnum;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Container;
+use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\DataTable\Enums\Storage;
 use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
+use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\EnumFilter;
@@ -37,13 +39,14 @@ trait Filters
 	public function handleClear(?string $column = null): void
 	{
 		foreach ($this->getFilters() as $filter) {
-			if ($column && !array_key_exists($column, $filter->getColumns())) {
+			if ($column && !$filter->hasColumn($column)) {
 				continue;
 			}
 
 			$filter->setValue(null);
 		}
 
+		$this->setOption(Option::IsFiltered, $column <> null);
 		$this->redirect('this');
 	}
 
@@ -166,9 +169,7 @@ trait Filters
 	 */
 	public function getCurrentFilter(): array
 	{
-		$hasFiltered = true;
-
-		if ($this->filter || $hasFiltered) {
+		if ($this->filter || $this->getOption(Option::IsFiltered)) {
 			return $this->filter;
 		}
 
@@ -179,17 +180,22 @@ trait Filters
 	/**
 	 * @param  array<string, scalar> $filters
 	 * @throws FilterNotFoundException
+	 * @throws FilterValueInvalidException
 	 */
 	public function setDefaultFilter(array $filters): self
 	{
 		$this->filterDefault = [];
 
-		foreach ($filters as $filter => $query) {
-			if (!$filter || !$this->getFilter($filter, false)) {
-				throw FilterNotFoundException::fromName($filter);
+		foreach ($filters as $name => $query) {
+			if (!$filter = $this->getFilter($name, false)) {
+				throw FilterNotFoundException::fromName($name);
 			}
 
-			$this->filterDefault[$filter] = $query;
+			if (!$value = $filter->format($query)) {
+				throw FilterValueInvalidException::fromFilter($filter, 'scalar', $query);
+			}
+
+			$this->filterDefault[$name] = $value;
 		}
 
 		return $this;
@@ -230,6 +236,7 @@ trait Filters
 		};
 
 		$form->onSuccess[] = function() {
+			$this->setOption(Option::IsFiltered, true);
 			$this->redirect('this');
 		};
 
@@ -258,8 +265,6 @@ trait Filters
 		foreach ($this->getFilters() as $name => $filter) {
 			$state['filter'][$name] = $filter->getValue();
 		}
-
-		// todo: if $state[filter] === $filterDefault
 
 		return $state;
 	}
