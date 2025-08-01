@@ -46,6 +46,7 @@
 		<thead class="position-sticky top-0">
 			<tr>
 
+				{* todo: render attributes from the $column -> n:attr="$column->getAttributes()" *}
 				<th n:foreach="$columns as $name => $column" n:class="'col-'.$name">
 					<div class="d-flex gap-2 justify-content-between">
 						<div n:class="flex-fill, $column->getAlign()->class()">
@@ -63,7 +64,8 @@
 
 		<tbody>
 
-			<tr n:foreach="$rows as $row">
+			<tr n:foreach="$rows as $row" class="align-middle">
+				{* todo: render attributes from the $column -> n:attr="$column->getAttributes()" *}
 				<td n:foreach="$columns as $name => $column" n:class="'col-'.$name, $column->getAlign()->class()">{control $column, $row}</td>
 			</tr>
 
