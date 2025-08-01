@@ -27,7 +27,7 @@ class Row
 	 */
 	public function __construct(
 		private object|array $item,
-		private readonly Source $source,	// @phpstan-ignore property.onlyWritten
+		private readonly Source $source,
 	) {
 		$this->reader = PropertyAccess::createPropertyAccessor();
 		$primaryKey = $source->getPrimaryKey();
@@ -54,6 +54,12 @@ class Row
 	public function getItem(): object|array
 	{
 		return $this->item;
+	}
+
+
+	public function getPrimaryKey(): string
+	{
+		return $this->source->getPrimaryKey();
 	}
 
 
