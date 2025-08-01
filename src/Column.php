@@ -9,7 +9,6 @@ namespace JuniWalk\DataTable;
 
 use JuniWalk\DataTable\Enums\Align;
 use Nette\ComponentModel\IComponent;
-use Nette\Utils\Html;
 
 interface Column extends IComponent
 {
@@ -27,5 +26,4 @@ interface Column extends IComponent
 
 	public function render(Row $row): void;
 	public function renderLabel(): void;
-	// public function renderValue(Row $row): Html|string;
 }
