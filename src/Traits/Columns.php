@@ -18,6 +18,9 @@ use JuniWalk\DataTable\Columns\TextColumn;
 use JuniWalk\DataTable\Container;
 use JuniWalk\DataTable\Enums\Storage;
 
+/**
+ * @phpstan-import-type LinkArgs from Linking
+ */
 trait Columns
 {
 	public function addColumnText(string $name, string $label): TextColumn
@@ -26,9 +29,12 @@ trait Columns
 	}
 
 
-	public function addColumnLink(string $name, string $label): LinkColumn
+	/**
+	 * @param LinkArgs $args
+	 */
+	public function addColumnLink(string $name, string $label, string $dest = '', array $args = []): LinkColumn
 	{
-		return $this->addColumn($name, new LinkColumn($label));
+		return $this->addColumn($name, new LinkColumn($label))->setLink($dest, $args);
 	}
 
 
