@@ -10,6 +10,7 @@ namespace JuniWalk\DataTable\Columns\Interfaces;
 use Closure;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Row;
+use Nette\Utils\Html;
 
 interface CustomRenderer extends Column
 {
@@ -17,5 +18,5 @@ interface CustomRenderer extends Column
 	public function getRenderer(): ?Closure;
 	public function hasRenderer(): bool;
 
-	public function renderCustom(Row $row): mixed;
+	public function renderCustom(Row $row, Html|string $value): mixed;
 }

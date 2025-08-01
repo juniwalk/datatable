@@ -13,6 +13,7 @@ use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Row;
+use Nette\Utils\Html;
 
 class NumberColumn extends AbstractColumn implements Sortable, Filterable, CustomRenderer
 {
@@ -50,14 +51,14 @@ class NumberColumn extends AbstractColumn implements Sortable, Filterable, Custo
 	/**
 	 * @throws FieldInvalidException
 	 */
-	public function renderValue(Row $row): void
+	protected function renderValue(Row $row): Html|string
 	{
-		$number = $row->getValue($this);
+		$value = $row->getValue($this);
 
-		if (!is_numeric($number)) {
-			throw FieldInvalidException::fromColumn($this, $number, 'numeric');
+		if (!is_numeric($value)) {
+			throw FieldInvalidException::fromColumn($this, $value, 'numeric');
 		}
 
-		echo number_format((float) $number, $this->precision, $this->separator, ' ');
+		return number_format((float) $value, $this->precision, $this->separator, ' ');
 	}
 }

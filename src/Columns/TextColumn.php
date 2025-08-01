@@ -7,12 +7,13 @@
 
 namespace JuniWalk\DataTable\Columns;
 
-use BackedEnum;
 use JuniWalk\DataTable\Columns\Interfaces\CustomRenderer;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Row;
+use Nette\Utils\Html;
+use Nette\Utils\Strings;
 use Stringable;
 
 class TextColumn extends AbstractColumn implements Sortable, Filterable, CustomRenderer
@@ -21,27 +22,43 @@ class TextColumn extends AbstractColumn implements Sortable, Filterable, CustomR
 	use Traits\Filters;
 	use Traits\Renderer;
 
+	protected ?int $truncate = null;
+
+
+	public function setTruncate(?int $truncate): self
+	{
+		$this->truncate = $truncate;
+		return $this;
+	}
+
+
+	public function getTruncate(): ?int
+	{
+		return $this->truncate;
+	}
+
 
 	/**
 	 * @throws FieldInvalidException
 	 */
-	public function renderValue(Row $row): void
+	protected function renderValue(Row $row): Html|string
 	{
-		$text = $row->getValue($this);
+		$value = $row->getValue($this);
 
-		if ($text instanceof Stringable) {
-			$text = (string) $text;
+		if ($value instanceof Stringable) {
+			$value = (string) $value;
 		}
 
-		if ($text instanceof BackedEnum) {
-			$text = $text->value;
+		if (!is_scalar($value)) {
+			throw FieldInvalidException::fromColumn($this, $value, 'string');
 		}
 
-		if (!is_scalar($text)) {
-			throw FieldInvalidException::fromColumn($this, $text, 'string');
+		$value = (string) $value;
+
+		if ($this->truncate > 0) {
+			$value = Strings::truncate($value, $this->truncate);
 		}
 
-		// convert to string
-		echo $text;
+		return $value;
 	}
 }

@@ -14,6 +14,7 @@ use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Row;
+use Nette\Utils\Html;
 
 class DateColumn extends AbstractColumn implements Sortable, Filterable, CustomRenderer
 {
@@ -42,16 +43,16 @@ class DateColumn extends AbstractColumn implements Sortable, Filterable, CustomR
 	/**
 	 * @throws FieldInvalidException
 	 */
-	public function renderValue(Row $row): void
+	protected function renderValue(Row $row): Html|string
 	{
-		$date = $row->getValue($this);
+		$value = $row->getValue($this);
 
 		// todo: try to make DateTime from other value types
 
-		if (!$date instanceof DateTimeInterface) {
-			throw FieldInvalidException::fromColumn($this, $date, DateTimeInterface::class);
+		if (!$value instanceof DateTimeInterface) {
+			throw FieldInvalidException::fromColumn($this, $value, DateTimeInterface::class);
 		}
 
-		echo $date->format($this->format);
+		return $value->format($this->format);
 	}
 }

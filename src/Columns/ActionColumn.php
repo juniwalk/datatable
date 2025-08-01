@@ -32,7 +32,13 @@ class ActionColumn extends AbstractColumn
 
 	public function render(Row $row): void
 	{
-		$toolbar = Html::el('div class="btn-toolbar gap-1 justify-content-end"');
+		echo $this->renderValue($row);
+	}
+
+
+	protected function renderValue(Row $row): Html
+	{
+		$toolbar = Html::el('div class="btn-toolbar flex-nowrap gap-1 justify-content-end"');
 
 		foreach ($this->actions as $name => $action) {
 			// todo: check if the row is allowed to have this action
@@ -41,12 +47,6 @@ class ActionColumn extends AbstractColumn
 			$toolbar->addHtml($button);
 		}
 
-		echo $toolbar;
-	}
-
-
-	public function renderValue(Row $row): void
-	{
-		$this->render($row);
+		return $toolbar;
 	}
 }

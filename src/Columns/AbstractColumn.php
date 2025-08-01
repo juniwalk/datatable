@@ -13,9 +13,8 @@ use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Row;
 use Nette\Application\UI\Control;
-use Nette\Utils\Helpers;
+use Nette\Utils\Html;
 use Stringable;
-use Throwable;
 
 abstract class AbstractColumn extends Control implements Column
 {
@@ -78,23 +77,21 @@ abstract class AbstractColumn extends Control implements Column
 	 */
 	public function render(Row $row): void
 	{
-		$value = Helpers::capture(fn() => $this->renderValue($row));
+		$value = $this->renderValue($row);
 
 		if ($this instanceof CustomRenderer && $this->hasRenderer()) {
-			$value = $this->renderCustom($row);
+			$value = $this->renderCustom($row, $value);
 		}
 
-		// todo: consider using Format::stringify
-		if ($value instanceof Stringable) {
-			$value = (string) $value;
-		}
-
-		if ($value !== null && !is_scalar($value)) {
-			throw FieldInvalidException::fromColumn($this, $value, 'scalar');
+		if (!is_null($value) && !(is_string($value) || $value instanceof Stringable)) {
+			throw FieldInvalidException::fromColumn($this, $value, 'string');
 		}
 
 		echo $value;
 	}
+
+
+	abstract protected function renderValue(Row $row): Html|string;
 
 
 	public function renderLabel(): void

@@ -8,38 +8,32 @@
 namespace JuniWalk\DataTable\Columns;
 
 use BackedEnum;
-use JuniWalk\DataTable\Columns\Interfaces\CustomRenderer;
-use JuniWalk\DataTable\Columns\Interfaces\Filterable;
-use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Row;
 use JuniWalk\Utils\Enums\Interfaces\LabeledEnum;
-use JuniWalk\Utils\Html;
+use JuniWalk\Utils\Html as CustomHtml;
+use Nette\Utils\Html;
 
-class EnumColumn extends AbstractColumn implements Sortable, Filterable, CustomRenderer
+class EnumColumn extends TextColumn
 {
-	use Traits\Sorting;
-	use Traits\Filters;
-	use Traits\Renderer;
-
 	protected Align $align = Align::Right;
 
 
 	/**
 	 * @throws FieldInvalidException
 	 */
-	public function renderValue(Row $row): void
+	protected function renderValue(Row $row): Html|string
 	{
-		$enum = $row->getValue($this);
+		$value = $row->getValue($this);
 
-		if (!$enum instanceof BackedEnum) {
-			throw FieldInvalidException::fromColumn($this, $enum, BackedEnum::class);
+		if (!$value instanceof BackedEnum) {
+			throw FieldInvalidException::fromColumn($this, $value, BackedEnum::class);
 		}
 
-		echo match (true) {
-			$enum instanceof LabeledEnum => Html::badgeEnum($enum),
-			default => $enum->value,
+		return match (true) {
+			$value instanceof LabeledEnum => CustomHtml::badgeEnum($value),
+			default => (string) $value->value,
 		};
 	}
 }
