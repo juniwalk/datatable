@@ -33,7 +33,7 @@ class SourceFactory
 			$model instanceof QueryBuilder => new DoctrineSource($model),
 
 			// todo: validate somehow that array has proper structure
-			is_array($model) => new ArraySource($model),
+			is_array($model) => new ArraySource($model),	// @phpstan-ignore argument.type
 
 			default => throw SourceUnknownException::fromModel($model),
 		};
