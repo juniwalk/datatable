@@ -7,6 +7,8 @@
 
 namespace JuniWalk\DataTable\Traits;
 
+use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
+use JuniWalk\DataTable\Row;
 use Nette\Application\UI\InvalidLinkException;
 use Nette\Application\UI\Link;
 
@@ -15,6 +17,23 @@ use Nette\Application\UI\Link;
  */
 trait Linking
 {
+	protected string $dest;
+
+	/** @var LinkArgs */
+	protected array $args = [];
+
+
+	/**
+	 * @param LinkArgs $args
+	 */
+	public function setLink(string $dest, array $args = []): self
+	{
+		$this->dest = $dest;
+		$this->args = $args;
+		return $this;
+	}
+
+
 	/**
 	 * @param  LinkArgs $args
 	 * @throws InvalidLinkException
@@ -57,5 +76,26 @@ trait Linking
 		} while ($component = $component->getParent());
 
 		throw new InvalidLinkException;
+	}
+
+
+	/**
+	 * @return LinkArgs
+	 * @throws FieldNotFoundException
+	 */
+	protected function createArgs(Row $row): array
+	{
+		$args = $this->args;
+
+		foreach ($args as $key => $arg) {
+			if (!is_string($arg) || !str_starts_with($arg, '@')) {
+				continue;
+			}
+
+			$args[$key] = $row->getValue(substr($arg, 1));
+		}
+
+		$args[$row->getPrimaryKey()] ??= $row->getId();
+		return $args;
 	}
 }

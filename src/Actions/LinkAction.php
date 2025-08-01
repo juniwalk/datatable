@@ -17,10 +17,10 @@ class LinkAction extends AbstractAction
 
 	public function render(Row $row): Html
 	{
+		$link = $this->createLink($this->dest ?? $this->name.'!', $this->createArgs($row));
+
 		$button = Html::el('a class="btn btn-xs btn-secondary"', $this->label);
-		$button->setHref($this->createLink($this->getName().'!', [
-			'id' => $row->getId(),
-		]));
+		$button->setHref($link);
 
 		return $button;
 	}
