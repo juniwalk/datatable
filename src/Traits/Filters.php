@@ -178,7 +178,7 @@ trait Filters
 
 
 	/**
-	 * @param  array<string, scalar> $filters
+	 * @param  array<string, mixed> $filters
 	 * @throws FilterNotFoundException
 	 * @throws FilterValueInvalidException
 	 */
