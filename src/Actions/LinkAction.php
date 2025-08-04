@@ -11,6 +11,9 @@ use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Traits\Linking;
 use Nette\Utils\Html;
 
+/**
+ * @inheritDoc
+ */
 class LinkAction extends AbstractAction
 {
 	use Linking;
@@ -19,7 +22,7 @@ class LinkAction extends AbstractAction
 	{
 		$link = $this->createLink($this->dest ?? $this->name.'!', $this->createArgs($row));
 
-		$button = Html::el('a class="btn btn-xs btn-secondary"', $this->label);
+		$button = parent::render($row);
 		$button->setHref($link);
 
 		return $button;

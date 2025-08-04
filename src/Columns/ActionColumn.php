@@ -42,6 +42,9 @@ class ActionColumn extends AbstractColumn
 
 		foreach ($this->actions as $name => $action) {
 			// todo: check if the row is allowed to have this action
+			// if (!$row->isActionAllowed($name, $action)) {
+			// 	continue;
+			// }
 
 			$button = $action->render($row);
 			$toolbar->addHtml($button);
