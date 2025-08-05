@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Actions;
 
+use Closure;
 use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Traits;
@@ -17,15 +18,41 @@ abstract class AbstractAction extends Control implements Action
 {
 	use Traits\Attributes;
 
+	protected Closure $rowAllowed;
+
 	public function __construct(
 		protected string $label,
 	) {
 	}
 
 
+	public function setLabel(string $label): self
+	{
+		$this->label = $label;
+		return $this;
+	}
+
+
 	public function getLabel(): string
 	{
 		return $this->label;
+	}
+
+
+	public function setRowAllowed(Closure $condition): self
+	{
+		$this->rowAllowed = $condition;
+		return $this;
+	}
+
+
+	public function isRowAllowed(Row $row): bool
+	{
+		if (!isset($this->rowAllowed)) {
+			return true;
+		}
+
+		return (bool) call_user_func($this->rowAllowed, $row->getItem());
 	}
 
 

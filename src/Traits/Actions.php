@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Traits;
 
+use Closure;
 use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Actions\LinkAction;
 use JuniWalk\DataTable\Container;
@@ -58,6 +59,17 @@ trait Actions
 	public function removeAction(string $name): void
 	{
 		$this->__actions()->remove($name);
+	}
+
+
+	public function allowRowAction(string $name, callable $condition): self
+	{
+		if (!$condition instanceof Closure) {
+			$condition = Closure::fromCallable($condition);
+		}
+
+		$this->getAction($name)->setRowAllowed($condition);
+		return $this;
 	}
 
 
