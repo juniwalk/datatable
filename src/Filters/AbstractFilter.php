@@ -96,8 +96,7 @@ abstract class AbstractFilter extends Control implements Filter
 	 */
 	public function render(Form $form): void
 	{
-		// todo: Form::getComponent might throw its own exception
-		if (!$input = $form->getComponent($this->name)) {
+		if (!$input = $form->getComponent($this->name, false)) {
 			throw InvalidStateException::filterInputMissing($this);
 		}
 
