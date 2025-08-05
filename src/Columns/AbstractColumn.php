@@ -11,13 +11,20 @@ use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\CustomRenderer;
 use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Row;
+use JuniWalk\DataTable\Table;
+use JuniWalk\DataTable\Traits;
 use Nette\Application\UI\Control;
+use Nette\ComponentModel\IContainer;
 use Nette\Utils\Html;
+use Nette\Utils\Strings;
 use Stringable;
 
 abstract class AbstractColumn extends Control implements Column
 {
+	use Traits\Attributes;
+
 	protected Align $align = Align::Left;
 
 	protected ?string $field = null;
@@ -91,11 +98,31 @@ abstract class AbstractColumn extends Control implements Column
 	}
 
 
-	abstract protected function renderValue(Row $row): Html|string;
-
-
 	public function renderLabel(): void
 	{
 		echo $this->label;
+	}
+
+
+	abstract protected function renderValue(Row $row): Html|string;
+
+
+	/**
+	 * @throws InvalidStateException
+	 */
+	protected function validateParent(IContainer $container): void
+	{
+		$table = $container->getParent();
+
+		if (!$table instanceof Table) {
+			throw InvalidStateException::parentRequired(Table::class, $this);
+		}
+
+		$table->when('render', function() {
+			$this->addAttribute('class', 'col-'.Strings::webalize($this->name));
+			$this->addAttribute('class', $this->align->class());
+		});
+
+		parent::validateParent($container);
 	}
 }

@@ -37,4 +37,14 @@ class InvalidStateException extends \Exception
 	{
 		return new self('Input for filter "'.$filter->getName().'" is missing.');
 	}
+
+
+	/**
+	 * @param class-string $parent
+	 * @param object $child
+	 */
+	public static function parentRequired(string $parent, object $child): self
+	{
+		return new self('Component '.$child::class.' needs to have access to '.$parent.' parent.');
+	}
 }

@@ -20,6 +20,7 @@ abstract class AbstractAction extends Control implements Action
 
 	protected Closure $rowAllowed;
 
+
 	public function __construct(
 		protected string $label,
 	) {

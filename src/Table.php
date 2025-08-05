@@ -9,13 +9,17 @@ namespace JuniWalk\DataTable;
 
 use JuniWalk\DataTable\Enums\Storage;
 use JuniWalk\DataTable\Exceptions\SourceMissingException;
+use JuniWalk\Utils\Interfaces\EventHandler;
+use JuniWalk\Utils\Traits\Events;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
 use Nette\ComponentModel\IComponent;
 use Nette\ComponentModel\IContainer;
 
-class Table extends Control
+class Table extends Control implements EventHandler
 {
+	use Events;
+
 	use Traits\Actions;
 	use Traits\Columns;
 	use Traits\Filters;
@@ -78,6 +82,8 @@ class Table extends Control
 		$columns = $this->getColumns();
 		$filters = $this->getFilters();
 
+		$this->trigger('render');
+
 		// ! first filter, then sort and then limit
 		$source->filter($filters);	// $source->filterById($listOfRowsToRedraw);	// ? choose which method to call
 		$source->sort($columns);
@@ -102,6 +108,8 @@ class Table extends Control
 
 	protected function validateParent(IContainer $parent): void
 	{
+		$this->watch('render');
+
 		// ? Parent has to be validated first so the loadState is called
 		parent::validateParent($parent);
 
