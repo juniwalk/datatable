@@ -83,9 +83,13 @@ trait Linking
 	 * @return LinkArgs
 	 * @throws FieldNotFoundException
 	 */
-	protected function createArgs(Row $row): array
+	protected function createArgs(?Row $row): array
 	{
 		$args = $this->args;
+
+		if (is_null($row)) {
+			return $args;
+		}
 
 		foreach ($args as $key => $arg) {
 			if (!is_string($arg) || !str_starts_with($arg, '@')) {
