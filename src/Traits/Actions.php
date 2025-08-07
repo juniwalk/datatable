@@ -9,20 +9,26 @@ namespace JuniWalk\DataTable\Traits;
 
 use Closure;
 use JuniWalk\DataTable\Action;
+use JuniWalk\DataTable\Actions\CallbackAction;
 use JuniWalk\DataTable\Actions\LinkAction;
 use JuniWalk\DataTable\Container;
 use JuniWalk\DataTable\Enums\Storage;
 
 trait Actions
 {
-	// todo: new action addActionCallback ?
-	// todo: new action addActionDropdown ?
-
-
 	public function addActionLink(string $name, string $label): LinkAction
 	{
 		// todo: allow $name to be signal (clear unwanted characters for $name)
 		return $this->addAction($name, new LinkAction($label));
+	}
+
+
+	// todo: new action addActionDropdown ?
+
+
+	public function addActionCallback(string $name, string $label): CallbackAction
+	{
+		return $this->addAction($name, new CallbackAction($label));
 	}
 
 

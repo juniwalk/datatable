@@ -10,14 +10,19 @@ namespace JuniWalk\DataTable\Traits;
 use Closure;
 use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Actions\ButtonAction;
+use JuniWalk\DataTable\Actions\CallbackAction;
 use JuniWalk\DataTable\Actions\LinkAction;
 use JuniWalk\DataTable\Container;
 use JuniWalk\DataTable\Enums\Storage;
 
 trait Toolbar
 {
-	// todo: new action addToolbarCallback ?
-	// todo: new action addToolbarDropdown ?
+	public function addToolbarLink(string $name, string $label, ?string $group = null): LinkAction
+	{
+		// todo: allow $name to be signal (clear unwanted characters for $name)
+
+		return $this->addToolbarAction($name, new LinkAction($label, $group));
+	}
 
 
 	public function addToolbarButton(string $name, string $label, ?string $group = null): ButtonAction
@@ -26,11 +31,12 @@ trait Toolbar
 	}
 
 
-	public function addToolbarLink(string $name, string $label, ?string $group = null): LinkAction
-	{
-		// todo: allow $name to be signal (clear unwanted characters for $name)
+	// todo: new action addToolbarDropdown ?
 
-		return $this->addToolbarAction($name, new LinkAction($label, $group));
+
+	public function addToolbarCallback(string $name, string $label, ?string $group = null): CallbackAction
+	{
+		return $this->addToolbarAction($name, new CallbackAction($label, $group));
 	}
 
 
