@@ -62,13 +62,9 @@ trait Actions
 	}
 
 
-	public function allowRowAction(string $name, callable $condition): self
+	public function allowRowAction(string $name, Closure|bool $condition): self
 	{
-		if (!$condition instanceof Closure) {
-			$condition = Closure::fromCallable($condition);
-		}
-
-		$this->getAction($name)->setRowAllowed($condition);
+		$this->getAction($name)->setAllowCondition($condition);
 		return $this;
 	}
 

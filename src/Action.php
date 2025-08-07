@@ -17,8 +17,14 @@ interface Action extends IComponent
 	public function setLabel(string $label): self;
 	public function getLabel(): string;
 
-	public function setRowAllowed(Closure $condition): self;
-	public function isRowAllowed(Row $row): bool;
+	public function setGroup(?string $group): self;
+	public function getGroup(): ?string;
 
-	public function render(Row $row): Html;
+	public function setAllowCondition(Closure|bool $condition): self;
+	public function isAllowed(?Row $row = null): bool;
+
+	/**
+	 * @return ($return is true ? Html : null)
+	 */
+	public function render(?Row $row = null, bool $return = false): ?Html;
 }

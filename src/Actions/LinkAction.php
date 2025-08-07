@@ -18,13 +18,20 @@ class LinkAction extends AbstractAction
 {
 	use Linking;
 
-	public function render(Row $row): Html
+	protected string $tag = 'a';
+
+
+	public function render(?Row $row = null, bool $return = false): ?Html
 	{
 		$link = $this->createLink($this->dest ?? $this->name.'!', $this->createArgs($row));
 
-		$button = parent::render($row);
+		$button = parent::render($row, true);
 		$button->setHref($link);
 
-		return $button;
+		if ($return === true) {
+			return $button;
+		}
+
+		echo $button; return null;
 	}
 }

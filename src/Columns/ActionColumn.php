@@ -41,11 +41,11 @@ class ActionColumn extends AbstractColumn
 		$toolbar = Html::el('div class="btn-toolbar flex-nowrap gap-1 justify-content-end"');
 
 		foreach ($this->actions as $action) {
-			if (!$action->isRowAllowed($row)) {
+			if (!$action->isAllowed($row)) {
 				continue;
 			}
 
-			$button = $action->render($row);
+			$button = $action->render($row, true);
 			$toolbar->addHtml($button);
 		}
 

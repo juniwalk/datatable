@@ -18,11 +18,13 @@ abstract class AbstractAction extends Control implements Action
 {
 	use Traits\Attributes;
 
-	protected Closure $rowAllowed;
+	protected Closure|bool $allowCondition;
+	protected string $tag = 'span';
 
 
 	public function __construct(
 		protected string $label,
+		protected ?string $group = null,
 	) {
 	}
 
@@ -40,30 +42,56 @@ abstract class AbstractAction extends Control implements Action
 	}
 
 
-	public function setRowAllowed(Closure $condition): self
+	public function setGroup(?string $group): self
 	{
-		$this->rowAllowed = $condition;
+		$this->group = $group;
 		return $this;
 	}
 
 
-	public function isRowAllowed(Row $row): bool
+	public function getGroup(): ?string
 	{
-		if (!isset($this->rowAllowed)) {
-			return true;
-		}
-
-		return (bool) call_user_func($this->rowAllowed, $row->getItem());
+		return $this->group;
 	}
 
 
-	public function render(Row $row): Html
+	public function setAllowCondition(Closure|bool $condition): self
 	{
-		$button = Html::el('a', $this->attributes);
+		$this->allowCondition = $condition;
+		return $this;
+	}
+
+
+	public function isAllowed(?Row $row = null): bool
+	{
+		if (!isset($this->allowCondition)) {
+			return true;
+		}
+
+		if (is_bool($this->allowCondition)) {
+			return $this->allowCondition;
+		}
+
+		return (bool) call_user_func($this->allowCondition, $row?->getItem());
+	}
+
+
+	public function render(?Row $row = null, bool $return = false): ?Html
+	{
+		// todo: make sure there is proper button size? btn-xs
+		// ? should be only optional, so if size is provided, do not add standard one
+
+		$button = Html::el($this->tag, $this->attributes);
 
 		// todo: handle translation
 		// todo: handle icons
 
-		return $button->addText($this->label);
+		$button->addText($this->label);
+
+		if ($return === true) {
+			return $button;
+		}
+
+		echo $button; return null;
 	}
 }
