@@ -8,14 +8,14 @@
 namespace JuniWalk\DataTable\Actions;
 
 use JuniWalk\DataTable\Row;
-use JuniWalk\DataTable\Traits\Linking;
+use JuniWalk\DataTable\Traits\LinkHandler;
 use JuniWalk\Utils\Interfaces\EventHandler;
 use JuniWalk\Utils\Traits\Events;
 use Nette\Utils\Html;
 
 class CallbackAction extends AbstractAction implements EventHandler
 {
-	use Events, Linking;
+	use Events, LinkHandler;
 
 	protected string $tag = 'a';
 

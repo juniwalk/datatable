@@ -8,7 +8,8 @@
 namespace JuniWalk\DataTable\Actions;
 
 use JuniWalk\DataTable\Row;
-use JuniWalk\DataTable\Traits\LinkingCustom;
+use JuniWalk\DataTable\Traits\LinkArguments;
+use JuniWalk\DataTable\Traits\LinkHandler;
 use Nette\Utils\Html;
 
 /**
@@ -16,7 +17,8 @@ use Nette\Utils\Html;
  */
 class LinkAction extends AbstractAction
 {
-	use LinkingCustom;
+	use LinkArguments;
+	use LinkHandler;
 
 	protected string $tag = 'a';
 

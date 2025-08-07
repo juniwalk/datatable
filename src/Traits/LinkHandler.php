@@ -13,7 +13,7 @@ use Nette\Application\UI\Link;
 /**
  * @phpstan-type LinkArgs array<string, mixed>
  */
-trait Linking
+trait LinkHandler
 {
 	/**
 	 * @param  LinkArgs $args

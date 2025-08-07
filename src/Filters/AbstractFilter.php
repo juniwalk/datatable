@@ -11,14 +11,14 @@ use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Filter;
-use JuniWalk\DataTable\Traits\Linking;
+use JuniWalk\DataTable\Traits\LinkHandler;
 use JuniWalk\Utils\Format;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
 
 abstract class AbstractFilter extends Control implements Filter
 {
-	use Linking;
+	use LinkHandler;
 
 	protected bool $isFiltered = false;
 	protected mixed $value;

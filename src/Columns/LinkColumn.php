@@ -10,13 +10,15 @@ namespace JuniWalk\DataTable\Columns;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Row;
-use JuniWalk\DataTable\Traits\LinkingCustom;
+use JuniWalk\DataTable\Traits\LinkArguments;
+use JuniWalk\DataTable\Traits\LinkHandler;
 use Nette\Application\UI\InvalidLinkException;
 use Nette\Utils\Html;
 
 class LinkColumn extends TextColumn
 {
-	use LinkingCustom;
+	use LinkArguments;
+	use LinkHandler;
 
 	/**
 	 * @throws FieldNotFoundException

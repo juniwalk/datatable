@@ -11,12 +11,10 @@ use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use JuniWalk\DataTable\Row;
 
 /**
- * @phpstan-import-type LinkArgs from Linking
+ * @phpstan-import-type LinkArgs from LinkHandler
  */
-trait LinkingCustom
+trait LinkArguments
 {
-	use Linking;
-
 	protected string $dest;
 
 	/** @var LinkArgs */

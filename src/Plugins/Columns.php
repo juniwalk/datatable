@@ -17,10 +17,10 @@ use JuniWalk\DataTable\Columns\NumberColumn;
 use JuniWalk\DataTable\Columns\TextColumn;
 use JuniWalk\DataTable\Container;
 use JuniWalk\DataTable\Enums\Storage;
-use JuniWalk\DataTable\Traits\Linking;
+use JuniWalk\DataTable\Traits\LinkHandler;
 
 /**
- * @phpstan-import-type LinkArgs from Linking
+ * @phpstan-import-type LinkArgs from LinkHandler
  */
 trait Columns
 {
