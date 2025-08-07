@@ -43,7 +43,9 @@ class TextColumn extends AbstractColumn implements Sortable, Filterable, CustomR
 	 */
 	protected function renderValue(Row $row): Html|string
 	{
-		$value = $row->getValue($this);
+		if (!$value = $row->getValue($this)) {
+			return '';
+		}
 
 		if ($value instanceof Stringable) {
 			$value = (string) $value;

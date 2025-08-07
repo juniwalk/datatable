@@ -45,7 +45,9 @@ class DateColumn extends AbstractColumn implements Sortable, Filterable, CustomR
 	 */
 	protected function renderValue(Row $row): Html|string
 	{
-		$value = $row->getValue($this);
+		if (!$value = $row->getValue($this)) {
+			return '';
+		}
 
 		// todo: try to make DateTime from other value types
 

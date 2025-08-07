@@ -25,7 +25,9 @@ class EnumColumn extends TextColumn
 	 */
 	protected function renderValue(Row $row): Html|string
 	{
-		$value = $row->getValue($this);
+		if (!$value = $row->getValue($this)) {
+			return '';
+		}
 
 		if (!$value instanceof BackedEnum) {
 			throw FieldInvalidException::fromColumn($this, $value, BackedEnum::class);

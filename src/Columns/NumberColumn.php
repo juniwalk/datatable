@@ -53,7 +53,9 @@ class NumberColumn extends AbstractColumn implements Sortable, Filterable, Custo
 	 */
 	protected function renderValue(Row $row): Html|string
 	{
-		$value = $row->getValue($this);
+		if (!$value = $row->getValue($this)) {
+			return '';
+		}
 
 		if (!is_numeric($value)) {
 			throw FieldInvalidException::fromColumn($this, $value, 'numeric');
