@@ -9,6 +9,7 @@ namespace JuniWalk\DataTable;
 
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
+use JuniWalk\DataTable\Traits\Attributes;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -17,8 +18,11 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
  */
 class Row
 {
-	private int|string $id;
-	private PropertyAccessor $reader;
+	use Attributes;
+
+	protected PropertyAccessor $reader;
+	protected int|string $id;
+
 
 	/**
 	 * @param  Item $item
@@ -26,19 +30,13 @@ class Row
 	 * @throws FieldInvalidException
 	 */
 	public function __construct(
-		private object|array $item,
-		private readonly Source $source,
+		protected object|array $item,
+		protected readonly Source $source,
 	) {
 		$this->reader = PropertyAccess::createPropertyAccessor();
-		$primaryKey = $source->getPrimaryKey();
 
-		$id = $this->getValue($primaryKey);
-
-		if (!is_string($id) && !is_int($id)) {
-			throw FieldInvalidException::fromName($primaryKey, $id, 'int|string');
-		}
-
-		$this->id = $id;
+		$this->fetchPrimaryKey($source->getPrimaryKey());
+		$this->setAttribute('class', 'align-middle');
 	}
 
 
@@ -83,5 +81,21 @@ class Row
 		};
 
 		return $this->reader->getValue($this->item, $path);
+	}
+
+
+	/**
+	 * @throws FieldNotFoundException
+	 * @throws FieldInvalidException
+	 */
+	protected function fetchPrimaryKey(string $primaryKey): void
+	{
+		$id = $this->getValue($primaryKey);
+
+		if (!is_string($id) && !is_int($id)) {
+			throw FieldInvalidException::fromName($primaryKey, $id, 'int|string');
+		}
+
+		$this->id = $id;
 	}
 }

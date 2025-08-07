@@ -56,8 +56,8 @@
 
 		<tbody>
 
-			<tr n:foreach="$rows as $row" class="align-middle">
-				<td n:foreach="$columns as $name => $column" n:attr="$column->getAttributes()">{control $column, $row}</td>
+			<tr n:foreach="$rows as $row" n:attr="$row->getAttributes()">
+				<td n:foreach="$columns as $column" n:attr="$column->getAttributes()">{control $column, $row}</td>
 			</tr>
 
 			<tr n:if="empty($rows)">
