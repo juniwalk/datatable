@@ -5,7 +5,7 @@
  * @license   MIT License
  */
 
-namespace JuniWalk\DataTable\Traits;
+namespace JuniWalk\DataTable\Plugins;
 
 use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Column;
@@ -17,6 +17,7 @@ use JuniWalk\DataTable\Columns\NumberColumn;
 use JuniWalk\DataTable\Columns\TextColumn;
 use JuniWalk\DataTable\Container;
 use JuniWalk\DataTable\Enums\Storage;
+use JuniWalk\DataTable\Traits\Linking;
 
 /**
  * @phpstan-import-type LinkArgs from Linking

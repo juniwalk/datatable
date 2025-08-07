@@ -20,14 +20,14 @@ class Table extends Control implements EventHandler
 {
 	use Events;
 
-	use Traits\Actions;
-	use Traits\Toolbar;
-	use Traits\Columns;
-	use Traits\Filters;
-	use Traits\Sorting;
-	use Traits\Sources;
-	use Traits\Session;
-	use Traits\Pagination;
+	use Plugins\Actions;
+	use Plugins\Toolbar;
+	use Plugins\Columns;
+	use Plugins\Filters;
+	use Plugins\Sorting;
+	use Plugins\Sources;
+	use Plugins\Session;
+	use Plugins\Pagination;
 
 
 	/**

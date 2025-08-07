@@ -5,7 +5,7 @@
  * @license   MIT License
  */
 
-namespace JuniWalk\DataTable\Traits;
+namespace JuniWalk\DataTable\Plugins;
 
 use BackedEnum;
 use JuniWalk\DataTable\Column;

@@ -5,7 +5,7 @@
  * @license   MIT License
  */
 
-namespace JuniWalk\DataTable\Traits;
+namespace JuniWalk\DataTable\Plugins;
 
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Sort;
