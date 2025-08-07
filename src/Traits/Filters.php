@@ -70,6 +70,7 @@ trait Filters
 			return $this->isFilterShown;
 		}
 
+		// todo: empty filter but not default one should still show them [?]
 		return !empty($this->filter) && !$this->isDefaultFilter();
 	}
 
@@ -272,10 +273,14 @@ trait Filters
 
 	protected function validateFilters(): void
 	{
-		$filters = $this->getCurrentFilter();
+		$current = $this->getCurrentFilter();
 
-		foreach ($this->getFilters() as $name => $filter) {
-			$filter->setValue($filters[$name] ?? null);
+		if (!$filters = $this->getFilters()) {
+			return;
+		}
+
+		foreach ($filters as $name => $filter) {
+			$filter->setValue($current[$name] ?? null);
 		}
 
 		foreach ($this->getColumns() as $column) {
@@ -285,6 +290,22 @@ trait Filters
 
 			$column->detectFilteredStatus();
 		}
+
+		// todo: add icon "fas fa-filter fa-fw"
+		// todo: add addToolbarButton which wont require href attribute
+		$this->addToolbarButton('__filter_toggle', '[Y] Filtrace', '__filters')
+			->setClass('btn btn-sm btn-info collapsed')
+			->setAttribute('data-bs-toggle', 'collapse')
+			->setAttribute('data-bs-target', '#'.$this->getSnippetId('filters'));
+
+		// todo: add icon "fas fa-times fa-fw"
+		$this->addToolbarLink('__filter_clear', '[X]', '__filters')->setLink('clear!')
+			->setClass('btn btn-sm btn-info')
+			->setAttribute('data-bs-toggle', 'tooltip')
+			->setTitle('Zrušit filtraci');
+
+		// $this->allowToolbarAction('__filter_toggle', !empty($filters));
+		$this->allowToolbarAction('__filter_clear', $this->shouldShowFilters());
 	}
 
 
