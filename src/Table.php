@@ -99,6 +99,8 @@ class Table extends Control implements EventHandler
 		foreach ($items as $item) {
 			$row = new Row($item, $source);
 			$rows[$row->getId()] = $row;
+
+			$this->trigger('row', $item, $row);
 		}
 
 		$template->add('toolbar', $toolbar);
@@ -116,6 +118,7 @@ class Table extends Control implements EventHandler
 	{
 		$this->watch('render');
 		$this->watch('loaded');
+		$this->watch('row');
 
 		// ? Parent has to be validated first so the loadState is called
 		parent::validateParent($parent);
