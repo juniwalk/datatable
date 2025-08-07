@@ -91,9 +91,12 @@ class Table extends Control implements EventHandler
 		$source->sort($columns);
 		$source->limit($this->page, $this->getCurrentLimit());
 
-		$rows = [];
+		$items = $source->fetchItems();
+		$rows =  [];
 
-		foreach ($source->fetchItems() as $item) {
+		$this->trigger('loaded', $items);
+
+		foreach ($items as $item) {
 			$row = new Row($item, $source);
 			$rows[$row->getId()] = $row;
 		}
@@ -112,6 +115,7 @@ class Table extends Control implements EventHandler
 	protected function validateParent(IContainer $parent): void
 	{
 		$this->watch('render');
+		$this->watch('loaded');
 
 		// ? Parent has to be validated first so the loadState is called
 		parent::validateParent($parent);

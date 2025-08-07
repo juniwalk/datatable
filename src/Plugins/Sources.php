@@ -12,6 +12,9 @@ use JuniWalk\DataTable\Exceptions\SourceUnknownException;
 use JuniWalk\DataTable\Source;
 use JuniWalk\DataTable\SourceFactory;
 
+/**
+ * @phpstan-import-type Items from Source
+ */
 trait Sources
 {
 	private Source $source;
@@ -33,6 +36,11 @@ trait Sources
 	protected function createModel(): mixed { return null; }
 	protected function createTable(): void {}
 
+	/**
+	 * @param Items $items
+	 */
+	protected function onDataLoaded(array $items): void {}
+
 
 	/**
 	 * @throws SourceMissingException
@@ -50,5 +58,7 @@ trait Sources
 			// todo: give more details with the exception
 			throw new SourceMissingException;
 		}
+
+		$this->when('loaded', $this->onDataLoaded(...));
 	}
 }
