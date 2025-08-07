@@ -12,4 +12,5 @@ enum Storage: string
 	case Actions = 'actions';
 	case Columns = 'columns';
 	case Filters = 'filters';
+	case Toolbar = 'toolbar';
 }

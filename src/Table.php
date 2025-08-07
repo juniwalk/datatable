@@ -21,6 +21,7 @@ class Table extends Control implements EventHandler
 	use Events;
 
 	use Traits\Actions;
+	use Traits\Toolbar;
 	use Traits\Columns;
 	use Traits\Filters;
 	use Traits\Sorting;
@@ -79,6 +80,7 @@ class Table extends Control implements EventHandler
 			$this->addColumnAction('actions', 'Akce', $actions);
 		}
 
+		$toolbar = $this->getToolbarActionsGrouped();
 		$columns = $this->getColumns();
 		$filters = $this->getFilters();
 
@@ -96,6 +98,7 @@ class Table extends Control implements EventHandler
 			$rows[$row->getId()] = $row;
 		}
 
+		$template->add('toolbar', $toolbar);
 		$template->add('columns', $columns);
 		$template->add('filters', $filters);
 		$template->add('rows', $rows);

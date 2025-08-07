@@ -5,19 +5,11 @@
 
 		<h5 class="card-title flex-fill py-2">DataTable</h5>
 
-		<div class="btn-toolbar gap-2">
-			{* todo toolbar actions *}
+		<div class="btn-toolbar gap-2" n:inner-foreach="$toolbar as $group => $actions" n:ifcontent>
 
-			<div class="btn-group" n:if="!empty($filters)">
-				{* todo: store state of the filters collapsible in localStorage so it is remembered *}
-				<button class="btn btn-sm btn-info collapsed" data-bs-toggle="collapse" data-bs-target="#{$controlName}-filters" aria-expanded="false">
-					<i class="fas fa-filter fa-fw"></i> Filtrace
-				</button>
-				<a n:href="clear!" class="btn btn-sm btn-info" n:if="$control->shouldShowFilters()" title="Zrušit filtraci" data-bs-toggle="tooltip"><i class="fas fa-times fa-fw"></i></a>
-			</div>
+			<div class="btn-group" role="group" n:inner-foreach="$actions as $action" n:ifcontent>
+				{control $action}
 
-			<div class="btn-group" role="group">
-				<a class="btn btn-sm btn-success"><i class="fa-solid fa-plus fa-fw"></i> Vytvořit</a>
 			</div>
 
 		</div>
@@ -25,7 +17,7 @@
 	</div>
 	</div>
 
-	<div id="{$controlName}-filters" n:class="collapse, $control->shouldShowFilters() ? show" n:if="!empty($filters)">
+	<div n:snippet="filters" n:class="collapse, $control->shouldShowFilters() ? show" n:if="!empty($filters)">
 	<form n:name="filterForm" class="card-header">
 
 		<div class="row g-2 row-cols-auto row-cols-lg-{$control->getFilterColumnCount() ?? auto}" n:ifcontent>
