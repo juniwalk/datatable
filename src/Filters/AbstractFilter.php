@@ -13,6 +13,7 @@ use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Traits\LinkHandler;
 use JuniWalk\Utils\Format;
+use JuniWalk\Utils\Strings;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Form;
 
@@ -96,7 +97,7 @@ abstract class AbstractFilter extends Control implements Filter
 	 */
 	public function render(Form $form): void
 	{
-		if (!$input = $form->getComponent($this->name, false)) {
+		if (!$input = $form->getComponent($this->fieldName(), false)) {
 			throw InvalidStateException::filterInputMissing($this);
 		}
 
@@ -110,9 +111,15 @@ abstract class AbstractFilter extends Control implements Filter
 		$template->add('isFiltered', $this->isFiltered);
 		$template->add('clearLink', $clearLink);
 		$template->add('label', $this->label);
-		$template->add('name', $this->name);
+		$template->add('name', $this->fieldName());
 		$template->add('input', $input);
 
 		$template->render();
+	}
+
+
+	protected function fieldName(): string
+	{
+		return Format::camelCase(Strings::webalize($this->name));
 	}
 }

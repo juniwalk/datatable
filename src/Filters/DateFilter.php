@@ -15,10 +15,10 @@ class DateFilter extends AbstractFilter
 {
 	public function attachToForm(Form $form): void
 	{
-		$form->addDate($this->name, $this->label);
+		$form->addDate($this->fieldName(), $this->label);
 
 		$form->onSuccess[] = function($form, $data) {
-			$this->value = $this->format($data[$this->name] ?? null);
+			$this->value = $this->format($data[$this->fieldName()] ?? null);
 		};
 	}
 

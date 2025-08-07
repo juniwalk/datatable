@@ -38,11 +38,11 @@ class EnumFilter extends AbstractFilter
 			$items[$case->value] = $option;
 		}
 
-		$form->addSelect($this->name, $this->label)->setPrompt('Vše…')
+		$form->addSelect($this->fieldName(), $this->label)->setPrompt('Vše…')
 			->setItems($items);
 
 		$form->onSuccess[] = function($form, $data) {
-			$this->value = $this->format($data[$this->name] ?? null);
+			$this->value = $this->format($data[$this->fieldName()] ?? null);
 		};
 	}
 

@@ -13,10 +13,10 @@ class TextFilter extends AbstractFilter
 {
 	public function attachToForm(Form $form): void
 	{
-		$form->addText($this->name, $this->label)->setNullable(true);
+		$form->addText($this->fieldName(), $this->label)->setNullable(true);
 
 		$form->onSuccess[] = function($form, $data) {
-			$this->value = $this->format($data[$this->name] ?? null);
+			$this->value = $this->format($data[$this->fieldName()] ?? null);
 		};
 	}
 }
