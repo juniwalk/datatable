@@ -1,0 +1,60 @@
+<?php declare(strict_types=1);
+
+/**
+ * @copyright Martin Procházka (c) 2025
+ * @license   MIT License
+ */
+
+namespace JuniWalk\DataTable\Traits;
+
+use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
+use JuniWalk\DataTable\Row;
+
+/**
+ * @phpstan-import-type LinkArgs from Linking
+ */
+trait LinkingCustom
+{
+	use Linking;
+
+	protected string $dest;
+
+	/** @var LinkArgs */
+	protected array $args = [];
+
+
+	/**
+	 * @param LinkArgs $args
+	 */
+	public function setLink(string $dest, array $args = []): self
+	{
+		$this->dest = $dest;
+		$this->args = $args;
+		return $this;
+	}
+
+
+	/**
+	 * @return LinkArgs
+	 * @throws FieldNotFoundException
+	 */
+	protected function createArgs(?Row $row): array
+	{
+		$args = $this->args;
+
+		if (is_null($row)) {
+			return $args;
+		}
+
+		foreach ($args as $key => $arg) {
+			if (!is_string($arg) || !str_starts_with($arg, '@')) {
+				continue;
+			}
+
+			$args[$key] = $row->getValue(substr($arg, 1));
+		}
+
+		$args[$row->getPrimaryKey()] ??= $row->getId();
+		return $args;
+	}
+}

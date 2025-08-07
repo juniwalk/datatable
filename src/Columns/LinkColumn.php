@@ -7,16 +7,16 @@
 
 namespace JuniWalk\DataTable\Columns;
 
-use JuniWalk\DataTable\Traits\Linking;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Row;
+use JuniWalk\DataTable\Traits\LinkingCustom;
 use Nette\Application\UI\InvalidLinkException;
 use Nette\Utils\Html;
 
 class LinkColumn extends TextColumn
 {
-	use Linking;
+	use LinkingCustom;
 
 	/**
 	 * @throws FieldNotFoundException
