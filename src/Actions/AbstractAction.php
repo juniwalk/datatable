@@ -78,9 +78,6 @@ abstract class AbstractAction extends Control implements Action
 
 	public function render(?Row $row = null, bool $return = false): ?Html
 	{
-		// todo: make sure there is proper button size? btn-xs
-		// ? should be only optional, so if size is provided, do not add standard one
-
 		$button = Html::el($this->tag, $this->attributes);
 
 		// todo: handle translation

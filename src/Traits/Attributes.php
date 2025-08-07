@@ -12,76 +12,68 @@ use Nette\MemberAccessException;
 use Nette\Utils\ObjectHelpers;
 
 /**
- * @method static setClass(mixed $value)
- * @method static addClass(mixed $value)
- * @method mixed getClass()
- * @method bool hasClass()
+ * @method static setClass(string ...$value)
+ * @method static addClass(string ...$value)
+ * @method ?string getClass()
+ * @method bool hasClass(string ...$value)
+ * @method static removeClass(string ...$value)
  * 
  * @method static setTitle(string $value)
- * @method string getTitle()
+ * @method ?string getTitle()
  * @method bool hasTitle()
- * 
- * @phpstan-type AttributeValue string|int|float|bool|null
- * @phpstan-type AttributeList array<string, AttributeValue|AttributeValue[]>
  */
 trait Attributes
 {
-	/** @var AttributeList */
+	/** @var array<string, string> */
 	protected array $attributes = [];
 
 
 	/**
+	 * @param  string[] $args
 	 * @throws MemberAccessException
 	 */
-	public function __call(string $name, array $args): mixed	// @phpstan-ignore missingType.iterableValue (too complex to care)
+	public function __call(string $name, array $args): mixed
 	{
-		$type = mb_substr($name, 0, 3);
-		$attr = mb_substr($name, 3);
+		$attr = explode('-', Format::kebabCase($name), 2);
 
-		$attr = Format::kebabCase($attr);
+		[$type, $attr] = $attr + ['', ''];
 
 		return match ($type) {
+			'remove' => $this->removeAttribute($attr, ...$args),
 			'set' => $this->setAttribute($attr, ...$args),
 			'add' => $this->addAttribute($attr, ...$args),
 			'has' => $this->hasAttribute($attr, ...$args),
 			'get' => $this->getAttribute($attr),
-			'del' => $this->delAttribute($attr),
 
 			default => ObjectHelpers::strictCall(static::class, $name),
 		};
 	}
 
 
-	/**
-	 * @param AttributeValue|AttributeValue[] $value
-	 */
-	public function setAttribute(string $name, mixed $value): static
+	public function setAttribute(string $name, string ...$value): static
 	{
-		$this->attributes[$name] = $value;
+		$this->attributes[$name] = implode(' ', $value);
 		return $this;
 	}
 
 
-	/**
-	 * @param AttributeValue|AttributeValue[] $value
-	 */
-	public function addAttribute(string $name, mixed $value): static
+	public function addAttribute(string $name, string ...$value): static
 	{
 		if ($values = $this->attributes[$name] ?? null) {
-			$value = [... (array) $values, ... (array) $value];
+			$value = [$values, ...$value];
 		}
 
-		return $this->setAttribute($name, $value);
+		return $this->setAttribute($name, ...$value);
 	}
 
 
 	/**
-	 * @param AttributeList $attributes
+	 * @param array<string, string|string[]> $attributes
 	 */
 	public function setAttributes(array $attributes): static
 	{
 		foreach ($attributes as $name => $value) {
-			$this->setAttribute($name, $value);
+			$this->setAttribute($name, ... (array) $value);
 		}
 
 		return $this;
@@ -89,66 +81,38 @@ trait Attributes
 
 
 	/**
-	 * @param AttributeList $attributes
+	 * @param array<string, string|string[]> $attributes
 	 */
 	public function addAttributes(array $attributes): static
 	{
 		foreach ($attributes as $name => $value) {
-			$this->addAttribute($name, $value);
+			$this->addAttribute($name, ... (array) $value);
 		}
 
 		return $this;
 	}
 
 
-	/**
-	 * @return AttributeValue
-	 */
-	public function getAttribute(string $name): mixed
+	public function getAttribute(string $name): ?string
 	{
-		if (!$values = $this->attributes[$name] ?? null) {
-			return null;
+		return $this->attributes[$name] ?? null;
+	}
+
+
+	public function hasAttribute(string $name, string ...$value): bool
+	{
+		$exists = array_key_exists($name, $this->attributes);
+
+		if (!$exists || empty($value)) {
+			return $exists;
 		}
 
-		if (is_array($values)) {
-			$values = implode(' ', $values);
-		}
-
-		return $values;
+		return (bool) array_intersect($this->fetchAttributeValues($name), $value);
 	}
 
 
 	/**
-	 * @param AttributeValue|AttributeValue[] $value
-	 */
-	public function hasAttribute(string $name, mixed $value = null, bool $strict = false): bool
-	{
-		if (!isset($this->attributes[$name])) {
-			return false;
-		}
-
-		if (is_null($value)) {
-			return true;
-		}
-
-		$attr = $this->getAttribute($name);
-		$attr = explode(' ', (string) $attr);
-
-		$value = implode(' ', (array) $value);
-		$value = explode(' ', $value);
-
-		$found = array_intersect($attr, $value);
-
-		if ($strict === false) {
-			return (bool) $found;
-		}
-
-		return ! (bool) array_diff($value, $found);
-	}
-
-
-	/**
-	 * @return AttributeList
+	 * @return array<string, string>
 	 */
 	public function getAttributes(): array
 	{
@@ -156,9 +120,35 @@ trait Attributes
 	}
 
 
-	public function delAttribute(string $name): static
+	public function removeAttribute(string $name, string ...$value): static
 	{
-		unset($this->attributes[$name]);
+		if (empty($value) || !$this->hasAttribute($name)) {
+			unset($this->attributes[$name]);
+			return $this;
+		}
+
+		$values = $this->fetchAttributeValues($name);
+		$values = array_diff($values, $value);
+
+		$this->setAttribute($name, ...$values);
+
+		if (empty($this->attributes[$name])) {
+			unset($this->attributes[$name]);
+		}
+
 		return $this;
+	}
+
+
+	/**
+	 * @return string[]
+	 */
+	private function fetchAttributeValues(string $name): array
+	{
+		if (!$values = $this->attributes[$name] ?? null) {
+			return [];
+		}
+
+		return explode(' ', $values);
 	}
 }
