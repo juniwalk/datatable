@@ -17,12 +17,12 @@ use JuniWalk\DataTable\Source;
 use JuniWalk\Utils\Format;
 
 /**
- * @phpstan-import-type Item from Source
  * @phpstan-import-type Items from Source
  */
-class ArraySource implements Source
+class ArraySource extends AbstractSource
 {
 	private int $totalCount;
+
 
 	/**
 	 * @param Items $items
@@ -31,6 +31,7 @@ class ArraySource implements Source
 		private array $items,
 		private string $primaryKey = 'id',
 	) {
+		parent::__construct();
 		$this->totalCount = sizeof($items);
 	}
 
@@ -45,22 +46,6 @@ class ArraySource implements Source
 	public function getPrimaryKey(): string
 	{
 		return $this->primaryKey;
-	}
-
-
-	public function totalCount(): int
-	{
-		return $this->totalCount;
-	}
-
-
-	/**
-	 * @return Items
-	 */
-	public function fetchItems(): iterable
-	{
-		// todo: handle onDataLoaded event in the Source
-		return $this->items;
 	}
 
 
@@ -162,7 +147,22 @@ class ArraySource implements Source
 	}
 
 
-	private function isMatching(Row $row, Filter $filter): bool
+	public function totalCount(): int
+	{
+		return $this->totalCount;
+	}
+
+
+	/**
+	 * @return Items
+	 */
+	protected function fetchItems(): iterable
+	{
+		return $this->items;
+	}
+
+
+	protected function isMatching(Row $row, Filter $filter): bool
 	{
 		if (!$filter->isFiltered()) {
 			return false;

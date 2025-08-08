@@ -71,11 +71,6 @@ class Table extends Control implements EventHandler
 		$template->setFile(__DIR__.'/templates/table.latte');
 		$template->add('controlName', $this->getUniqueId());
 
-		if (!$source = $this->getSource()) {
-			// todo: give more details with the exception
-			throw new SourceMissingException;
-		}
-
 		if ($actions = $this->getActions()) {
 			$this->addColumnAction('actions', 'Akce', $actions);
 		}
@@ -87,29 +82,19 @@ class Table extends Control implements EventHandler
 		// todo: add some argumens like $template
 		$this->trigger('render');
 
+		// todo: move this into Sources plugin [?]
+		$source = $this->getSource();
 		// ! first filter, then sort and then limit
 		$source->filter($filters);	// $source->filterById($listOfRowsToRedraw);	// ? choose which method to call
 		$source->sort($columns);
 		$source->limit($this->page, $this->getCurrentLimit());
 
-		$items = $source->fetchItems();
-		$rows =  [];
+		// bdump($this);
 
-		$this->trigger('loaded', $items);
-
-		foreach ($items as $item) {
-			$row = new Row($item, $source);
-			$rows[$row->getId()] = $row;
-
-			$this->trigger('row', $item, $row);
-		}
-
+		$template->add('rows', $source->fetchRows());
 		$template->add('toolbar', $toolbar);
 		$template->add('columns', $columns);
 		$template->add('filters', $filters);
-		$template->add('rows', $rows);
-
-		// bdump($this);
 
 		$template->render();
 	}
@@ -118,8 +103,6 @@ class Table extends Control implements EventHandler
 	protected function validateParent(IContainer $parent): void
 	{
 		$this->watch('render');
-		$this->watch('loaded');
-		$this->watch('row');
 
 		// ? Parent has to be validated first so the loadState is called
 		parent::validateParent($parent);

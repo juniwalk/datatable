@@ -20,10 +20,9 @@ use JuniWalk\DataTable\Filters;
 use JuniWalk\DataTable\Source;
 
 /**
- * @phpstan-import-type Item from Source
  * @phpstan-import-type Items from Source
  */
-class DoctrineSource implements Source
+class DoctrineSource extends AbstractSource
 {
 	/** @var array<string, mixed> */
 	protected array $hints = [];
@@ -35,6 +34,7 @@ class DoctrineSource implements Source
 		protected QueryBuilder $queryBuilder,
 		protected string $primaryKey = 'id',
 	) {
+		parent::__construct();
 		$this->placeholder = sizeof($queryBuilder->getParameters());
 	}
 
@@ -62,55 +62,6 @@ class DoctrineSource implements Source
 	{
 		$this->hints[$name] = $value;
 		return $this;
-	}
-
-
-	public function totalCount(): int
-	{
-		$source = clone $this->queryBuilder;
-		$source->select(sprintf('COUNT(DISTINCT %s)', $this->getPrimaryField()));
-		$source->resetDQLPart('orderBy');
-		$source->resetDQLPart('groupBy');
-		$source->setFirstResult(0);
-		$source->setMaxResults(null);
-
-		// todo: this needs to be cached
-		return (int) $source->getQuery()
-			->getSingleScalarResult();
-	}
-
-
-	// todo: add method getRows() - used by the Table to get Row($item, $source) instances
-	// todo: getRows method could be inside AbstractSource as a final method for all sources to use
-	// todo: this method should call internally fetchItems and create Row instances and call events
-
-
-	// todo: this could be made protected/private
-	/**
-	 * @return Items
-	 */
-	public function fetchItems(): iterable
-	{
-		$this->queryBuilder->addGroupBy($this->getPrimaryField());
-
-		/** @var Items */
-		return $this->getQuery()->getResult();
-
-		// $items = $source->fetchItems();
-		// $rows =  [];
-
-		// // todo: handle onDataLoaded event
-		// $this->trigger('loaded', $items);
-
-		// foreach ($items as $item) {
-		// 	$row = new Row($item, $this);
-		// 	$rows[$row->getId()] = $row;
-
-		// 	// todo: handle onRow event
-		// 	$this->trigger('row', $item, $row);
-		// }
-
-		// return $rows;
 	}
 
 
@@ -179,6 +130,33 @@ class DoctrineSource implements Source
 		$this->queryBuilder
 			->setFirstResult($offset)
 			->setMaxResults($limit);
+	}
+
+
+	public function totalCount(): int
+	{
+		$source = clone $this->queryBuilder;
+		$source->select(sprintf('COUNT(DISTINCT %s)', $this->getPrimaryField()));
+		$source->resetDQLPart('orderBy');
+		$source->resetDQLPart('groupBy');
+		$source->setFirstResult(0);
+		$source->setMaxResults(null);
+
+		// todo: this needs to be cached
+		return (int) $source->getQuery()
+			->getSingleScalarResult();
+	}
+
+
+	/**
+	 * @return Items
+	 */
+	protected function fetchItems(): iterable
+	{
+		$this->queryBuilder->addGroupBy($this->getPrimaryField());
+
+		/** @var Items */
+		return $this->getQuery()->getResult();
 	}
 
 

@@ -12,12 +12,9 @@ use JuniWalk\DataTable\Exceptions\SourceUnknownException;
 use JuniWalk\DataTable\Source;
 use JuniWalk\DataTable\SourceFactory;
 
-/**
- * @phpstan-import-type Items from Source
- */
 trait Sources
 {
-	private Source $source;
+	protected Source $source;
 
 
 	public function setSource(Source $source): self
@@ -27,23 +24,55 @@ trait Sources
 	}
 
 
-	public function getSource(): ?Source
+	/**
+	 * @throws SourceMissingException
+	 */
+	public function getSource(): Source
 	{
-		return $this->source ?? null;
+		if (!isset($this->source)) {
+			// todo: give more details with the exception
+			throw new SourceMissingException;
+		}
+
+		return $this->source;
+	}
+
+
+	/**
+	 * @throws SourceMissingException
+	 */
+	public function addLoadCallback(callable $callback): self
+	{
+		if (!isset($this->source)) {
+			// todo: give more details with the exception
+			throw new SourceMissingException;
+		}
+
+		$this->source->when('load', $callback);
+		return $this;
+	}
+
+
+	/**
+	 * @throws SourceMissingException
+	 */
+	public function addItemCallback(callable $callback): self
+	{
+		if (!isset($this->source)) {
+			// todo: give more details with the exception
+			throw new SourceMissingException;
+		}
+
+		$this->source->when('item', $callback);
+		return $this;
 	}
 
 
 	protected function createModel(): mixed { return null; }
 	protected function createTable(): void {}
 
-	/**
-	 * @param Items $items
-	 */
-	protected function onDataLoaded(array $items): void {}
-
 
 	/**
-	 * @throws SourceMissingException
 	 * @throws SourceUnknownException
 	 */
 	protected function validateSources(): void
@@ -53,12 +82,5 @@ trait Sources
 		}
 
 		$this->createTable();
-
-		if (!isset($this->source)) {
-			// todo: give more details with the exception
-			throw new SourceMissingException;
-		}
-
-		$this->when('loaded', $this->onDataLoaded(...));
 	}
 }
