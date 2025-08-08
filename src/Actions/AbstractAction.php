@@ -17,6 +17,7 @@ use Nette\Utils\Html;
 abstract class AbstractAction extends Control implements Action
 {
 	use Traits\Attributes;
+	use Traits\Confirmation;
 	use Traits\Icons;
 
 	protected Closure|bool $allowCondition;
@@ -82,6 +83,10 @@ abstract class AbstractAction extends Control implements Action
 		$button = Html::el($this->tag, $this->attributes);
 
 		// todo: handle translation
+
+		if ($confirm = $this->createConfirm($row)) {
+			$button->setAttribute('data-confirm', $confirm);
+		}
 
 		if ($icon = $this->createIcon()) {
 			$button->addHtml($icon);
