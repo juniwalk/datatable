@@ -291,16 +291,13 @@ trait Filters
 			$column->detectFilteredStatus();
 		}
 
-		// todo: add icon "fas fa-filter fa-fw"
-		// todo: add addToolbarButton which wont require href attribute
-		$this->addToolbarButton('__filter_toggle', '[Y] Filtrace', '__filters')
-			->setClass('btn btn-sm btn-info collapsed')
-			->setAttribute('data-bs-toggle', 'collapse')
-			->setAttribute('data-bs-target', '#'.$this->getSnippetId('filters'));
+		$this->addToolbarButton('__filter_toggle', 'Filtrace', '__filters')
+			->setIcon('fa-filter')->setClass('btn btn-sm btn-info collapsed')
+			->setAttribute('data-bs-target', '#'.$this->getSnippetId('filters'))
+			->setAttribute('data-bs-toggle', 'collapse');
 
-		// todo: add icon "fas fa-times fa-fw"
-		$this->addToolbarLink('__filter_clear', '[X]', '__filters')->setLink('clear!')
-			->setClass('btn btn-sm btn-info')
+		$this->addToolbarLink('__filter_clear', '', '__filters')->setLink('clear!')
+			->setIcon('fa-times')->setClass('btn btn-sm btn-info')
 			->setAttribute('data-bs-toggle', 'tooltip')
 			->setTitle('Zrušit filtraci');
 

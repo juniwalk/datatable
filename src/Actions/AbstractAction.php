@@ -17,6 +17,7 @@ use Nette\Utils\Html;
 abstract class AbstractAction extends Control implements Action
 {
 	use Traits\Attributes;
+	use Traits\Icons;
 
 	protected Closure|bool $allowCondition;
 	protected string $tag = 'span';
@@ -81,7 +82,11 @@ abstract class AbstractAction extends Control implements Action
 		$button = Html::el($this->tag, $this->attributes);
 
 		// todo: handle translation
-		// todo: handle icons
+
+		if ($icon = $this->createIcon()) {
+			$button->addHtml($icon);
+			$button->addText(' ');
+		}
 
 		$button->addText($this->label);
 
