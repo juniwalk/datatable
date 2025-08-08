@@ -87,7 +87,7 @@ class Table extends Control implements EventHandler
 		// ! first filter, then sort and then limit
 		$source->filter($filters);	// $source->filterById($listOfRowsToRedraw);	// ? choose which method to call
 		$source->sort($columns);
-		$source->limit($this->page, $this->getCurrentLimit());
+		$source->limit($this->getOffset(), $this->getCurrentLimit());
 
 		// bdump($this);
 

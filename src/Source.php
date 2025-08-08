@@ -28,7 +28,7 @@ interface Source extends EventHandler
 	 * @param array<string, Column> $columns
 	 */
 	public function sort(array $columns): void;
-	public function limit(int $page, int $limit): void;
+	public function limit(int $offset, int $limit): void;
 
 	/**
 	 * @return Row[]

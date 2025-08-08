@@ -137,13 +137,13 @@ class ArraySource extends AbstractSource
 	}
 
 
-	public function limit(int $page, int $limit): void
+	public function limit(int $offset, int $limit): void
 	{
 		if ($limit === 0) {
 			return;
 		}
 
-		$this->items = array_slice($this->items, $limit * ($page - 1), $limit, true);
+		$this->items = array_slice($this->items, $offset, $limit, true);
 	}
 
 

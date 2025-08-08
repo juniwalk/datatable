@@ -119,13 +119,11 @@ class DoctrineSource extends AbstractSource
 	}
 
 
-	public function limit(int $page, int $limit): void
+	public function limit(int $offset, int $limit): void
 	{
 		if ($limit === 0) {
 			return;
 		}
-
-		$offset = $limit * ($page - 1);
 
 		$this->queryBuilder
 			->setFirstResult($offset)
