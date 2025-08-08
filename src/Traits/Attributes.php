@@ -12,13 +12,13 @@ use Nette\MemberAccessException;
 use Nette\Utils\ObjectHelpers;
 
 /**
- * @method static setClass(string ...$value)
- * @method static addClass(string ...$value)
+ * @method static setClass(?string ...$value)
+ * @method static addClass(?string ...$value)
  * @method ?string getClass()
  * @method bool hasClass(string ...$value)
  * @method static removeClass(string ...$value)
  * 
- * @method static setTitle(string $value)
+ * @method static setTitle(?string $value)
  * @method ?string getTitle()
  * @method bool hasTitle()
  */
@@ -50,14 +50,14 @@ trait Attributes
 	}
 
 
-	public function setAttribute(string $name, string ...$value): static
+	public function setAttribute(string $name, ?string ...$value): static
 	{
 		$this->attributes[$name] = implode(' ', $value);
 		return $this;
 	}
 
 
-	public function addAttribute(string $name, string ...$value): static
+	public function addAttribute(string $name, ?string ...$value): static
 	{
 		if ($values = $this->attributes[$name] ?? null) {
 			$value = [$values, ...$value];
