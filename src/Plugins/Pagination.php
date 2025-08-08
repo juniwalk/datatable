@@ -52,6 +52,19 @@ trait Pagination
 	}
 
 
+	public function getPage(): int
+	{
+		return $this->page;
+	}
+
+
+	public function getOffset(): int
+	{
+		$limit = $this->getCurrentLimit();
+		return $limit * ($this->page - 1);
+	}
+
+
 	/**
 	 * @param  int[] $limits
 	 * @throws InvalidStateException
@@ -72,6 +85,15 @@ trait Pagination
 		}
 
 		return $this;
+	}
+
+
+	/**
+	 * @return int[]
+	 */
+	public function getLimits(): array
+	{
+		return $this->limits;
 	}
 
 
@@ -113,9 +135,7 @@ trait Pagination
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/../templates/table-pages.latte');
 
-		if (!isset($this->source)) {
-			throw new \Exception('No source set');
-		}
+		$source = $this->getSource();
 
 		// todo: do not allow showing all rows with indetermined paginator
 		if ($this->limit === 0) {
@@ -126,7 +146,7 @@ trait Pagination
 		$pages->setPage($this->page);
 		$pages->setItemsPerPage($this->getCurrentLimit());
 		// todo: allow indetermined pagination when count is not known
-		$pages->setItemCount($this->source->totalCount());
+		$pages->setItemCount($source->totalCount());
 
 		$template->add('steps', $this->createSteps($pages));
 		$template->add('pages', $pages);
@@ -142,9 +162,19 @@ trait Pagination
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/../templates/table-limiter.latte');
 
-		// todo: add some numbers for the overview field
-		$template->add('limit', $this->getCurrentLimit());
+		$source = $this->getSource();
+
+		$limit = $this->getCurrentLimit();
+		$count = $source->totalCount();
+
+		$offsetStart = $this->getOffset();
+		$offsetEnd = $offsetStart + $limit;
+
 		$template->add('limits', $this->limits);
+		$template->add('limit', $limit);
+		$template->add('offsetStart', $offsetStart);
+		$template->add('offsetEnd', $offsetEnd ?: $count);
+		$template->add('count', $count);
 
 		$template->render();
 	}
