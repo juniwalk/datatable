@@ -30,6 +30,7 @@ class DoctrineSource implements Source
 
 	protected int $placeholder;
 
+
 	public function __construct(
 		protected QueryBuilder $queryBuilder,
 		protected string $primaryKey = 'id',
@@ -67,9 +68,11 @@ class DoctrineSource implements Source
 	public function totalCount(): int
 	{
 		$source = clone $this->queryBuilder;
-		$source->select(sprintf('COUNT(%s)', $this->getPrimaryField()));
+		$source->select(sprintf('COUNT(DISTINCT %s)', $this->getPrimaryField()));
 		$source->resetDQLPart('orderBy');
+		$source->resetDQLPart('groupBy');
 		$source->setFirstResult(0);
+		$source->setMaxResults(null);
 
 		// todo: this needs to be cached
 		return (int) $source->getQuery()
@@ -77,15 +80,37 @@ class DoctrineSource implements Source
 	}
 
 
+	// todo: add method getRows() - used by the Table to get Row($item, $source) instances
+	// todo: getRows method could be inside AbstractSource as a final method for all sources to use
+	// todo: this method should call internally fetchItems and create Row instances and call events
+
+
+	// todo: this could be made protected/private
 	/**
 	 * @return Items
 	 */
 	public function fetchItems(): iterable
 	{
-		// todo: handle onDataLoaded event in the Source
+		$this->queryBuilder->addGroupBy($this->getPrimaryField());
 
 		/** @var Items */
 		return $this->getQuery()->getResult();
+
+		// $items = $source->fetchItems();
+		// $rows =  [];
+
+		// // todo: handle onDataLoaded event
+		// $this->trigger('loaded', $items);
+
+		// foreach ($items as $item) {
+		// 	$row = new Row($item, $this);
+		// 	$rows[$row->getId()] = $row;
+
+		// 	// todo: handle onRow event
+		// 	$this->trigger('row', $item, $row);
+		// }
+
+		// return $rows;
 	}
 
 
@@ -112,14 +137,14 @@ class DoctrineSource implements Source
 	}
 
 
-	public function filterById(int|string ...$rows): void
+	public function filterById(int|string ...$items): void
 	{
 		$this->queryBuilder->setParameters(new ArrayCollection);
 		$this->queryBuilder->resetDQLPart('where');
 
 		$field = $this->getPrimaryField();
 		$this->queryBuilder->where($field.' IN(:list)')
-			->setParameter('list', $rows);
+			->setParameter('list', $items);
 	}
 
 

@@ -84,6 +84,7 @@ class Table extends Control implements EventHandler
 		$columns = $this->getColumns();
 		$filters = $this->getFilters();
 
+		// todo: add some argumens like $template
 		$this->trigger('render');
 
 		// ! first filter, then sort and then limit
