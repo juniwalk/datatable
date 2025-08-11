@@ -172,7 +172,7 @@ trait Pagination
 
 		$template->add('limits', $this->limits);
 		$template->add('limit', $limit);
-		$template->add('offsetStart', $offsetStart);
+		$template->add('offsetStart', $offsetStart + 1);
 		$template->add('offsetEnd', $offsetEnd ?: $count);
 		$template->add('count', $count);
 

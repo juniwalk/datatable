@@ -1,10 +1,11 @@
+{var $all = ('datatable.limit.all'|translate)}
 <div class="input-group input-group-sm">
-	<span class="input-group-text text-secondary">Záznamů: {$offsetStart + 1} - {$offsetEnd} z {$count}</span>
+	<span class="input-group-text text-secondary">{_datatable.limit.rows, [from: $offsetStart, to: $offsetEnd, count: $count]}</span>
 	<div class="dropup">
-		<button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-start-0" type="button" data-bs-toggle="dropdown">Limit: <strong>{$limit ?: Vše}</strong></button>
+		<button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-start-0" type="button" data-bs-toggle="dropdown">{_datatable.limit.label}: <strong>{$limit ?: $all}</strong></button>
 		<ul class="dropdown-menu dropdown-menu-end" style="min-width: auto" n:inner-foreach="$limits as $_limit">
 			<li n:if="$_limit === 0"><hr class="dropdown-divider"></li>
-			<li><a n:href="limit! $_limit" n:class="dropdown-item, $_limit === $limit ? active">{$_limit ?: Vše}</a></li>
+			<li><a n:href="limit! $_limit" n:class="dropdown-item, $_limit === $limit ? active">{$_limit ?: $all}</a></li>
 		</ul>
 	</div>
 </div>

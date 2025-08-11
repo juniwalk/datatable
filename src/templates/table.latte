@@ -26,7 +26,9 @@
 
 			</div>
 			<div class="col d-flex align-items-end">
-				<button n:name="submit" type="submit" class="btn btn-sm btn-info"><i class="fas fa-filter fa-fw"></i> Filtrovat</button>
+				<button n:name="submit" type="submit" class="btn btn-sm btn-info">
+					<i class="fas fa-filter fa-fw"></i> {_datatable.filter.button|noescape}
+				</button>
 			</div>
 		</div>
 
@@ -62,7 +64,7 @@
 
 			<tr n:if="empty($rows)">
 				<td class="col-no-rows py-3" colspan="{sizeof($columns)}">
-					<em class="text-secondary">Nenalezeny žádné záznamy. Můžete <a n:href="clear!">zrušit filtraci</a>.</em>
+					<em class="text-secondary">{_datatable.table.empty} <a n:href="clear!" n:if="$control->shouldShowFilters()"><i class="fas fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.cancel}</a></em>
 				</td>
 			</tr>
 
@@ -83,7 +85,7 @@
 		<div class="d-flex gap-2">
 
 			<a n:href="clear!" class="btn btn-sm btn-danger text-nowrap" n:if="$control->shouldShowFilters()">
-				<i class="fas fa-filter-circle-xmark fa-fw"></i> Zrušit filtraci
+				<i class="fas fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.cancel}
 			</a>
 
 			{control $control:limiter}

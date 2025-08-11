@@ -291,7 +291,7 @@ trait Filters
 			$column->detectFilteredStatus();
 		}
 
-		$this->addToolbarButton('__filter_toggle', 'Filtrace', '__filters')
+		$this->addToolbarButton('__filter_toggle', 'datatable.filter.button', '__filters')
 			->setIcon('fa-filter')->setClass('btn btn-sm btn-info collapsed')
 			->setAttribute('data-bs-target', '#'.$this->getSnippetId('filters'))
 			->setAttribute('data-bs-toggle', 'collapse');
@@ -299,9 +299,8 @@ trait Filters
 		$this->addToolbarLink('__filter_clear', '', '__filters')->setLink('clear!')
 			->setIcon('fa-times')->setClass('btn btn-sm btn-info')
 			->setAttribute('data-bs-toggle', 'tooltip')
-			->setTitle('Zrušit filtraci');
+			->setTitle('datatable.filter.cancel');
 
-		// $this->allowToolbarAction('__filter_toggle', !empty($filters));
 		$this->allowToolbarAction('__filter_clear', $this->shouldShowFilters());
 	}
 

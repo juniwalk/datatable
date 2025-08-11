@@ -9,15 +9,19 @@ namespace JuniWalk\DataTable\Actions;
 
 use Closure;
 use JuniWalk\DataTable\Action;
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Row;
+use JuniWalk\DataTable\Table;
 use JuniWalk\DataTable\Traits;
 use Nette\Application\UI\Control;
+use Nette\ComponentModel\IContainer;
 use Nette\Utils\Html;
 
 abstract class AbstractAction extends Control implements Action
 {
 	use Traits\Attributes;
 	use Traits\Confirmation;
+	use Traits\Translation;
 	use Traits\Icons;
 
 	protected Closure|bool $allowCondition;
@@ -82,8 +86,6 @@ abstract class AbstractAction extends Control implements Action
 	{
 		$button = Html::el($this->tag, $this->attributes);
 
-		// todo: handle translation
-
 		if ($confirm = $this->createConfirm($row)) {
 			$button->setAttribute('data-confirm', $confirm);
 		}
@@ -93,12 +95,33 @@ abstract class AbstractAction extends Control implements Action
 			$button->addText(' ');
 		}
 
-		$button->addText($this->label);
+		$label = $this->translate($this->label);
+		$button->addText($label);
+
+		if ($title = $button->getTitle()) {
+			$button->setTitle($this->translate($title));
+		}
 
 		if ($return === true) {
 			return $button;
 		}
 
 		echo $button; return null;
+	}
+
+
+	/**
+	 * @throws InvalidStateException
+	 */
+	protected function validateParent(IContainer $container): void
+	{
+		$table = $container->getParent();
+
+		if (!$table instanceof Table) {
+			throw InvalidStateException::parentRequired(Table::class, $this);
+		}
+
+		$this->setTranslator($table->getTranslator());
+		parent::validateParent($container);
 	}
 }

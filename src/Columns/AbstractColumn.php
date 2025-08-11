@@ -24,6 +24,7 @@ use Stringable;
 abstract class AbstractColumn extends Control implements Column
 {
 	use Traits\Attributes;
+	use Traits\Translation;
 
 	protected Align $align = Align::Left;
 
@@ -100,7 +101,7 @@ abstract class AbstractColumn extends Control implements Column
 
 	public function renderLabel(): void
 	{
-		echo $this->label;
+		echo $this->translate($this->label);
 	}
 
 
@@ -123,6 +124,7 @@ abstract class AbstractColumn extends Control implements Column
 			$this->addAttribute('class', $this->align->class());
 		});
 
+		$this->setTranslator($table->getTranslator());
 		parent::validateParent($container);
 	}
 }

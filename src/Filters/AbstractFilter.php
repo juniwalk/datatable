@@ -11,15 +11,18 @@ use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Filter;
-use JuniWalk\DataTable\Traits\LinkHandler;
+use JuniWalk\DataTable\Table;
+use JuniWalk\DataTable\Traits;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Strings;
 use Nette\Application\UI\Control;
+use Nette\ComponentModel\IContainer;
 use Nette\Application\UI\Form;
 
 abstract class AbstractFilter extends Control implements Filter
 {
-	use LinkHandler;
+	use Traits\LinkHandler;
+	use Traits\Translation;
 
 	protected bool $isFiltered = false;
 	protected mixed $value;
@@ -110,11 +113,27 @@ abstract class AbstractFilter extends Control implements Filter
 
 		$template->add('isFiltered', $this->isFiltered);
 		$template->add('clearLink', $clearLink);
-		$template->add('label', $this->label);
+		$template->add('label', $this->translate($this->label));
 		$template->add('name', $this->fieldName());
 		$template->add('input', $input);
 
 		$template->render();
+	}
+
+
+	/**
+	 * @throws InvalidStateException
+	 */
+	protected function validateParent(IContainer $container): void
+	{
+		$table = $container->getParent();
+
+		if (!$table instanceof Table) {
+			throw InvalidStateException::parentRequired(Table::class, $this);
+		}
+
+		$this->setTranslator($table->getTranslator());
+		parent::validateParent($container);
 	}
 
 

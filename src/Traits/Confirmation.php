@@ -12,6 +12,8 @@ use Nette\Utils\Strings;
 
 trait Confirmation
 {
+	use Translation;
+
 	protected ?string $confirmMessage = null;
 
 
@@ -34,7 +36,7 @@ trait Confirmation
 			return null;
 		}
 
-		// todo: translate
+		$message = (string) $this->translate($message);
 
 		if (isset($row)) {
 			$message = Strings::replace(
@@ -43,6 +45,6 @@ trait Confirmation
 			);
 		}
 
-		return $message;
+		return $message ?: null;
 	}
 }

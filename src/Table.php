@@ -9,6 +9,7 @@ namespace JuniWalk\DataTable;
 
 use JuniWalk\DataTable\Enums\Storage;
 use JuniWalk\DataTable\Exceptions\SourceMissingException;
+use JuniWalk\DataTable\Traits\Translation;
 use JuniWalk\Utils\Interfaces\EventHandler;
 use JuniWalk\Utils\Traits\Events;
 use Nette\Application\UI\Control;
@@ -18,7 +19,7 @@ use Nette\ComponentModel\IContainer;
 
 class Table extends Control implements EventHandler
 {
-	use Events;
+	use Events, Translation;
 
 	use Plugins\Actions;
 	use Plugins\Toolbar;
@@ -72,7 +73,7 @@ class Table extends Control implements EventHandler
 		$template->add('controlName', $this->getUniqueId());
 
 		if ($actions = $this->getActions()) {
-			$this->addColumnAction('actions', 'Akce', $actions);
+			$this->addColumnAction('actions', 'datatable.column.action', $actions);
 		}
 
 		$toolbar = $this->getToolbarActionsGrouped();

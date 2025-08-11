@@ -1,0 +1,24 @@
+
+#
+# @copyright Martin Procházka (c) 2025
+# @license   MIT License
+#
+
+table:
+	empty: 'Nenalezeny žádné záznamy.'
+
+column:
+	action: 'Akce'
+
+page:
+	prev: 'Předchozí'
+	next: 'Další'
+
+limit:
+	rows: 'Záznamy: %from% - %to% z %count%'
+	label: 'Limit'
+	all: 'Vše'
+
+filter:
+	button: 'Filtrovat'
+	cancel: 'Zrušit filtraci'
