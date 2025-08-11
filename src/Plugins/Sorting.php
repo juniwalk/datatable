@@ -19,10 +19,10 @@ trait Sorting
 	public array $sort = [];
 
 	/** @var array<string, Sort> */
-	private array $sortDefault = [];
+	protected array $sortDefault = [];
 
-	private bool $isSortable = false;
-	private bool $isSortMultiple = false;
+	protected bool $isSortable = false;
+	protected bool $isSortMultiple = false;
 
 
 	/**

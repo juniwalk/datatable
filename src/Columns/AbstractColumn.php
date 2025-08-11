@@ -111,10 +111,8 @@ abstract class AbstractColumn extends Control implements Column
 	/**
 	 * @throws InvalidStateException
 	 */
-	protected function validateParent(IContainer $container): void
+	protected function validateParent(IContainer $table): void
 	{
-		$table = $container->getParent();
-
 		if (!$table instanceof Table) {
 			throw InvalidStateException::parentRequired(Table::class, $this);
 		}
@@ -125,6 +123,6 @@ abstract class AbstractColumn extends Control implements Column
 		});
 
 		$this->setTranslator($table->getTranslator());
-		parent::validateParent($container);
+		parent::validateParent($table);
 	}
 }

@@ -12,11 +12,13 @@ use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Actions\ButtonAction;
 use JuniWalk\DataTable\Actions\CallbackAction;
 use JuniWalk\DataTable\Actions\LinkAction;
-use JuniWalk\DataTable\Container;
-use JuniWalk\DataTable\Enums\Storage;
 
 trait Toolbar
 {
+	/** @var array<string, Action> */
+	protected array $toolbar = [];
+
+
 	public function addToolbarLink(string $name, string $label, ?string $group = null): LinkAction
 	{
 		// todo: allow $name to be signal (clear unwanted characters for $name)
@@ -47,8 +49,10 @@ trait Toolbar
 	 */
 	public function addToolbarAction(string $name, Action $action): Action
 	{
-		/** @var T */
-		return $this->__toolbar()->add($name, $action);
+		$this->addComponent($action, $name);
+		$this->toolbar[$name] = $action;
+
+		return $action;
 	}
 
 
@@ -57,7 +61,11 @@ trait Toolbar
 	 */
 	public function getToolbarAction(string $name, bool $require = true): ?Action
 	{
-		return $this->__toolbar()->get($name, $require);
+		if ($require && !isset($this->toolbar[$name])) {
+			throw new \Exception;
+		}
+
+		return $this->toolbar[$name] ?? null;
 	}
 
 
@@ -66,7 +74,7 @@ trait Toolbar
 	 */
 	public function getToolbarActions(): array
 	{
-		return $this->__toolbar()->list();
+		return $this->toolbar;
 	}
 
 
@@ -100,7 +108,12 @@ trait Toolbar
 
 	public function removeToolbarAction(string $name): void
 	{
-		$this->__toolbar()->remove($name);
+		if (!$action = $this->getToolbarAction($name)) {
+			return;
+		}
+
+		$this->removeComponent($action);
+		unset($this->actions[$name]);
 	}
 
 
@@ -108,14 +121,5 @@ trait Toolbar
 	{
 		$this->getToolbarAction($name)->setAllowCondition($condition);
 		return $this;
-	}
-
-
-	/**
-	 * @return Container<Action>
-	 */
-	private function __toolbar(): Container
-	{
-		return $this->getComponent(Storage::Toolbar->value);
 	}
 }

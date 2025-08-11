@@ -10,9 +10,7 @@ namespace JuniWalk\DataTable\Plugins;
 use BackedEnum;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
-use JuniWalk\DataTable\Container;
 use JuniWalk\DataTable\Enums\Option;
-use JuniWalk\DataTable\Enums\Storage;
 use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filter;
@@ -30,10 +28,14 @@ trait Filters
 	public array $filter = [];
 
 	/** @var array<string, scalar> */
-	private array $filterDefault = [];
+	protected array $filterDefault = [];
 
-	private ?bool $isFilterShown = null;
-	private ?int $filterColumnCount = null;
+	protected ?bool $isFilterShown = null;
+	protected ?int $filterColumnCount = null;
+
+
+	/** @var array<string, Filter> */
+	protected array $filters = [];
 
 
 	public function handleClear(?string $column = null): void
@@ -133,10 +135,10 @@ trait Filters
 
 		$columns = array_filter($columns, fn($x) => $x instanceof Column);
 
-		/** @var T */
-		$filter = $this->__filters()->add($name, $filter);
+		$filter->setParent($this, $name);
 		$filter->setColumns(...$columns);
 
+		$this->filters[$name] = $filter;
 		return $filter;
 	}
 
@@ -146,7 +148,11 @@ trait Filters
 	 */
 	public function getFilter(string $name, bool $require = true): ?Filter
 	{
-		return $this->__filters()->get($name, $require);
+		if ($require && !isset($this->filters[$name])) {
+			throw new \Exception;
+		}
+
+		return $this->filters[$name] ?? null;
 	}
 
 
@@ -155,13 +161,14 @@ trait Filters
 	 */
 	public function getFilters(): array
 	{
-		return $this->__filters()->list();
+		return $this->filters;
 	}
 
 
 	public function removeFilter(string $name): void
 	{
-		$this->__filters()->remove($name);
+		$this->getFilter($name, false)?->setParent(null);
+		unset($this->filters[$name]);
 	}
 
 
@@ -302,14 +309,5 @@ trait Filters
 			->setTitle('datatable.filter.cancel');
 
 		$this->allowToolbarAction('__filter_clear', $this->shouldShowFilters());
-	}
-
-
-	/**
-	 * @return Container<Filter>
-	 */
-	private function __filters(): Container
-	{
-		return $this->getComponent(Storage::Filters->value);
 	}
 }

@@ -15,8 +15,6 @@ use JuniWalk\DataTable\Columns\EnumColumn;
 use JuniWalk\DataTable\Columns\LinkColumn;
 use JuniWalk\DataTable\Columns\NumberColumn;
 use JuniWalk\DataTable\Columns\TextColumn;
-use JuniWalk\DataTable\Container;
-use JuniWalk\DataTable\Enums\Storage;
 use JuniWalk\DataTable\Traits\LinkHandler;
 
 /**
@@ -24,6 +22,10 @@ use JuniWalk\DataTable\Traits\LinkHandler;
  */
 trait Columns
 {
+	/** @var array<string, Column> */
+	protected array $columns = [];
+
+
 	public function addColumnText(string $name, string $label): TextColumn
 	{
 		return $this->addColumn($name, new TextColumn($label));
@@ -73,8 +75,10 @@ trait Columns
 	 */
 	public function addColumn(string $name, Column $column): Column
 	{
-		/** @var T */
-		return $this->__columns()->add($name, $column);
+		$column->setParent($this, $name);
+
+		$this->columns[$name] = $column;
+		return $column;
 	}
 
 
@@ -83,7 +87,11 @@ trait Columns
 	 */
 	public function getColumn(string $name, bool $require = true): ?Column
 	{
-		return $this->__columns()->get($name, $require);
+		if ($require && !isset($this->columns[$name])) {
+			throw new \Exception;
+		}
+
+		return $this->columns[$name] ?? null;
 	}
 
 
@@ -92,21 +100,13 @@ trait Columns
 	 */
 	public function getColumns(): array
 	{
-		return $this->__columns()->list();
+		return $this->columns;
 	}
 
 
 	public function removeColumn(string $name): void
 	{
-		$this->__columns()->remove($name);
-	}
-
-
-	/**
-	 * @return Container<Column>
-	 */
-	private function __columns(): Container
-	{
-		return $this->getComponent(Storage::Columns->value);
+		$this->getColumn($name, false)?->setParent(null);
+		unset($this->columns[$name]);
 	}
 }

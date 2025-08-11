@@ -18,10 +18,10 @@ trait Pagination
 
 	#[Persistent]
 	public ?int $limit = null;
-	private ?int $limitDefault = null;
+	protected ?int $limitDefault = null;
 
 	/** @var int[] */
-	private array $limits = [10, 20, 50];
+	protected array $limits = [10, 20, 50];
 
 
 	public function handlePage(int $page): void

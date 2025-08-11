@@ -13,10 +13,10 @@ use Nette\Http\SessionSection;
 
 trait Session
 {
-	private SessionSection $session;
+	protected SessionSection $session;
 
-	// private bool $rememberFilters = true;
-	// private bool $rememberSorting = true;
+	// protected bool $rememberFilters = true;
+	// protected bool $rememberSorting = true;
 
 
 	public function getSessionName(): string

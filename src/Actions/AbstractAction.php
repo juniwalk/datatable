@@ -113,15 +113,13 @@ abstract class AbstractAction extends Control implements Action
 	/**
 	 * @throws InvalidStateException
 	 */
-	protected function validateParent(IContainer $container): void
+	protected function validateParent(IContainer $table): void
 	{
-		$table = $container->getParent();
-
 		if (!$table instanceof Table) {
 			throw InvalidStateException::parentRequired(Table::class, $this);
 		}
 
 		$this->setTranslator($table->getTranslator());
-		parent::validateParent($container);
+		parent::validateParent($table);
 	}
 }

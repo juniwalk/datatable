@@ -7,27 +7,25 @@
 
 namespace JuniWalk\DataTable;
 
-use JuniWalk\DataTable\Enums\Storage;
 use JuniWalk\DataTable\Exceptions\SourceMissingException;
 use JuniWalk\DataTable\Traits\Translation;
 use JuniWalk\Utils\Interfaces\EventHandler;
 use JuniWalk\Utils\Traits\Events;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
-use Nette\ComponentModel\IComponent;
 use Nette\ComponentModel\IContainer;
 
 class Table extends Control implements EventHandler
 {
 	use Events, Translation;
 
-	use Plugins\Actions;
-	use Plugins\Toolbar;
+	use Plugins\Session;
+	use Plugins\Sources;
 	use Plugins\Columns;
 	use Plugins\Filters;
+	use Plugins\Actions;
+	use Plugins\Toolbar;
 	use Plugins\Sorting;
-	use Plugins\Sources;
-	use Plugins\Session;
 	use Plugins\Pagination;
 
 
@@ -73,7 +71,7 @@ class Table extends Control implements EventHandler
 		$template->add('controlName', $this->getUniqueId());
 
 		if ($actions = $this->getActions()) {
-			$this->addColumnAction('actions', 'datatable.column.action', $actions);
+			$this->addColumnAction('__actions', 'datatable.column.action', $actions);
 		}
 
 		$toolbar = $this->getToolbarActionsGrouped();
@@ -112,15 +110,5 @@ class Table extends Control implements EventHandler
 		$this->monitor(Presenter::class, fn() => $this->validateSources());
 		$this->monitor(Presenter::class, fn() => $this->validateFilters());
 		$this->monitor(Presenter::class, fn() => $this->validateSorting());
-	}
-
-
-	protected function createComponent(string $name): ?IComponent
-	{
-		if (Storage::tryFrom($name)) {
-			return new Container;
-		}
-
-		return parent::createComponent($name);
 	}
 }

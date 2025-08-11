@@ -8,14 +8,13 @@
 namespace JuniWalk\DataTable\Actions;
 
 use JuniWalk\DataTable\Row;
-use JuniWalk\DataTable\Traits\LinkHandler;
 use JuniWalk\Utils\Interfaces\EventHandler;
 use JuniWalk\Utils\Traits\Events;
 use Nette\Utils\Html;
 
 class CallbackAction extends AbstractAction implements EventHandler
 {
-	use Events, LinkHandler;
+	use Events;
 
 	protected string $tag = 'a';
 
@@ -44,7 +43,7 @@ class CallbackAction extends AbstractAction implements EventHandler
 
 	public function render(?Row $row = null, bool $return = false): ?Html
 	{
-		$link = $this->createLink('action!', [
+		$link = $this->link('action!', [
 			'id' => $row?->getId(),
 		]);
 

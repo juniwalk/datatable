@@ -11,11 +11,13 @@ use Closure;
 use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Actions\CallbackAction;
 use JuniWalk\DataTable\Actions\LinkAction;
-use JuniWalk\DataTable\Container;
-use JuniWalk\DataTable\Enums\Storage;
 
 trait Actions
 {
+	/** @var array<string, Action> */
+	protected array $actions = [];
+
+
 	public function addActionLink(string $name, string $label): LinkAction
 	{
 		// todo: allow $name to be signal (clear unwanted characters for $name)
@@ -39,8 +41,10 @@ trait Actions
 	 */
 	public function addAction(string $name, Action $action): Action
 	{
-		/** @var T */
-		return $this->__actions()->add($name, $action);
+		$this->addComponent($action, $name);
+		$this->actions[$name] = $action;
+
+		return $action;
 	}
 
 
@@ -49,7 +53,11 @@ trait Actions
 	 */
 	public function getAction(string $name, bool $require = true): ?Action
 	{
-		return $this->__actions()->get($name, $require);
+		if ($require && !isset($this->actions[$name])) {
+			throw new \Exception;
+		}
+
+		return $this->actions[$name] ?? null;
 	}
 
 
@@ -58,13 +66,18 @@ trait Actions
 	 */
 	public function getActions(): array
 	{
-		return $this->__actions()->list();
+		return $this->actions;
 	}
 
 
 	public function removeAction(string $name): void
 	{
-		$this->__actions()->remove($name);
+		if (!$action = $this->getAction($name)) {
+			return;
+		}
+
+		$this->removeComponent($action);
+		unset($this->actions[$name]);
 	}
 
 
@@ -72,14 +85,5 @@ trait Actions
 	{
 		$this->getAction($name)->setAllowCondition($condition);
 		return $this;
-	}
-
-
-	/**
-	 * @return Container<Action>
-	 */
-	private function __actions(): Container
-	{
-		return $this->getComponent(Storage::Actions->value);
 	}
 }
