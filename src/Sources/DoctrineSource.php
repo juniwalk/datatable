@@ -24,10 +24,11 @@ use JuniWalk\DataTable\Source;
  */
 class DoctrineSource extends AbstractSource
 {
+	protected int $placeholder;
+	protected int $count;
+
 	/** @var array<string, mixed> */
 	protected array $hints = [];
-
-	protected int $placeholder;
 
 
 	public function __construct(
@@ -53,16 +54,7 @@ class DoctrineSource extends AbstractSource
 
 	public function getCount(): int
 	{
-		$source = clone $this->queryBuilder;
-		$source->select(sprintf('COUNT(DISTINCT %s)', $this->getPrimaryField()));
-		$source->resetDQLPart('orderBy');
-		$source->resetDQLPart('groupBy');
-		$source->setFirstResult(0);
-		$source->setMaxResults(null);
-
-		// todo: this needs to be cached
-		return (int) $source->getQuery()
-			->getSingleScalarResult();
+		return $this->count ??= (int) $this->getQueryCount()->getSingleScalarResult();
 	}
 
 
@@ -163,6 +155,25 @@ class DoctrineSource extends AbstractSource
 	protected function getQuery(): Query
 	{
 		$query = $this->queryBuilder->getQuery();
+
+		foreach ($this->hints as $name => $value) {
+			$query->setHint($name, $value);
+		}
+
+		return $query;
+	}
+
+
+	protected function getQueryCount(): Query
+	{
+		$count = clone $this->queryBuilder;
+		$count->select(sprintf('COUNT(DISTINCT %s)', $this->getPrimaryField()));
+		$count->resetDQLPart('orderBy');
+		$count->resetDQLPart('groupBy');
+		$count->setFirstResult(0);
+		$count->setMaxResults(null);
+
+		$query = $count->getQuery();
 
 		foreach ($this->hints as $name => $value) {
 			$query->setHint($name, $value);
