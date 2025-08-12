@@ -21,18 +21,18 @@ use JuniWalk\Utils\Format;
  */
 class ArraySource extends AbstractSource
 {
-	private int $totalCount;
+	protected int $totalCount;
 
 
 	/**
 	 * @param Items $items
 	 */
 	public function __construct(
-		private array $items,
-		private string $primaryKey = 'id',
+		protected array $items,
+		protected string $primaryKey = 'id',
 	) {
-		parent::__construct();
 		$this->totalCount = sizeof($items);
+		parent::__construct();
 	}
 
 
