@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Filters;
 
+use Closure;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
@@ -26,6 +27,8 @@ abstract class AbstractFilter extends Control implements Filter
 
 	protected bool $isFiltered = false;
 	protected mixed $value;
+
+	protected ?Closure $condition = null;
 
 	/** @var array<string, Column> */
 	protected array $columns;
@@ -65,6 +68,29 @@ abstract class AbstractFilter extends Control implements Filter
 	public function hasColumn(string $columnName): bool
 	{
 		return array_key_exists($columnName, $this->columns);
+	}
+
+
+	public function setCondition(?Closure $condition): self
+	{
+		$this->condition = $condition;
+		return $this;
+	}
+
+
+	public function hasCondition(): bool
+	{
+		return isset($this->condition);
+	}
+
+
+	public function applyCondition(mixed $model): bool
+	{
+		if (!$this->isFiltered || !isset($this->condition)) {
+			return false;
+		}
+
+		return (bool) call_user_func($this->condition, $model, $this->value ?? null);
 	}
 
 

@@ -71,9 +71,14 @@ class ArraySource extends AbstractSource
 					continue;
 				}
 
-				// todo: handle custom filter condition
+				$isMatching = match (true) {
+					// ? Returns @true if the query matches field in the model
+					$filter->hasCondition() => $filter->applyCondition($item),
 
-				if (!$this->isMatching($row, $filter)) {
+					default => $this->isMatching($row, $filter),
+				};
+
+				if ($isMatching) {
 					continue;
 				}
 

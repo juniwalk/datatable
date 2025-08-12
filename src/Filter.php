@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable;
 
+use Closure;
 use Nette\Application\UI\Form;
 use Nette\ComponentModel\IComponent;
 
@@ -18,6 +19,10 @@ interface Filter extends IComponent
 	public function getColumns(): array;
 	public function setColumns(Column ...$column): self;
 	public function hasColumn(string $columnName): bool;
+
+	public function setCondition(?Closure $condition): self;
+	public function hasCondition(): bool;
+	public function applyCondition(mixed $model): bool;
 
 	public function setValue(mixed $filter): self;
 	public function getValue(): mixed;

@@ -72,7 +72,9 @@ class DoctrineSource extends AbstractSource
 
 
 	/**
-	 * @param array<string, Filter> $filters
+	 * @param  array<string, Filter> $filters
+	 * @throws FilterValueInvalidException
+	 * @throws FilterUnknownException
 	 */
 	protected function filter(array $filters): void
 	{
@@ -81,9 +83,10 @@ class DoctrineSource extends AbstractSource
 				continue;
 			}
 
-			// todo: handle custom filter condition
-
 			match (true) {
+				// ? Returns @true if the query matches field in the model
+				$filter->hasCondition() => $filter->applyCondition($this->queryBuilder),
+
 				$filter instanceof Filters\DateFilter => $this->applyDateFilter($filter),
 				$filter instanceof Filters\EnumFilter => $this->applyEnumFilter($filter),
 				$filter instanceof Filters\TextFilter => $this->applyTextFilter($filter),
