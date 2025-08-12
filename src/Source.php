@@ -7,32 +7,25 @@
 
 namespace JuniWalk\DataTable;
 
-use JuniWalk\Utils\Interfaces\EventHandler;
-
 /**
  * @phpstan-type Item object|array<string, mixed>
  * @phpstan-type Items array<int|string, Item>
  */
-interface Source extends EventHandler
+interface Source
 {
 	public function setPrimaryKey(string $primaryKey): self;
 	public function getPrimaryKey(): string;
+	public function getCount(): int;
 
 	/**
 	 * @param array<string, Filter> $filters
-	 */
-	public function filter(array $filters): void;
-	public function filterById(int|string ...$rows): void;
-
-	/**
 	 * @param array<string, Column> $columns
+	 * @return Items
 	 */
-	public function sort(array $columns): void;
-	public function limit(int $offset, int $limit): void;
+	public function fetchItems(array $filters, array $columns, int $offset, int $limit): iterable;
 
 	/**
-	 * @return Row[]
+	 * @return Items
 	 */
-	public function fetchRows(): iterable;
-	public function totalCount(): int;
+	public function fetchItem(int|string $id): iterable;
 }

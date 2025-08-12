@@ -7,46 +7,58 @@
 
 namespace JuniWalk\DataTable\Sources;
 
-use JuniWalk\DataTable\Row;
+use JuniWalk\DataTable\Column;
+use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Source;
-use JuniWalk\Utils\Traits\Events;
 
 /**
  * @phpstan-import-type Items from Source
  */
 abstract class AbstractSource implements Source
 {
-	use Events;
-
-
-	public function __construct()
-	{
-		$this->watch('load');
-		$this->watch('item');
-	}
-
-
 	/**
-	 * @return Row[]
+	 * @param array<string, Filter> $filters
+	 * @param array<string, Column> $columns
+	 * @return Items
 	 */
-	public function fetchRows(): iterable
+	public function fetchItems(array $filters, array $columns, int $offset, int $limit): iterable
 	{
-		$items = $this->fetchItems();
-		$rows =  [];
+		// ! first filter, then sort and then limit
+		$this->filter($filters);
+		$this->sort($columns);
+		$this->limit($offset, $limit);
 
-		$this->trigger('load', $items);
-
-		foreach ($items as $item) {
-			$rows[] = $row = new Row($item, $this);
-			$this->trigger('item', $item, $row);
-		}
-
-		return $rows;
+		return $this->getData();
 	}
 
 
 	/**
 	 * @return Items
 	 */
-	abstract protected function fetchItems(): iterable;
+	public function fetchItem(int|string $id): iterable
+	{
+		$this->filterOne($id);
+
+		return $this->getData();
+	}
+
+
+	/**
+	 * @param array<string, Filter> $filters
+	 */
+	abstract protected function filter(array $filters): void;
+	abstract protected function filterOne(int|string $id): void;
+
+
+	/**
+	 * @param array<string, Column> $columns
+	 */
+	abstract protected function sort(array $columns): void;
+	abstract protected function limit(int $offset, int $limit): void;
+
+
+	/**
+	 * @return Items
+	 */
+	abstract protected function getData(): iterable;
 }

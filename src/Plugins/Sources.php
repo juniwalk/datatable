@@ -14,7 +14,16 @@ use JuniWalk\DataTable\SourceFactory;
 
 trait Sources
 {
+	protected int|string|null $redrawItem = null;
+
 	protected Source $source;
+
+
+	public function redrawItem(int|string|null $id): static
+	{
+		$this->redrawItem = $id;
+		return $this;
+	}
 
 
 	public function setSource(Source $source): self
@@ -38,32 +47,16 @@ trait Sources
 	}
 
 
-	/**
-	 * @throws SourceMissingException
-	 */
 	public function addLoadCallback(callable $callback): self
 	{
-		if (!isset($this->source)) {
-			// todo: give more details with the exception
-			throw new SourceMissingException;
-		}
-
-		$this->source->when('load', $callback);
+		$this->when('load', $callback);
 		return $this;
 	}
 
 
-	/**
-	 * @throws SourceMissingException
-	 */
 	public function addItemCallback(callable $callback): self
 	{
-		if (!isset($this->source)) {
-			// todo: give more details with the exception
-			throw new SourceMissingException;
-		}
-
-		$this->source->when('item', $callback);
+		$this->when('item', $callback);
 		return $this;
 	}
 

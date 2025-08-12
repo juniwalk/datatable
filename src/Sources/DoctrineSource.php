@@ -34,7 +34,6 @@ class DoctrineSource extends AbstractSource
 		protected QueryBuilder $queryBuilder,
 		protected string $primaryKey = 'id',
 	) {
-		parent::__construct();
 		$this->placeholder = sizeof($queryBuilder->getParameters());
 	}
 
@@ -49,6 +48,21 @@ class DoctrineSource extends AbstractSource
 	public function getPrimaryKey(): string
 	{
 		return $this->primaryKey;
+	}
+
+
+	public function getCount(): int
+	{
+		$source = clone $this->queryBuilder;
+		$source->select(sprintf('COUNT(DISTINCT %s)', $this->getPrimaryField()));
+		$source->resetDQLPart('orderBy');
+		$source->resetDQLPart('groupBy');
+		$source->setFirstResult(0);
+		$source->setMaxResults(null);
+
+		// todo: this needs to be cached
+		return (int) $source->getQuery()
+			->getSingleScalarResult();
 	}
 
 
@@ -68,7 +82,7 @@ class DoctrineSource extends AbstractSource
 	/**
 	 * @param array<string, Filter> $filters
 	 */
-	public function filter(array $filters): void
+	protected function filter(array $filters): void
 	{
 		foreach ($filters as $filter) {
 			if (!$filter->isFiltered()) {
@@ -88,21 +102,24 @@ class DoctrineSource extends AbstractSource
 	}
 
 
-	public function filterById(int|string ...$items): void
+	protected function filterOne(int|string $id): void
 	{
 		$this->queryBuilder->setParameters(new ArrayCollection);
 		$this->queryBuilder->resetDQLPart('where');
+		$this->placeholder = 0;
 
 		$field = $this->getPrimaryField();
-		$this->queryBuilder->where($field.' IN(:list)')
-			->setParameter('list', $items);
+		$param = $this->getPlaceholder();
+
+		$this->queryBuilder->andWhere("{$field} = :{$param}")
+			->setParameter($param, $id);
 	}
 
 
 	/**
 	 * @param array<string, Column> $columns
 	 */
-	public function sort(array $columns): void
+	protected function sort(array $columns): void
 	{
 		foreach ($columns as $name => $column) {
 			if (!$column instanceof Sortable || !$sort = $column->isSorted()) {
@@ -119,7 +136,7 @@ class DoctrineSource extends AbstractSource
 	}
 
 
-	public function limit(int $offset, int $limit): void
+	protected function limit(int $offset, int $limit): void
 	{
 		if ($limit === 0) {
 			return;
@@ -131,30 +148,33 @@ class DoctrineSource extends AbstractSource
 	}
 
 
-	public function totalCount(): int
-	{
-		$source = clone $this->queryBuilder;
-		$source->select(sprintf('COUNT(DISTINCT %s)', $this->getPrimaryField()));
-		$source->resetDQLPart('orderBy');
-		$source->resetDQLPart('groupBy');
-		$source->setFirstResult(0);
-		$source->setMaxResults(null);
-
-		// todo: this needs to be cached
-		return (int) $source->getQuery()
-			->getSingleScalarResult();
-	}
-
-
 	/**
 	 * @return Items
 	 */
-	protected function fetchItems(): iterable
+	protected function getData(): iterable
 	{
 		$this->queryBuilder->addGroupBy($this->getPrimaryField());
 
 		/** @var Items */
 		return $this->getQuery()->getResult();
+	}
+
+
+	protected function getQuery(): Query
+	{
+		$query = $this->queryBuilder->getQuery();
+
+		foreach ($this->hints as $name => $value) {
+			$query->setHint($name, $value);
+		}
+
+		return $query;
+	}
+
+
+	protected function getPlaceholder(): string
+	{
+		return 'param'.($this->placeholder++);
 	}
 
 
@@ -176,24 +196,6 @@ class DoctrineSource extends AbstractSource
 		}
 
 		return $alias.'.'.$field;
-	}
-
-
-	protected function getQuery(): Query
-	{
-		$query = $this->queryBuilder->getQuery();
-
-		foreach ($this->hints as $name => $value) {
-			$query->setHint($name, $value);
-		}
-
-		return $query;
-	}
-
-
-	protected function getPlaceholder(): string
-	{
-		return 'param'.($this->placeholder++);
 	}
 
 

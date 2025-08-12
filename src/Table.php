@@ -81,16 +81,23 @@ class Table extends Control implements EventHandler
 		// todo: add some argumens like $template
 		$this->trigger('render');
 
-		// todo: move this into Sources plugin [?]
 		$source = $this->getSource();
-		// ! first filter, then sort and then limit
-		$source->filter($filters);	// $source->filterById($listOfRowsToRedraw);	// ? choose which method to call
-		$source->sort($columns);
-		$source->limit($this->getOffset(), $this->getCurrentLimit());
+		$items = !isset($this->redrawItem)
+			? $source->fetchItems($filters, $columns, $this->getOffset(), $this->getCurrentLimit())
+			: $source->fetchItem($this->redrawItem);
+
+		$rows =  [];
+
+		$this->trigger('load', $items);
+
+		foreach ($items as $item) {
+			$rows[] = $row = new Row($item, $source);
+			$this->trigger('item', $item, $row);
+		}
 
 		// bdump($this);
 
-		$template->add('rows', $source->fetchRows());
+		$template->add('rows', $rows);
 		$template->add('toolbar', $toolbar);
 		$template->add('columns', $columns);
 		$template->add('filters', $filters);
@@ -102,6 +109,8 @@ class Table extends Control implements EventHandler
 	protected function validateParent(IContainer $parent): void
 	{
 		$this->watch('render');
+		$this->watch('load');
+		$this->watch('item');
 
 		// ? Parent has to be validated first so the loadState is called
 		parent::validateParent($parent);

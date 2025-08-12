@@ -146,7 +146,7 @@ trait Pagination
 		$pages->setPage($this->page);
 		$pages->setItemsPerPage($this->getCurrentLimit());
 		// todo: allow indetermined pagination when count is not known
-		$pages->setItemCount($source->totalCount());
+		$pages->setItemCount($source->getCount());
 
 		$template->add('steps', $this->createSteps($pages));
 		$template->add('pages', $pages);
@@ -165,7 +165,7 @@ trait Pagination
 		$source = $this->getSource();
 
 		$limit = $this->getCurrentLimit();
-		$count = $source->totalCount();
+		$count = $source->getCount();
 
 		$offsetStart = $this->getOffset();
 		$offsetEnd = $offsetStart + $limit;

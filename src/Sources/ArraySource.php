@@ -21,7 +21,7 @@ use JuniWalk\Utils\Format;
  */
 class ArraySource extends AbstractSource
 {
-	protected int $totalCount;
+	protected int $count;
 
 
 	/**
@@ -31,8 +31,7 @@ class ArraySource extends AbstractSource
 		protected array $items,
 		protected string $primaryKey = 'id',
 	) {
-		$this->totalCount = sizeof($items);
-		parent::__construct();
+		$this->count = sizeof($items);
 	}
 
 
@@ -49,10 +48,16 @@ class ArraySource extends AbstractSource
 	}
 
 
+	public function getCount(): int
+	{
+		return $this->count;
+	}
+
+
 	/**
 	 * @param array<string, Filter> $filters
 	 */
-	public function filter(array $filters): void
+	protected function filter(array $filters): void
 	{
 		if (empty($this->items)) {
 			return;
@@ -76,22 +81,23 @@ class ArraySource extends AbstractSource
 			}
 		}
 
-		$this->totalCount = sizeof($this->items);
+		$this->count = sizeof($this->items);
 	}
 
 
-	public function filterById(int|string ...$rows): void
+	protected function filterOne(int|string $id): void
 	{
 		$items = [];
 
 		foreach ($this->items as $key => $item) {
 			$row = new Row($item, $this);
 
-			if (!in_array($row->getId(), $rows)) {
+			if ($id <> $row->getId()) {
 				continue;
 			}
 
 			$items[$key] = $item;
+			break;
 		}
 
 		$this->items = $items;
@@ -102,7 +108,7 @@ class ArraySource extends AbstractSource
 	 * @param  array<string, Column> $columns
 	 * @throws FieldNotFoundException
 	 */
-	public function sort(array $columns): void
+	protected function sort(array $columns): void
 	{
 		if (empty($this->items)) {
 			return;
@@ -130,7 +136,7 @@ class ArraySource extends AbstractSource
 	}
 
 
-	public function limit(int $offset, int $limit): void
+	protected function limit(int $offset, int $limit): void
 	{
 		if ($limit === 0) {
 			return;
@@ -140,16 +146,10 @@ class ArraySource extends AbstractSource
 	}
 
 
-	public function totalCount(): int
-	{
-		return $this->totalCount;
-	}
-
-
 	/**
 	 * @return Items
 	 */
-	protected function fetchItems(): iterable
+	protected function getData(): iterable
 	{
 		return $this->items;
 	}
