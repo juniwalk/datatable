@@ -113,7 +113,6 @@ class ArraySource extends AbstractSource
 				continue;
 			}
 
-			$field = $column->getField() ?? $name;
 			$type = match (true) {
 				$column instanceof Columns\NumberColumn => SORT_NUMERIC,
 				$column instanceof Columns\DateColumn,
@@ -121,16 +120,10 @@ class ArraySource extends AbstractSource
 				default => SORT_LOCALE_STRING,
 			};
 
-			// todo: try to use Row::getValue to get the keys for sorting (to be more universal)
-			$keys = array_map(
-				fn($key) => Format::stringify($key),
-				array_column($this->items, $field),
-			);
-
-			if (empty($keys)) {
-				// todo: if Row::getValue is used, this is gonna be thrown there instead
-				throw FieldNotFoundException::fromName($field);
-			}
+			$keys = array_map(array: $this->items, callback: function($item) use ($name) {
+				$value = (new Row($item, $this))->getValue($name);
+				return Format::stringify($value);
+			});
 
 			array_multisort($keys, $sort->order(), $type, $this->items);
 		}
