@@ -14,6 +14,8 @@ use JuniWalk\Utils\Traits\Events;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
 use Nette\ComponentModel\IContainer;
+use stdClass;
+use Stringable;
 
 class Table extends Control implements EventHandler
 {
@@ -27,6 +29,21 @@ class Table extends Control implements EventHandler
 	use Plugins\Toolbar;
 	use Plugins\Sorting;
 	use Plugins\Pagination;
+
+	protected Stringable|string|null $caption = null;
+
+
+	public function setCaption(Stringable|string|null $caption): static
+	{
+		$this->caption = $caption;
+		return $this;
+	}
+
+
+	public function getCaption(): Stringable|string|null
+	{
+		return $this->caption;
+	}
 
 
 	/**
@@ -54,7 +71,7 @@ class Table extends Control implements EventHandler
 	}
 
 
-	public function flashMessage(string|\stdClass|\Stringable $message, string $type = 'info'): \stdClass
+	public function flashMessage(Stringable|stdClass|string $message, string $type = 'info'): stdClass
 	{
 		return $this->getPresenter()->flashMessage($message, $type);
 	}
@@ -101,6 +118,7 @@ class Table extends Control implements EventHandler
 		$template->add('toolbar', $toolbar);
 		$template->add('columns', $columns);
 		$template->add('filters', $filters);
+		$template->add('caption', $this->caption);
 
 		$template->render();
 	}
