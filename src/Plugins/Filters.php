@@ -66,14 +66,19 @@ trait Filters
 	}
 
 
+	public function isFiltered(): bool
+	{
+		return !empty($this->filter);
+	}
+
+
 	public function shouldShowFilters(): bool
 	{
 		if ($this->isFilterShown !== null) {
 			return $this->isFilterShown;
 		}
 
-		// todo: empty filter but not default one should still show them [?]
-		return !empty($this->filter) && !$this->isDefaultFilter();
+		return $this->isFiltered() || !$this->isDefaultFilter();
 	}
 
 
@@ -219,12 +224,12 @@ trait Filters
 	}
 
 
-	// todo: this needs to be writen for filters which can be array
 	public function isDefaultFilter(): bool
 	{
+		// todo: this needs to be writen for filters which can be array
 		return !array_udiff_assoc(
+			$this->getDefaultFilter(),
 			$this->getCurrentFilter(),
-			$this->filterDefault,
 			fn($a, $b) => $a <=> $b,
 		);
 	}
