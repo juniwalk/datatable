@@ -8,10 +8,10 @@
 namespace JuniWalk\DataTable\Columns;
 
 use JuniWalk\DataTable\Column;
-use JuniWalk\DataTable\Columns\Interfaces\CustomRenderer;
 use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
+use JuniWalk\DataTable\Interfaces\CustomRenderer;
 use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Table;
 use JuniWalk\DataTable\Traits;
@@ -88,11 +88,7 @@ abstract class AbstractColumn extends Control implements Column
 		$value = $this->renderValue($row);
 
 		if ($this instanceof CustomRenderer && $this->hasRenderer()) {
-			$value = $this->renderCustom($row, $value);
-		}
-
-		if (!is_null($value) && !(is_string($value) || $value instanceof Stringable)) {
-			throw FieldInvalidException::fromColumn($this, $value, 'string');
+			$value = $this->renderCustom($row, $value, true);
 		}
 
 		echo $value;

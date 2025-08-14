@@ -8,6 +8,8 @@
 namespace JuniWalk\DataTable\Exceptions;
 
 use JuniWalk\DataTable\Column;
+use JuniWalk\Utils\Format;
+use Nette\ComponentModel\Component;
 
 class FieldInvalidException extends \Exception
 {
@@ -20,5 +22,11 @@ class FieldInvalidException extends \Exception
 	public static function fromName(string $field, mixed $value, string $expected): self
 	{
 		return new self('Field "'.$field.'" has invalid value of type "'.gettype($value).'", but "'.$expected.'" was expected.');
+	}
+
+
+	public static function fromComponent(Component $component, mixed $value, string $expected): self
+	{
+		return new self('Value of "'.Format::className($component).'#'.$component->getName().'" has invalid type "'.gettype($value).'", but "'.$expected.'" was expected.');
 	}
 }

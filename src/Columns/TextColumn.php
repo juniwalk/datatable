@@ -7,20 +7,21 @@
 
 namespace JuniWalk\DataTable\Columns;
 
-use JuniWalk\DataTable\Columns\Interfaces\CustomRenderer;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
+use JuniWalk\DataTable\Columns\Traits\Filters;
+use JuniWalk\DataTable\Columns\Traits\Sorting;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
+use JuniWalk\DataTable\Interfaces\CustomRenderer;
 use JuniWalk\DataTable\Row;
+use JuniWalk\DataTable\Traits\Renderer;
 use Nette\Utils\Html;
 use Nette\Utils\Strings;
 use Stringable;
 
 class TextColumn extends AbstractColumn implements Sortable, Filterable, CustomRenderer
 {
-	use Traits\Sorting;
-	use Traits\Filters;
-	use Traits\Renderer;
+	use Sorting, Filters, Renderer;
 
 	protected ?int $truncate = null;
 
