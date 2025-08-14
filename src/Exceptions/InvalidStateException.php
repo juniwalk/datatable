@@ -8,6 +8,7 @@
 namespace JuniWalk\DataTable\Exceptions;
 
 use JuniWalk\DataTable\Filter;
+use JuniWalk\Utils\Enums\Casing;
 use JuniWalk\Utils\Format;
 use Nette\ComponentModel\Component;
 
@@ -15,7 +16,7 @@ class InvalidStateException extends \Exception
 {
 	public static function customRendererMissing(Component $component): self
 	{
-		return new self('Custom renderer callback for "'.Format::className($component).'#'.$component->getName().'" is not set.');
+		return new self('Custom renderer callback for "'.Format::className($component, Casing::Pascal).'#'.$component->getName().'" is not set.');
 	}
 
 
