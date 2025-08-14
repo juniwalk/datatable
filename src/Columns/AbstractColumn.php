@@ -11,7 +11,7 @@ use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
-use JuniWalk\DataTable\Interfaces\CustomRenderer;
+use JuniWalk\DataTable\Interfaces\CallbackRenderable;
 use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Table;
 use JuniWalk\DataTable\Traits;
@@ -19,7 +19,6 @@ use Nette\Application\UI\Control;
 use Nette\ComponentModel\IContainer;
 use Nette\Utils\Html;
 use Nette\Utils\Strings;
-use Stringable;
 
 abstract class AbstractColumn extends Control implements Column
 {
@@ -87,8 +86,8 @@ abstract class AbstractColumn extends Control implements Column
 	{
 		$value = $this->renderValue($row);
 
-		if ($this instanceof CustomRenderer && $this->hasRenderer()) {
-			$value = $this->renderCustom($row, $value, true);
+		if ($this instanceof CallbackRenderable && $this->hasRenderer()) {
+			$value = $this->callbackRender($row, $value);
 		}
 
 		echo $value;

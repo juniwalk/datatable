@@ -11,14 +11,12 @@ use Closure;
 use JuniWalk\DataTable\Row;
 use Nette\Utils\Html;
 
-interface CustomRenderer
+interface CallbackRenderable
 {
-	public function setRenderer(?Closure $renderer = null): self;
+	public function setRenderer(?Closure $renderer = null, bool $strict = false): self;
 	public function getRenderer(): ?Closure;
 	public function hasRenderer(): bool;
 
-	/**
-	 * @return ($return is true ? Html|string|null : null)
-	 */
-	public function renderCustom(Row $row, Html|string $value = '', bool $return = false): Html|string|null;
+	public function renderCallback(Row $row, mixed ...$params): void;
+	public function callbackRender(Row $row, mixed ...$params): ?Html;
 }

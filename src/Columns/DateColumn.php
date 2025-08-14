@@ -14,14 +14,14 @@ use JuniWalk\DataTable\Columns\Traits\Filters;
 use JuniWalk\DataTable\Columns\Traits\Sorting;
 use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
-use JuniWalk\DataTable\Interfaces\CustomRenderer;
+use JuniWalk\DataTable\Interfaces\CallbackRenderable;
 use JuniWalk\DataTable\Row;
-use JuniWalk\DataTable\Traits\Renderer;
+use JuniWalk\DataTable\Traits\RendererCallback;
 use Nette\Utils\Html;
 
-class DateColumn extends AbstractColumn implements Sortable, Filterable, CustomRenderer
+class DateColumn extends AbstractColumn implements Sortable, Filterable, CallbackRenderable
 {
-	use Sorting, Filters, Renderer;
+	use Sorting, Filters, RendererCallback;
 
 	protected Align $align = Align::Right;
 

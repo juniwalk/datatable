@@ -12,16 +12,16 @@ use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Columns\Traits\Filters;
 use JuniWalk\DataTable\Columns\Traits\Sorting;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
-use JuniWalk\DataTable\Interfaces\CustomRenderer;
+use JuniWalk\DataTable\Interfaces\CallbackRenderable;
 use JuniWalk\DataTable\Row;
-use JuniWalk\DataTable\Traits\Renderer;
+use JuniWalk\DataTable\Traits\RendererCallback;
 use Nette\Utils\Html;
 use Nette\Utils\Strings;
 use Stringable;
 
-class TextColumn extends AbstractColumn implements Sortable, Filterable, CustomRenderer
+class TextColumn extends AbstractColumn implements Sortable, Filterable, CallbackRenderable
 {
-	use Sorting, Filters, Renderer;
+	use Sorting, Filters, RendererCallback;
 
 	protected ?int $truncate = null;
 
