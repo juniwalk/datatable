@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Actions;
 
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Interfaces\CallbackRenderable;
 use JuniWalk\DataTable\Interfaces\TemplateRenderable;
 use JuniWalk\DataTable\Row;
@@ -29,6 +30,9 @@ class DetailAction extends AbstractAction implements CallbackRenderable, Templat
 	protected string $tag = 'a';
 
 
+	/**
+	 * @throws InvalidStateException
+	 */
 	public function handleOpen(int|string $id): void
 	{
 		$table = $this->getTable();
@@ -42,10 +46,13 @@ class DetailAction extends AbstractAction implements CallbackRenderable, Templat
 	}
 
 
+	/**
+	 * @throws InvalidStateException
+	 */
 	public function render(?Row $row = null, bool $return = false): ?Html
 	{
 		if (is_null($row)) {
-			throw new \Exception;
+			throw InvalidStateException::rowRequired($this);
 		}
 
 		$table = $this->getTable();

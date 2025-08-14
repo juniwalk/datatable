@@ -62,7 +62,7 @@ trait RendererCallback
 	public function callbackRender(Row $row, mixed ...$params): ?Html
 	{
 		if (!isset($this->renderer)) {
-			throw InvalidStateException::customRendererMissing($this);
+			throw InvalidStateException::customRendererMissing($this, 'callback');
 		}
 
 		$html = call_user_func($this->renderer, $row->getItem(), ...$params);

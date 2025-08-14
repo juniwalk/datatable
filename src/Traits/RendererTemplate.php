@@ -62,7 +62,7 @@ trait RendererTemplate
 	public function templateRender(Row $row, mixed ...$params): ?string
 	{
 		if (!isset($this->templateFile)) {
-			throw InvalidStateException::customRendererMissing($this);
+			throw InvalidStateException::customRendererMissing($this, 'template');
 		}
 
 		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
