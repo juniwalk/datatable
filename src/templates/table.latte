@@ -58,18 +58,33 @@
 
 		</thead>
 
-		<tbody>
+		<tbody n:snippet="rows" n:inner-foreach="$rows as $row">
 
-			<tr n:foreach="$rows as $row" n:attr="$row->getAttributes()">
-				<td n:foreach="$columns as $column" n:attr="$column->getAttributes()">{control $column, $row}</td>
+			<tr n:snippet="row-{$row->getId()}" n:attr="$row->getAttributes()" n:inner-foreach="$columns as $column">
+				<td n:attr="$column->getAttributes()">{control $column, $row}</td>
 			</tr>
 
-			<tr n:if="empty($rows)">
-				<td class="col-no-rows py-3" colspan="{sizeof($columns)}">
+			<tr n:if="$control->hasDetailAction()" class="d-none" n:snippet="row-{$row->getId()}-detail">
+				{var $activeDetail = $control->getActiveDetail()}
+				<td n:if="$activeDetail" class="p-0 border-0" colspan="{sizeof($columns)}">
+					<div class="collapse border-bottom" data-dt-action="{$activeDetail->getName()}">
+						<div class="bg-body p-3 px-4">
+							{control $activeDetail:callback, $row}
+							{control $activeDetail:template, $row}
+						</div>
+					</div>
+				</td>
+			</tr>
+			<tr n:if="$control->hasDetailAction()" class="d-none"></tr>
+
+		</tbody>
+
+		<tbody n:if="empty($rows)">
+			<tr>
+				<td class="col-no-rows p-3 px-4" colspan="{sizeof($columns)}">
 					<em class="text-secondary">{_datatable.table.empty} <a n:href="clear!" n:if="$control->shouldShowFilters()"><i class="fas fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.cancel}</a></em>
 				</td>
 			</tr>
-
 		</tbody>
 
 	</table>

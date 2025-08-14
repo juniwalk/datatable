@@ -43,12 +43,10 @@ class CallbackAction extends AbstractAction implements EventHandler
 
 	public function render(?Row $row = null, bool $return = false): ?Html
 	{
-		$link = $this->link('action!', [
-			'id' => $row?->getId(),
-		]);
-
 		$button = parent::render($row, true);
-		$button->setHref($link);
+		$button->setHref($this->link('action!', [
+			'id' => $row?->getId(),
+		]));
 
 		if ($return === true) {
 			return $button;

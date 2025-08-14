@@ -10,10 +10,14 @@ namespace JuniWalk\DataTable\Plugins;
 use Closure;
 use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Actions\CallbackAction;
+use JuniWalk\DataTable\Actions\DetailAction;
 use JuniWalk\DataTable\Actions\LinkAction;
 
 trait Actions
 {
+	protected ?DetailAction $activeDetail = null;
+	protected bool $hasDetailAction;
+
 	/** @var array<string, Action> */
 	protected array $actions = [];
 
@@ -31,6 +35,12 @@ trait Actions
 	public function addActionCallback(string $name, string $label): CallbackAction
 	{
 		return $this->addAction($name, new CallbackAction($label));
+	}
+
+
+	public function addActionDetail(string $name, string $label): DetailAction
+	{
+		return $this->addAction($name, new DetailAction($label));
 	}
 
 
@@ -78,6 +88,25 @@ trait Actions
 
 		$this->removeComponent($action);
 		unset($this->actions[$name]);
+	}
+
+
+	public function setActiveDetail(?DetailAction $activeDetail): static
+	{
+		$this->activeDetail = $activeDetail;
+		return $this;
+	}
+
+
+	public function getActiveDetail(): ?DetailAction
+	{
+		return $this->activeDetail;
+	}
+
+
+	public function hasDetailAction(): bool
+	{
+		return $this->hasDetailAction ??= (bool) array_filter($this->actions, fn($x) => $x instanceof DetailAction);
 	}
 
 

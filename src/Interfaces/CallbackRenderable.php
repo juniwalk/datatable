@@ -13,7 +13,7 @@ use Nette\Utils\Html;
 
 interface CallbackRenderable
 {
-	public function setRenderer(?Closure $renderer = null, bool $strict = false): self;
+	public function setRenderer(?Closure $renderer, bool $strict = false): self;
 	public function getRenderer(): ?Closure;
 	public function hasRenderer(): bool;
 
