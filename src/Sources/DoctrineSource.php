@@ -18,6 +18,7 @@ use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters;
 use JuniWalk\DataTable\Source;
+use Stringable;
 
 /**
  * @phpstan-import-type Items from Source
@@ -149,6 +150,15 @@ class DoctrineSource extends AbstractSource
 	protected function getData(): iterable
 	{
 		$this->queryBuilder->addGroupBy($this->getPrimaryField());
+		$alias = $this->queryBuilder->getRootAliases()[0];
+
+		foreach ($this->getOrderByFields() as $field) {
+			if (str_starts_with($field, $alias.'.')) {
+				continue;
+			}
+
+			$this->queryBuilder->addGroupBy($field);
+		}
 
 		/** @var Items */
 		return $this->getQuery()->getResult();
@@ -189,6 +199,27 @@ class DoctrineSource extends AbstractSource
 	protected function getPlaceholder(): string
 	{
 		return 'param'.($this->placeholder++);
+	}
+
+
+	/**
+	 * @return string[]
+	 */
+	protected function getOrderByFields(): array
+	{
+		/** @var Stringable[] */
+		$fields = $this->queryBuilder->getDQLPart('orderBy');
+
+		if (empty($fields)) {
+			return [];
+		}
+
+		$fields = explode(', ', implode(', ', $fields));
+		$fields = array_map(array: $fields, callback: function($field): ?string {
+			return preg_replace('/\s(asc|desc)$/i', '', $field);
+		});
+
+		return array_filter($fields);
 	}
 
 
