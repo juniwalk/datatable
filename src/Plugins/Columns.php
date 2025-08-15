@@ -15,6 +15,7 @@ use JuniWalk\DataTable\Columns\EnumColumn;
 use JuniWalk\DataTable\Columns\LinkColumn;
 use JuniWalk\DataTable\Columns\NumberColumn;
 use JuniWalk\DataTable\Columns\TextColumn;
+use JuniWalk\DataTable\Exceptions\ColumnNotFoundException;
 use JuniWalk\DataTable\Traits\LinkHandler;
 
 /**
@@ -84,11 +85,12 @@ trait Columns
 
 	/**
 	 * @return ($require is true ? Column : ?Column)
+	 * @throws ColumnNotFoundException
 	 */
 	public function getColumn(string $name, bool $require = true): ?Column
 	{
 		if ($require && !isset($this->columns[$name])) {
-			throw new \Exception;
+			throw ColumnNotFoundException::fromName($name);
 		}
 
 		return $this->columns[$name] ?? null;

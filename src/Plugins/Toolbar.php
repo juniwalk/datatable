@@ -62,6 +62,7 @@ trait Toolbar
 	public function getToolbarAction(string $name, bool $require = true): ?Action
 	{
 		if ($require && !isset($this->toolbar[$name])) {
+			// todo: throw ActionNotFound::fromName($name);
 			throw new \Exception;
 		}
 

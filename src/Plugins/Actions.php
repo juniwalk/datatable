@@ -12,6 +12,7 @@ use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Actions\CallbackAction;
 use JuniWalk\DataTable\Actions\DetailAction;
 use JuniWalk\DataTable\Actions\LinkAction;
+use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
 
 trait Actions
 {
@@ -60,11 +61,12 @@ trait Actions
 
 	/**
 	 * @return ($require is true ? Action : ?Action)
+	 * @throws ActionNotFoundException
 	 */
 	public function getAction(string $name, bool $require = true): ?Action
 	{
 		if ($require && !isset($this->actions[$name])) {
-			throw new \Exception;
+			throw ActionNotFoundException::fromName($name);
 		}
 
 		return $this->actions[$name] ?? null;

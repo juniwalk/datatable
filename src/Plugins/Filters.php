@@ -150,11 +150,12 @@ trait Filters
 
 	/**
 	 * @return ($require is true ? Filter : ?Filter)
+	 * @throws FilterNotFoundException
 	 */
 	public function getFilter(string $name, bool $require = true): ?Filter
 	{
 		if ($require && !isset($this->filters[$name])) {
-			throw new \Exception;
+			throw FilterNotFoundException::fromName($name);
 		}
 
 		return $this->filters[$name] ?? null;
