@@ -34,7 +34,6 @@ trait Sorting
 			throw ColumnNotFoundException::fromName($column);
 		}
 
-		// todo: sorting default sort does not work
 		$sort = $this->getCurrentSort();
 		$sort[$column] = match ($sort[$column] ?? null) {
 			Sort::ASC	=> Sort::DESC,
@@ -122,8 +121,8 @@ trait Sorting
 	public function isDefaultSort(): bool
 	{
 		return !array_udiff_assoc(
+			$this->getDefaultSort(),
 			$this->getCurrentSort(),
-			$this->sortDefault,
 			fn($a, $b) => $a <=> $b,
 		);
 	}
