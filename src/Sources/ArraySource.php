@@ -115,29 +115,34 @@ class ArraySource extends AbstractSource
 	 */
 	protected function sort(array $columns): void
 	{
-		if (empty($this->items)) {
+		if (empty($columns) || empty($this->items)) {
 			return;
 		}
+
+		$ordering = [];
 
 		foreach ($columns as $name => $column) {
 			if (!$column instanceof Sortable || !$sort = $column->isSorted()) {
 				continue;
 			}
 
-			$type = match (true) {
+			$ordering[] = array_map(array: $this->items, callback: function($item) use ($name): string {
+				$value = (new Row($item, $this))->getValue($name);
+				return Format::stringify($value);
+			});
+
+			$ordering[] = $sort->order();
+			$ordering[] = match (true) {
 				$column instanceof Columns\NumberColumn => SORT_NUMERIC,
 				$column instanceof Columns\DateColumn,
 				$column instanceof Columns\EnumColumn => SORT_NATURAL,
 				default => SORT_LOCALE_STRING,
 			};
-
-			$keys = array_map(array: $this->items, callback: function($item) use ($name) {
-				$value = (new Row($item, $this))->getValue($name);
-				return Format::stringify($value);
-			});
-
-			array_multisort($keys, $sort->order(), $type, $this->items);
 		}
+
+		$ordering[] = &$this->items;
+
+		array_multisort(...$ordering);	// @phpstan-ignore argument.type (not true)
 	}
 
 
