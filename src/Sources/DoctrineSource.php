@@ -149,17 +149,6 @@ class DoctrineSource extends AbstractSource
 	 */
 	protected function getData(): iterable
 	{
-		$this->queryBuilder->addGroupBy($this->getPrimaryField());
-		$alias = $this->queryBuilder->getRootAliases()[0];
-
-		foreach ($this->getOrderByFields() as $field) {
-			if (str_starts_with($field, $alias.'.')) {
-				continue;
-			}
-
-			$this->queryBuilder->addGroupBy($field);
-		}
-
 		/** @var Items */
 		return $this->getQuery()->getResult();
 	}
@@ -167,7 +156,20 @@ class DoctrineSource extends AbstractSource
 
 	protected function getQuery(): Query
 	{
-		$query = $this->queryBuilder->getQuery();
+		$qb = clone $this->queryBuilder;
+		$qb->addGroupBy($this->getPrimaryField());
+
+		$alias = $qb->getRootAliases()[0];
+
+		foreach ($this->getOrderByFields() as $field) {
+			if (str_starts_with($field, $alias.'.')) {
+				continue;
+			}
+
+			$qb->addGroupBy($field);
+		}
+
+		$query = $qb->getQuery();
 
 		foreach ($this->hints as $name => $value) {
 			$query->setHint($name, $value);
