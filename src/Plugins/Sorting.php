@@ -38,8 +38,15 @@ trait Sorting
 		$sort[$column] = match ($sort[$column] ?? null) {
 			Sort::ASC	=> Sort::DESC,
 			Sort::DESC	=> null,
-			null		=> Sort::ASC,
+			default		=> Sort::ASC,
 		};
+
+		$sortShouldReset = $this->isSortMultiple && sizeof($this->sortDefault) > 1;
+		$sortIsDefault = $this->isDefaultSort();
+
+		if ($sortIsDefault && !$sort[$column] && !$sortShouldReset) {
+			$sort[$column] = Sort::ASC;
+		}
 
 		if (!$this->isSortMultiple) {
 			$sort = [$column => $sort[$column]];
@@ -120,11 +127,19 @@ trait Sorting
 
 	public function isDefaultSort(): bool
 	{
-		return !array_udiff_assoc(
-			$this->getDefaultSort(),
-			$this->getCurrentSort(),
-			fn($a, $b) => $a <=> $b,
-		);
+		$sortCurrent = $this->getCurrentSort();
+
+		foreach ($this->sortDefault as $column => $sort) {
+			$current = $sortCurrent[$column] ??= null;
+
+			if ($sort !== $current) {
+				continue;
+			}
+
+			unset($sortCurrent[$column]);
+		}
+
+		return empty($sortCurrent);
 	}
 
 

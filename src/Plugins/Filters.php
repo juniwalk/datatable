@@ -228,7 +228,7 @@ trait Filters
 	public function isDefaultFilter(): bool
 	{
 		// todo: this needs to be writen for filters which can be array
-		return !array_udiff_assoc(
+		return ! (bool) array_udiff_assoc(
 			$this->getDefaultFilter(),
 			$this->getCurrentFilter(),
 			fn($a, $b) => $a <=> $b,
