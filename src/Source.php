@@ -18,11 +18,9 @@ interface Source
 	public function getCount(): int;
 
 	/**
-	 * @param array<string, Filter> $filters
-	 * @param array<string, Column> $columns
 	 * @return Items
 	 */
-	public function fetchItems(array $filters, array $columns, int $offset, int $limit): iterable;
+	public function fetchItems(Table $table): iterable;
 
 	/**
 	 * @return Items

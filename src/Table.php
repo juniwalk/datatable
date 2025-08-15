@@ -91,17 +91,13 @@ class Table extends Control implements EventHandler
 			$this->addColumnAction('__actions', 'datatable.column.action', $actions);
 		}
 
-		$toolbar = $this->getToolbarActionsGrouped();
-		$columns = $this->getColumns();
-		$filters = $this->getFilters();
-
 		// todo: add some argumens like $template
 		$this->trigger('render');
 
 		$source = $this->getSource();
-		$items = !isset($this->redrawItem)
-			? $source->fetchItems($filters, $columns, $this->getOffset(), $this->getCurrentLimit())
-			: $source->fetchItem($this->redrawItem);
+		$items = isset($this->redrawItem)
+			? $source->fetchItem($this->redrawItem)
+			: $source->fetchItems($this);
 
 		$rows =  [];
 
@@ -115,9 +111,9 @@ class Table extends Control implements EventHandler
 		// bdump($this);
 
 		$template->add('rows', $rows);
-		$template->add('toolbar', $toolbar);
-		$template->add('columns', $columns);
-		$template->add('filters', $filters);
+		$template->add('toolbar', $this->getToolbarActionsGrouped());
+		$template->add('columns', $this->getColumns());
+		$template->add('filters', $this->getFilters());
 		$template->add('caption', $this->caption);
 
 		$template->render();
