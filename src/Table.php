@@ -85,7 +85,6 @@ class Table extends Control implements EventHandler
 		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/templates/table.latte');
-		$template->add('controlName', $this->getUniqueId());
 
 		if ($actions = $this->getActions()) {
 			$this->addColumnAction('__actions', 'datatable.column.action', $actions);
