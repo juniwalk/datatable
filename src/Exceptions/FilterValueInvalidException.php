@@ -8,11 +8,12 @@
 namespace JuniWalk\DataTable\Exceptions;
 
 use JuniWalk\DataTable\Filter;
+use Throwable;
 
 class FilterValueInvalidException extends \Exception
 {
-	public static function fromFilter(Filter $filter, string $expected, mixed $value = null): self
+	public static function fromFilter(Filter $filter, string $expected, mixed $value = null, ?Throwable $previous = null): self
 	{
-		return new self('Filter "'.$filter->getName().'" has invalid value of type "'.gettype($value ?? $filter->getValue()).'", but "'.$expected.'" was expected.');
+		return new self('Filter "'.$filter->getName().'" has invalid value of type "'.gettype($value ?? $filter->getValue()).'", but "'.$expected.'" was expected.', previous: $previous);
 	}
 }
