@@ -1,0 +1,93 @@
+<?php declare(strict_types=1);
+
+/**
+ * @copyright Martin Procházka (c) 2025
+ * @license   MIT License
+ */
+
+namespace JuniWalk\DataTable\Tools;
+
+use BackedEnum;
+use DateMalformedStringException;
+use DateTimeImmutable;
+use DateTimeInterface;
+use JuniWalk\Utils\Enums\Interfaces\LabeledEnum;
+use JuniWalk\Utils\Format;
+use ValueError;
+
+class FormatValue
+{
+	private function __construct() {}
+
+
+	public static function string(mixed $value): ?string
+	{
+		return Format::stringify($value);
+	}
+
+
+	/**
+	 * @template T of BackedEnum
+	 * @param  class-string<T> $className
+	 * @return ?T
+	 * @throws ValueError
+	 */
+	public static function enum(mixed $value, string $className): ?BackedEnum
+	{
+		if (empty($value)) {
+			return null;
+		}
+
+		if (is_object($value) && is_a($value, $className)) {
+			return $value;
+		}
+
+		if (is_string($value) || is_int($value)) {
+			if (is_a($className, LabeledEnum::class, true)) {
+				return $className::make($value);
+			}
+
+			return $className::from($value);
+		}
+
+		throw new ValueError;
+	}
+
+
+	/**
+	 * @param  string[] $formats
+	 * @throws DateMalformedStringException
+	 */
+	public static function dateTime(mixed $value, array $formats = []): ?DateTimeImmutable
+	{
+		if (empty($value)) {
+			return null;
+		}
+
+		if ($value instanceof DateTimeInterface) {
+			return DateTimeImmutable::createFromInterface($value);
+		}
+
+		if (is_numeric($value)) {
+			return new DateTimeImmutable('@'.$value);
+		}
+
+		if (is_string($value)) {
+			// $formats = array_merge($formats, [
+			// 	DateTime::
+			// ]);
+
+			foreach ($formats as $format) {
+				$date = DateTimeImmutable::createFromFormat($format, $value);
+
+				if ($date !== false) {
+					return $date;
+				}
+			}
+
+			return new DateTimeImmutable($value);
+		}
+
+		throw new DateMalformedStringException;
+	}
+}
