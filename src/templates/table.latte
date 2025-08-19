@@ -46,7 +46,7 @@
 			<tr class="align-middle">
 				<th n:foreach="$columns as $name => $column" n:attr="$column->getAttributes()">
 					<div class="d-flex gap-2 justify-content-between">
-						<div n:class="flex-fill, $column->getAlign()->class()">
+						<div n:class="py-1, flex-fill, $column->getAlign()->class()">
 							<a n:tag-if="$column->isSortable()" n:href="sort! $name" class="text-nowrap ajax">
 								<i n:if="$column->isSortable()" n:class="fa-solid, $column->isSorted()?->icon() ?? fa-sort, fa-fw"></i>
 								<small>{control $column:label}</small>
