@@ -58,6 +58,7 @@ trait Sorting
 			$this->sort = [];
 		}
 
+		$this->redrawControl('table');
 		$this->redirect('this');
 	}
 
@@ -144,10 +145,9 @@ trait Sorting
 
 
 	/**
-	 * @param  array<string, mixed> $state
-	 * @return array<string, mixed>
+	 * @param array<string, mixed> $state
 	 */
-	protected function loadStateSorting(array $state): array
+	public function loadState(array $state): void
 	{
 		$state['sort'] = (array) ($state['sort'] ?? []);
 		$state['limit'] ??= null;
@@ -164,17 +164,7 @@ trait Sorting
 			}
 		}
 
-		return $state;
-	}
-
-
-	/**
-	 * @param  array<string, mixed> $state
-	 * @return array<string, mixed>
-	 */
-	protected function saveStateSorting(array $state): array
-	{
-		return $state;
+		parent::loadState($state);
 	}
 
 

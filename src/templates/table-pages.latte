@@ -1,5 +1,5 @@
 <nav class="btn-group btn-group-sm" n:inner-foreach="$steps as $step" n:ifcontent>
-	<a n:href="page! $page - 1" n:class="btn, btn-outline-secondary, $pages->isFirst() ? disabled" n:if="$iterator->isFirst()">{_datatable.page.prev}</a>
-	<a n:href="page! $step ?? 1" n:class="btn, $step == $page ? btn-primary : btn-outline-secondary, !$step ? disabled">{$step ?? '...'}</a>
-	<a n:href="page! $page + 1" n:class="btn, btn-outline-secondary, $pages->isLast() ? disabled" n:if="$iterator->isLast()">{_datatable.page.next}</a>
+	<a n:href="page! $page - 1" n:class="btn, btn-outline-secondary, $pages->isFirst() ? disabled, ajax" n:if="$iterator->isFirst()">{_datatable.page.prev}</a>
+	<a n:href="page! $step ?? 1" n:class="btn, $step == $page ? btn-primary : btn-outline-secondary, !$step ? disabled, ajax">{$step ?? '...'}</a>
+	<a n:href="page! $page + 1" n:class="btn, btn-outline-secondary, $pages->isLast() ? disabled, ajax" n:if="$iterator->isLast()">{_datatable.page.next}</a>
 </nav>

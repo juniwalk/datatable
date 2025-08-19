@@ -11,6 +11,7 @@ use JuniWalk\DataTable\Exceptions\SourceMissingException;
 use JuniWalk\DataTable\Traits\Translation;
 use JuniWalk\Utils\Interfaces\EventHandler;
 use JuniWalk\Utils\Traits\Events;
+use JuniWalk\Utils\Traits\RedirectAjaxHandler;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
 use Nette\ComponentModel\IContainer;
@@ -19,7 +20,7 @@ use Stringable;
 
 class Table extends Control implements EventHandler
 {
-	use Events, Translation;
+	use Events, Translation, RedirectAjaxHandler;
 
 	use Plugins\Session;
 	use Plugins\Sources;
@@ -43,31 +44,6 @@ class Table extends Control implements EventHandler
 	public function getCaption(): Stringable|string|null
 	{
 		return $this->caption;
-	}
-
-
-	/**
-	 * @param array<string, mixed> $params
-	 */
-	public function loadState(array $params): void
-	{
-		$params = $this->loadStateSorting($params);
-		$params = $this->loadStateFilters($params);
-
-		parent::loadState($params);
-	}
-
-
-	/**
-	 * @param array<string, mixed> $params
-	 * @param-out array<string, mixed> $params
-	 */
-	public function saveState(array &$params): void
-	{
-		$params = $this->saveStateSorting($params);
-		$params = $this->saveStateFilters($params);
-
-		parent::saveState($params);	// @phpstan-ignore paramOut.type (No control over this)
 	}
 
 
@@ -98,7 +74,7 @@ class Table extends Control implements EventHandler
 			? $source->fetchItem($this->redrawItem)
 			: $source->fetchItems($this);
 
-		$rows =  [];
+		$rows = [];
 
 		$this->trigger('load', $items);
 
@@ -130,7 +106,10 @@ class Table extends Control implements EventHandler
 
 		$this->monitor(Presenter::class, fn() => $this->validateSession());
 		$this->monitor(Presenter::class, fn() => $this->validateSources());
-		$this->monitor(Presenter::class, fn() => $this->validateFilters());
-		$this->monitor(Presenter::class, fn() => $this->validateSorting());
+
+		$this->when('render', function() {
+			$this->validateFilters();
+			$this->validateSorting();
+		});
 	}
 }

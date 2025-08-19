@@ -28,6 +28,8 @@ trait Pagination
 	{
 		$this->page = max($page, 1);
 
+		$this->redrawControl('paginator');
+		$this->redrawControl('table');
 		$this->redirect('this');
 	}
 
@@ -48,6 +50,8 @@ trait Pagination
 			$this->limit = null;
 		}
 
+		$this->redrawControl('paginator');
+		$this->redrawControl('table');
 		$this->redirect('this');
 	}
 
@@ -169,6 +173,10 @@ trait Pagination
 
 		$offsetStart = $this->getOffset();
 		$offsetEnd = $offsetStart + $limit;
+
+		if ($offsetEnd > $count) {
+			$offsetEnd = null;
+		}
 
 		$template->add('limits', $this->limits);
 		$template->add('limit', $limit);

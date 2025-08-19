@@ -1,4 +1,4 @@
-<div n:snippet="card" class="card card-outline card-secondary">
+<div n:snippet="wrapper" class="card card-outline card-secondary">
 
 	<div n:snippet="toolbar" class="card-header py-0">
 	<div class="d-flex flex-wrap justify-content-start align-items-center gap-2 py-2">
@@ -18,15 +18,16 @@
 	</div>
 
 	<div n:snippet="filters" n:class="collapse, $control->shouldShowFilters() ? show" n:if="!empty($filters)">
-	<form n:name="filterForm" class="card-header">
+	<form n:name="filterForm" class="card-header" autocomplete="off">
 
-		<div class="row g-2 row-cols-auto row-cols-lg-{$control->getFilterColumnCount() ?? auto}" n:ifcontent>
+		<div class="row g-2 row-cols-auto row-cols-lg-{$control->getFilterColumnCount() ?? auto}" n:ifcontent>{* todo: n:ifcontent does not make sense, since the button is always rendered *}
 			<div class="col flex-grow-1 flex-lg-grow-0" n:foreach="$filters as $filter">
 				{control $filter, $form}
 
 			</div>
 			<div class="col d-flex align-items-end">
-				<button n:name="submit" type="submit" class="btn btn-sm btn-info">
+				{* todo: create Naja extension that will handle auto-submit of the filters *}
+				<button n:name="submit" type="submit" class="btn btn-sm btn-info ajax">
 					<i class="fas fa-filter fa-fw"></i> {_datatable.filter.button|noescape}
 				</button>
 			</div>
@@ -40,25 +41,25 @@
 
 		<caption class="sr-only">{$caption|translate|noescape}</caption>
 
-		<thead n:snippet="head" class="position-sticky top-0">
+		<thead class="position-sticky top-0">
 
 			<tr class="align-middle">
 				<th n:foreach="$columns as $name => $column" n:attr="$column->getAttributes()">
 					<div class="d-flex gap-2 justify-content-between">
 						<div n:class="flex-fill, $column->getAlign()->class()">
-							<a n:tag-if="$column->isSortable()" n:href="sort! $name" class="text-nowrap">
+							<a n:tag-if="$column->isSortable()" n:href="sort! $name" class="text-nowrap ajax">
 								<i n:if="$column->isSortable()" n:class="fa-solid, $column->isSorted()?->icon() ?? fa-sort, fa-fw"></i>
 								<small>{control $column:label}</small>
 							</a>
 						</div>
-						<a n:if="$column->isFiltered()" n:href="clear! $name" class="text-danger"><i class="fa-solid fa-times fa-fw"></i></a>
+						<a n:if="$column->isFiltered()" n:href="clear! $name" class="text-danger ajax"><i class="fa-solid fa-times fa-fw"></i></a>
 					</div>
 				</th>
 			</tr>
 
 		</thead>
 
-		<tbody n:snippet="rows" n:inner-foreach="$rows as $row">
+		<tbody n:snippetArea="rows" n:inner-foreach="$rows as $row">
 
 			<tr n:snippet="row-{$row->getId()}" n:attr="$row->getAttributes()" n:inner-foreach="$columns as $column">
 				<td n:attr="$column->getAttributes()">{control $column, $row}</td>
@@ -101,7 +102,7 @@
 
 		<div class="d-flex gap-2">
 
-			<a n:href="clear!" class="btn btn-sm btn-danger text-nowrap" n:if="$control->shouldShowFilters()">
+			<a n:href="clear!" class="btn btn-sm btn-danger text-nowrap ajax" n:if="$control->shouldShowFilters()">
 				<i class="fas fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.cancel}
 			</a>
 
