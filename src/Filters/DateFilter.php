@@ -8,31 +8,55 @@
 namespace JuniWalk\DataTable\Filters;
 
 use DateTimeImmutable;
-use DateTimeInterface;
+use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
+use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Application\UI\Form;
+use Throwable;
 
 class DateFilter extends AbstractFilter
 {
-	public function attachToForm(Form $form): void
-	{
-		$form->addDate($this->fieldName(), $this->label);
+	protected ?DateTimeImmutable $value;
 
-		$form->onSuccess[] = function($form, $data) {
-			$this->value = $this->format($data[$this->fieldName()] ?? null);
-		};
+
+	/**
+	 * @throws FilterValueInvalidException
+	 */
+	public function setValue(mixed $value): static
+	{
+		try {
+			$this->value = FormatValue::dateTime($value);
+			$this->isFiltered = !empty($this->value);
+
+		} catch (Throwable $e) {
+			throw FilterValueInvalidException::fromFilter($this, DateTimeImmutable::class, $value, $e);
+		}
+
+		return $this;
 	}
 
 
-	public function format(mixed $value): ?string
+	/**
+	 * @return ?DateTimeImmutable
+	 */
+	public function getValue(): mixed
 	{
-		if (is_string($value)) {
-			$value = new DateTimeImmutable($value);
-		}
+		return $this->value ?? null;
+	}
 
-		if ($value instanceof DateTimeInterface) {
-			return $value->format('Y-m-d');
-		}
 
-		return null;
+	public function getValueFormatted(): int|string|float|null
+	{
+		return $this->value?->format('Y-m-d');
+	}
+
+
+	public function attachToForm(Form $form): void
+	{
+		$form->addDate($this->fieldName(), $this->label)
+			->setValue($this->value ?? null);
+
+		$form->onSuccess[] = function($form, $data) {
+			$this->setValue($data[$this->fieldName()] ?? null);
+		};
 	}
 }

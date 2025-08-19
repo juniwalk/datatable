@@ -171,7 +171,7 @@ class ArraySource extends AbstractSource
 			return false;
 		}
 
-		$query = Format::stringify($filter->getValue());
+		$query = (string) $filter->getValueFormatted();
 
 		foreach ($filter->getColumns() as $column) {
 			$value = $row->getValue($column);

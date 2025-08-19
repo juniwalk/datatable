@@ -8,14 +8,26 @@
 namespace JuniWalk\DataTable\Filters;
 
 use BackedEnum;
+use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
+use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Application\UI\Form;
 use JuniWalk\Utils\Enums\Interfaces\LabeledEnum;
 use JuniWalk\Utils\Html;
+use Throwable;
 
+/**
+ * @template T of BackedEnum
+ */
 class EnumFilter extends AbstractFilter
 {
+	/** @var ?T */
+	protected ?BackedEnum $value;
+
+	protected string|bool $placeholder = true;
+
+
 	/**
-	 * @param class-string<BackedEnum> $enum
+	 * @param class-string<T> $enum
 	 */
 	public function __construct(
 		protected string $label,
@@ -24,7 +36,55 @@ class EnumFilter extends AbstractFilter
 	}
 
 
-	public function attachToForm(Form $form): void
+	public function setPlaceholder(string|bool $placeholder): static
+	{
+		$this->placeholder = $placeholder;
+		return $this;
+	}
+
+
+	public function getPlaceholder(): string|bool
+	{
+		return $this->placeholder;
+	}
+
+
+	/**
+	 * @throws FilterValueInvalidException
+	 */
+	public function setValue(mixed $value): static
+	{
+		try {
+			$this->value = FormatValue::enum($value, $this->enum);
+			$this->isFiltered = !empty($this->value);
+
+		} catch (Throwable $e) {
+			throw FilterValueInvalidException::fromFilter($this, $this->enum, $value, $e);
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @return ?T
+	 */
+	public function getValue(): mixed
+	{
+		return $this->value ?? null;
+	}
+
+
+	public function getValueFormatted(): int|string|float|null
+	{
+		return $this->value?->value;
+	}
+
+
+	/**
+	 * @return array<value-of<T>, Html>
+	 */
+	public function getItems(): array	// @phpstan-ignore return.unresolvableType
 	{
 		$items = [];
 
@@ -38,25 +98,24 @@ class EnumFilter extends AbstractFilter
 			$items[$case->value] = $option;
 		}
 
-		$form->addSelect($this->fieldName(), $this->label)->setPrompt('Vše…')
-			->setItems($items);
-
-		$form->onSuccess[] = function($form, $data) {
-			$this->value = $this->format($data[$this->fieldName()] ?? null);
-		};
+		return $items;
 	}
 
 
-	public function format(mixed $value): ?string
+	public function attachToForm(Form $form): void
 	{
-		if ($value instanceof BackedEnum) {
-			$value = (string) $value->value;
+		$placeholder = $this->placeholder;
+
+		if ($placeholder === true) {
+			$placeholder = 'datatable.filter.select-placeholder';
 		}
 
-		if (is_string($value)) {
-			return $value;
-		}
+		$form->addSelect($this->fieldName(), $this->label, $this->getItems())
+			->setValue($this->value ?? null)
+			->setPrompt($placeholder);
 
-		return null;
+		$form->onSuccess[] = function($form, $data) {
+			$this->setValue($data[$this->fieldName()] ?? null);
+		};
 	}
 }

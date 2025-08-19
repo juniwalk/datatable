@@ -20,5 +20,6 @@ limit:
 	all: 'Vše'
 
 filter:
+	select-placeholder: 'Vše…'
 	button: 'Filtrovat'
 	cancel: 'Zrušit filtraci'

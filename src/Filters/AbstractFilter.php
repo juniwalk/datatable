@@ -25,13 +25,11 @@ abstract class AbstractFilter extends Control implements Filter
 	use Traits\LinkHandler;
 	use Traits\Translation;
 
-	protected bool $isFiltered = false;
-	protected mixed $value;
-
-	protected ?Closure $condition = null;
-
 	/** @var array<string, Column> */
 	protected array $columns;
+
+	protected ?Closure $condition = null;
+	protected bool $isFiltered = false;
 
 
 	public function __construct(
@@ -40,7 +38,7 @@ abstract class AbstractFilter extends Control implements Filter
 	}
 
 
-	public function setColumns(Column ...$columns): self
+	public function setColumns(Column ...$columns): static
 	{
 		$this->columns = [];
 
@@ -65,13 +63,13 @@ abstract class AbstractFilter extends Control implements Filter
 	}
 
 
-	public function hasColumn(string $columnName): bool
+	public function hasColumn(string $name): bool
 	{
-		return array_key_exists($columnName, $this->columns);
+		return isset($this->columns[$name]);
 	}
 
 
-	public function setCondition(?Closure $condition): self
+	public function setCondition(?Closure $condition): static
 	{
 		$this->condition = $condition;
 		return $this;
@@ -90,34 +88,13 @@ abstract class AbstractFilter extends Control implements Filter
 			return false;
 		}
 
-		return (bool) call_user_func($this->condition, $model, $this->value ?? null);
-	}
-
-
-	public function setValue(mixed $value): self
-	{
-		$this->isFiltered = $value !== '' && $value !== null;
-		$this->value = $value;
-
-		return $this;
-	}
-
-
-	public function getValue(): mixed
-	{
-		return $this->value ?? null;
+		return (bool) call_user_func($this->condition, $model, $this->getValue());
 	}
 
 
 	public function isFiltered(): bool
 	{
 		return $this->isFiltered;
-	}
-
-
-	public function format(mixed $value): ?string
-	{
-		return Format::stringify($value) ?: null;
 	}
 
 
@@ -147,6 +124,12 @@ abstract class AbstractFilter extends Control implements Filter
 	}
 
 
+	protected function fieldName(): string
+	{
+		return Format::camelCase(Strings::webalize($this->name));
+	}
+
+
 	/**
 	 * @throws InvalidStateException
 	 */
@@ -158,11 +141,5 @@ abstract class AbstractFilter extends Control implements Filter
 
 		$this->setTranslator($table->getTranslator());
 		parent::validateParent($table);
-	}
-
-
-	protected function fieldName(): string
-	{
-		return Format::camelCase(Strings::webalize($this->name));
 	}
 }

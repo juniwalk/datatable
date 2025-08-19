@@ -12,7 +12,6 @@ use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
-use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\EnumFilter;
@@ -23,16 +22,15 @@ use Nette\Application\UI\Form;
 
 trait Filters
 {
-	/** @var array<string, scalar> */
+	/** @var array<string, mixed> */
 	#[Persistent]
 	public array $filter = [];
 
-	/** @var array<string, scalar> */
+	/** @var array<string, mixed> */
 	protected array $filterDefault = [];
 
 	protected ?bool $isFilterShown = null;
 	protected ?int $filterColumnCount = null;
-
 
 	/** @var array<string, Filter> */
 	protected array $filters = [];
@@ -40,15 +38,19 @@ trait Filters
 
 	public function handleClear(?string $column = null): void
 	{
-		foreach ($this->getFilters() as $filter) {
+		foreach ($this->getFilters() as $name => $filter) {
 			if ($column && !$filter->hasColumn($column)) {
 				continue;
 			}
 
+			unset($this->filter[$name]);
 			$filter->setValue(null);
 		}
 
 		$this->setOption(Option::IsFiltered, $column <> null);
+		$this->getComponent('filterForm')->reset();
+
+		$this->redrawControl();
 		$this->redirect('this');
 	}
 
@@ -114,8 +116,10 @@ trait Filters
 
 
 	/**
-	 * @param class-string<BackedEnum> $enum
-	 * @param string|string[] $columns
+	 * @template T of BackedEnum
+	 * @param  class-string<T> $enum
+	 * @param  string|string[] $columns
+	 * @return EnumFilter<T>
 	 */
 	public function addFilterEnum(string $name, string $label, string $enum, string|array $columns = []): EnumFilter
 	{
@@ -179,7 +183,7 @@ trait Filters
 
 
 	/**
-	 * @return array<string, scalar>
+	 * @return array<string, mixed>
 	 */
 	public function getCurrentFilter(): array
 	{
@@ -192,21 +196,16 @@ trait Filters
 
 
 	/**
-	 * @param  array<string, mixed> $filters
+	 * @param  array<string, mixed> $filterDefault
 	 * @throws FilterNotFoundException
-	 * @throws FilterValueInvalidException
 	 */
-	public function setDefaultFilter(array $filters): self
+	public function setDefaultFilter(array $filterDefault): self
 	{
 		$this->filterDefault = [];
 
-		foreach ($filters as $name => $query) {
-			if (!$filter = $this->getFilter($name, false)) {
+		foreach ($filterDefault as $name => $value) {
+			if (!isset($this->filters[$name])) {
 				throw FilterNotFoundException::fromName($name);
-			}
-
-			if (!$value = $filter->format($query)) {
-				throw FilterValueInvalidException::fromFilter($filter, 'scalar', $query);
 			}
 
 			$this->filterDefault[$name] = $value;
@@ -217,7 +216,7 @@ trait Filters
 
 
 	/**
-	 * @return array<string, scalar>
+	 * @return array<string, mixed>
 	 */
 	public function getDefaultFilter(): array
 	{
@@ -228,6 +227,7 @@ trait Filters
 	public function isDefaultFilter(): bool
 	{
 		// todo: this needs to be writen for filters which can be array
+		// todo: make sure formatting of the value is the same when comparing
 		return ! (bool) array_udiff_assoc(
 			$this->getDefaultFilter(),
 			$this->getCurrentFilter(),
@@ -239,6 +239,8 @@ trait Filters
 	protected function createComponentFilterForm(): Form
 	{
 		$form = new Form;
+		$form->setTranslator($this->getTranslator());
+		$form->addProtection();
 		$form->addSubmit('submit');
 
 		foreach ($this->getFilters() as $filter) {
@@ -251,36 +253,15 @@ trait Filters
 
 		$form->onSuccess[] = function() {
 			$this->setOption(Option::IsFiltered, true);
+			$this->filter = array_filter(
+				array_map(fn($x) => $x->getValueFormatted(), $this->filters)
+			);
+
+			$this->redrawControl();
 			$this->redirect('this');
 		};
 
-		return $form->setDefaults($this->filter);
-	}
-
-
-	/**
-	 * @param  array<string, mixed> $state
-	 * @return array<string, mixed>
-	 */
-	protected function loadStateFilters(array $state): array
-	{
-		return $state;
-	}
-
-
-	/**
-	 * @param  array<string, mixed> $state
-	 * @return array<string, mixed>
-	 */
-	protected function saveStateFilters(array $state): array
-	{
-		$state['filter'] = [];
-
-		foreach ($this->getFilters() as $name => $filter) {
-			$state['filter'][$name] = $filter->getValue();
-		}
-
-		return $state;
+		return $form;
 	}
 
 
@@ -304,13 +285,15 @@ trait Filters
 			$column->detectFilteredStatus();
 		}
 
+		$this->getComponent('filterForm')->setDefaults($current, true);
+
 		$this->addToolbarButton('__filter_toggle', 'datatable.filter.button', '__filters')
 			->setIcon('fa-filter')->setClass('btn btn-sm btn-info collapsed')
 			->setAttribute('data-bs-target', '#'.$this->getSnippetId('filters'))
 			->setAttribute('data-bs-toggle', 'collapse');
 
 		$this->addToolbarLink('__filter_clear', '', '__filters')->setLink('clear!')
-			->setIcon('fa-times')->setClass('btn btn-sm btn-info')
+			->setIcon('fa-times')->setClass('btn btn-sm btn-info ajax')
 			->setAttribute('data-bs-toggle', 'tooltip')
 			->setTitle('datatable.filter.cancel');
 

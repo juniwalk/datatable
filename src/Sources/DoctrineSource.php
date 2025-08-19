@@ -7,6 +7,8 @@
 
 namespace JuniWalk\DataTable\Sources;
 
+use BackedEnum;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -14,7 +16,6 @@ use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use JuniWalk\DataTable\Exceptions\FilterUnknownException;
-use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters;
 use JuniWalk\DataTable\Source;
@@ -74,7 +75,6 @@ class DoctrineSource extends AbstractSource
 
 	/**
 	 * @param  array<string, Filter> $filters
-	 * @throws FilterValueInvalidException
 	 * @throws FilterUnknownException
 	 */
 	protected function filter(array $filters): void
@@ -246,18 +246,13 @@ class DoctrineSource extends AbstractSource
 	}
 
 
-	/**
-	 * @throws FilterValueInvalidException
-	 */
 	protected function applyDateFilter(Filters\DateFilter $filter): void
 	{
-		$query = $filter->getValue();
-
-		if (!is_string($query)) {
-			throw FilterValueInvalidException::fromFilter($filter, 'string');
+		if (!$query = $filter->getValue()) {
+			return;
 		}
 
-		$start = new \DateTime($query)->modify('midnight');
+		$start = DateTime::createFromInterface($query)->modify('midnight');
 		$end = (clone $start)->modify('+1 day');
 
 		foreach ($filter->getColumns() as $name => $column) {
@@ -271,11 +266,15 @@ class DoctrineSource extends AbstractSource
 	}
 
 
+	/**
+	 * @template T of BackedEnum
+	 * @param Filters\EnumFilter<T> $filter
+	 */
 	protected function applyEnumFilter(Filters\EnumFilter $filter): void
 	{
-		$query = $filter->getValue();
-
-		// todo: check value
+		if (!$query = $filter->getValue()) {
+			return;
+		}
 
 		foreach ($filter->getColumns() as $name => $column) {
 			$field = $this->checkAlias($column->getField() ?? $name);
@@ -287,15 +286,10 @@ class DoctrineSource extends AbstractSource
 	}
 
 
-	/**
-	 * @throws FilterValueInvalidException
-	 */
 	protected function applyTextFilter(Filters\TextFilter $filter): void
 	{
-		$query = $filter->getValue();
-
-		if (!is_string($query)) {
-			throw FilterValueInvalidException::fromFilter($filter, 'string');
+		if (!$query = $filter->getValue()) {
+			return;
 		}
 
 		foreach ($filter->getColumns() as $name => $column) {
