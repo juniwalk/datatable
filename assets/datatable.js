@@ -7,20 +7,16 @@
 var JuniWalk = JuniWalk || {};
 
 JuniWalk.DataTable = JuniWalk.DataTable || {};
-JuniWalk.DataTable.DetailActionExtension = class
-{
+JuniWalk.DataTable.DetailActionExtension = class {
 	#isDetailButton = false;
 	#activeAction = null;
 
-	initialize(naja)
-	{
+	initialize(naja) {
 		naja.uiHandler.addEventListener('interaction', this.#interaction.bind(this));
 		naja.snippetHandler.addEventListener('afterUpdate', this.#afterUpdate.bind(this));
 	}
 
-
-	#interaction(event)
-	{
+	#interaction(event) {
 		let button = event.detail.element;
 		let action = button.dataset.dtAction ?? null;
 		let target = button.dataset.dtTarget ?? null;
@@ -50,9 +46,7 @@ JuniWalk.DataTable.DetailActionExtension = class
 		event.preventDefault();
 	}
 
-
-	#afterUpdate(event)
-	{
+	#afterUpdate(event) {
 		if (!this.#isDetailButton) {
 			return;
 		}
