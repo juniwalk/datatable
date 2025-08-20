@@ -16,7 +16,9 @@ trait Sorting
 {
 	/** @var array<string, Sort> */
 	#[Persistent]
-	public array $sort = [];
+	public array $sort = [] {
+		set => array_filter(array_map(fn($sort) => Sort::make($sort, false), $value));
+	}
 
 	/** @var array<string, Sort> */
 	protected array $sortDefault = [];
@@ -52,6 +54,7 @@ trait Sorting
 			$sort = [$column => $sort[$column]];
 		}
 
+		// todo: array_filter might not be needed anymore since it is filtered in setter hook
 		$this->sort = array_filter($sort);
 
 		if ($this->isDefaultSort()) {
@@ -63,7 +66,7 @@ trait Sorting
 	}
 
 
-	public function setSortable(bool $sortable = true): self
+	public function setSortable(bool $sortable = true): static
 	{
 		$this->isSortable = $sortable;
 		return $this;
@@ -98,14 +101,14 @@ trait Sorting
 
 
 	/**
-	 * @param  array<string, Sort|value-of<Sort>> $sort
+	 * @param  array<string, Sort|value-of<Sort>> $sortDefault
 	 * @throws ColumnNotFoundException
 	 */
-	public function setDefaultSort(array $sort): self
+	public function setDefaultSort(array $sortDefault): static
 	{
 		$this->sortDefault = [];
 
-		foreach ($sort as $column => $sort) {
+		foreach ($sortDefault as $column => $sort) {
 			if (!$column || !$this->getColumn($column, false)) {
 				throw ColumnNotFoundException::fromName($column);
 			}
@@ -141,30 +144,6 @@ trait Sorting
 		}
 
 		return empty($sortCurrent);
-	}
-
-
-	/**
-	 * @param array<string, mixed> $state
-	 */
-	public function loadState(array $state): void
-	{
-		$state['sort'] = (array) ($state['sort'] ?? []);
-		$state['limit'] ??= null;
-
-		if ($state['limit'] && !in_array($state['limit'], $this->limits)) {
-			unset($state['limit']);
-		}
-
-		foreach ($state['sort'] as $column => $order) {
-			unset($state['sort'][$column]);
-
-			if ($sort = Sort::make($order, false)) {
-				$state['sort'][$column] = $sort;
-			}
-		}
-
-		parent::loadState($state);
 	}
 
 

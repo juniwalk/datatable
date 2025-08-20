@@ -14,19 +14,29 @@ use Nette\Utils\Paginator;
 trait Pagination
 {
 	#[Persistent]
-	public int $page = 1;
+	public int $page = 1 {
+		set => max($value, 1);
+	}
 
 	#[Persistent]
-	public ?int $limit = null;
-	protected ?int $limitDefault = null;
+	public ?int $limit = null {
+		set(?int $limit) {
+			if ($limit && !in_array($limit, $this->limits)) {
+				$limit = null;
+			}
+
+			$this->limit = $limit;
+		}
+	}
 
 	/** @var int[] */
 	protected array $limits = [10, 20, 50];
+	protected ?int $limitDefault = null;
 
 
 	public function handlePage(int $page): void
 	{
-		$this->page = max($page, 1);
+		$this->page = $page;
 
 		$this->redrawControl('paginator');
 		$this->redrawControl('table');
@@ -50,9 +60,15 @@ trait Pagination
 			$this->limit = null;
 		}
 
-		$this->redrawControl('paginator');
-		$this->redrawControl('table');
+		$this->redrawControl();
 		$this->redirect('this');
+	}
+
+
+	public function setPage(int $page): static
+	{
+		$this->page = $page;
+		return $this;
 	}
 
 
