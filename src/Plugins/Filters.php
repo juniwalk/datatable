@@ -273,7 +273,8 @@ trait Filters
 				array_map(fn($x) => $x->getValueFormatted(), $this->filters)
 			);
 
-			$this->redrawControl();
+			$this->redrawControl('paginator');
+			$this->redrawControl('table');
 			$this->redirect('this');
 		};
 

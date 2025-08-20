@@ -1,4 +1,4 @@
-<div n:snippet="wrapper" class="card card-outline card-secondary">
+<div n:snippet="wrapper" class="card card-outline card-secondary" n:attr="data-dt-allow-autosubmit: $autoSubmit">
 
 	<div n:snippet="toolbar" class="card-header py-0">
 	<div class="d-flex flex-wrap justify-content-start align-items-center gap-2 py-2">
@@ -20,18 +20,20 @@
 	<div n:snippet="filters" n:class="collapse, $control->shouldShowFilters() ? show" n:if="!empty($filters)">
 	<form n:name="filterForm" class="card-header" autocomplete="off">
 
-		<div class="row g-2 row-cols-auto row-cols-lg-{$control->getFilterColumnCount() ?? auto}" n:ifcontent>{* todo: n:ifcontent does not make sense, since the button is always rendered *}
+		<template n:if="$autoSubmit" data-dt-clear>
+			<button type="button" class="btn btn-outline-danger" data-dt-clear><i class="fas fa-times fa-fw"></i></button>
+		</template>
+
+		<div class="row g-2 row-cols-auto row-cols-lg-{$control->getFilterColumnCount() ?? auto}">
 			<div class="col flex-grow-1 flex-lg-grow-0" n:foreach="$filters as $filter">
 				{control $filter, $form}
 
 			</div>
-			<div class="col d-flex align-items-end">
-				{* todo: create Naja extension that will handle auto-submit of the filters *}
-				<button n:name="submit" type="submit" class="btn btn-sm btn-info ajax">
-					<i class="fas fa-filter fa-fw"></i> {_datatable.filter.button|noescape}
-				</button>
-			</div>
 		</div>
+
+		<button n:name="submit" type="submit" class="btn btn-sm btn-info ajax mt-3" n:if="!$autoSubmit">
+			<i class="fas fa-filter fa-fw"></i> {_datatable.filter.button|noescape}
+		</button>
 
 	</form>
 	</div>
@@ -45,8 +47,8 @@
 
 			<tr class="align-middle">
 				<th n:foreach="$columns as $name => $column" n:attr="$column->getAttributes()">
-					<div class="d-flex gap-2 justify-content-between">
-						<div n:class="py-1, flex-fill, $column->getAlign()->class()">
+					<div class="d-flex gap-2 py-1 justify-content-between">
+						<div n:class="flex-fill, $column->getAlign()->class()">
 							<a n:tag-if="$column->isSortable()" n:href="sort! $name" class="text-nowrap ajax">
 								<i n:if="$column->isSortable()" n:class="fa-solid, $column->isSorted()?->icon() ?? fa-sort, fa-fw"></i>
 								<small>{control $column:label}</small>

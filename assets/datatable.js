@@ -66,4 +66,82 @@ JuniWalk.DataTable.DetailActionExtension = class {
 	}
 }
 
+JuniWalk.DataTable = JuniWalk.DataTable || {};
+JuniWalk.DataTable.AutoSubmitExtension = class {
+	#selectorTable = '[data-dt-allow-autosubmit]';
+	#selectorInput = '[data-dt-autosubmit]';
+	#selectorClear = '[data-dt-clear]';
+
+	#allowedEvents = ['change', 'keyup'];
+	#ignoredKeys = [
+		'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12',
+		'Esc', 'Shift', 'Control', 'Alt', 'AltGraph', 'CapsLock', 'NumLock',
+		'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+	];
+
+	initialize(naja) {
+		naja.snippetHandler.addEventListener('afterUpdate', (event) => this.#attach(event.detail.snippet));
+		document.querySelectorAll(this.#selectorTable).forEach((element) => this.#attach(element));
+	}
+
+	#attach(snippet) {
+		snippet.querySelectorAll(this.#selectorInput)
+			.forEach((element) => {
+				let eventType = element.getAttribute(this.#selectorInput.replace(/[\[\]]/g, ''));
+
+				if (!this.#allowedEvents.includes(eventType)) {
+					return;
+				}
+
+				element.addEventListener(eventType, this.#debounce((event) => this.#submit(element, event)));
+			});
+	}
+
+	#submit(element, event) {
+		if (this.#ignoredKeys.includes(event?.key)) {
+			return;
+		}
+
+		let request = naja.uiHandler.submitForm(
+			element.closest('form')
+		);
+
+		request.then(() => {
+			let input = document.querySelector('#'+element.id);
+			let group = input.closest('.input-group');
+
+			if (!input.value || group.querySelector(this.#selectorClear)) {
+				return;
+			}
+
+			let template = group.closest(this.#selectorTable).querySelector('template'+this.#selectorClear);
+			group.append(template.content.cloneNode(true));
+
+			let button = group.querySelector(this.#selectorClear);
+			button.addEventListener('click', () => {
+				input.value = '';
+
+				if ('tomselect' in input) {
+					input.tomselect.setValue('');
+				}
+
+				input.dispatchEvent(new Event(event.type));
+				group.removeChild(button);
+			});
+		});
+
+		return request;
+	}
+
+	#debounce(fn, delay = 200) {
+		let timer;
+
+		return (...args) => {
+			timer && clearTimeout(timer);
+			timer = setTimeout(() => fn.apply(this, args), delay);
+		};
+	}
+}
+
+naja.registerExtension(new JuniWalk.DataTable.AutoSubmitExtension);
 naja.registerExtension(new JuniWalk.DataTable.DetailActionExtension);
