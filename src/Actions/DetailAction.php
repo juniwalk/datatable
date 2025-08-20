@@ -49,7 +49,7 @@ class DetailAction extends AbstractAction implements CallbackRenderable, Templat
 	/**
 	 * @throws InvalidStateException
 	 */
-	public function render(?Row $row = null, bool $return = false): ?Html
+	public function createButton(?Row $row): Html
 	{
 		if (is_null($row)) {
 			throw InvalidStateException::rowRequired($this);
@@ -57,7 +57,7 @@ class DetailAction extends AbstractAction implements CallbackRenderable, Templat
 
 		$table = $this->getTable();
 
-		$button = parent::render($row, true);
+		$button = parent::createButton($row);
 		$button->setHref($this->link('open!', [
 			'id' => $row->getId(),
 		]));
@@ -68,11 +68,7 @@ class DetailAction extends AbstractAction implements CallbackRenderable, Templat
 		$button->setAttribute('data-dt-action', $this->getName());
 		$button->setAttribute('data-dt-target', '#'.$snippetId);
 		$button->addClass('ajax');
-	
-		if ($return === true) {
-			return $button;
-		}
 
-		echo $button; return null;
+		return $button;
 	}
 }

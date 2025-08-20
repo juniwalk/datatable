@@ -17,7 +17,7 @@ class ActionColumn extends AbstractColumn
 	protected Align $align = Align::Right;
 
 	/** @var array<string, Action> */
-	protected array $actions;
+	protected array $actions = [];
 
 
 	/**
@@ -45,7 +45,7 @@ class ActionColumn extends AbstractColumn
 				continue;
 			}
 
-			$button = $action->render($row, true);
+			$button = $action->createButton($row);
 			$toolbar->addHtml($button);
 		}
 

@@ -23,17 +23,13 @@ class LinkAction extends AbstractAction
 	protected string $tag = 'a';
 
 
-	public function render(?Row $row = null, bool $return = false): ?Html
+	public function createButton(?Row $row): Html
 	{
 		$link = $this->createLink($this->dest ?? $this->name.'!', $this->createArgs($row));
 
-		$button = parent::render($row, true);
+		$button = parent::createButton($row);
 		$button->setHref($link);
 
-		if ($return === true) {
-			return $button;
-		}
-
-		echo $button; return null;
+		return $button;
 	}
 }

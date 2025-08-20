@@ -23,8 +23,6 @@ interface Action extends IComponent
 	public function setAllowCondition(Closure|bool $condition): self;
 	public function isAllowed(?Row $row = null): bool;
 
-	/**
-	 * @return ($return is true ? Html : null)
-	 */
-	public function render(?Row $row = null, bool $return = false): ?Html;
+	public function createButton(?Row $row): Html;
+	public function render(?Row $row = null): void;
 }

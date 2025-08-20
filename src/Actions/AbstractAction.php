@@ -82,7 +82,13 @@ abstract class AbstractAction extends Control implements Action
 	}
 
 
-	public function render(?Row $row = null, bool $return = false): ?Html
+	public function render(?Row $row = null): void
+	{
+		echo $this->createButton($row);
+	}
+
+
+	public function createButton(?Row $row): Html
 	{
 		$button = Html::el($this->tag, $this->attributes);
 
@@ -102,11 +108,7 @@ abstract class AbstractAction extends Control implements Action
 			$button->setTitle($this->translate($title));
 		}
 
-		if ($return === true) {
-			return $button;
-		}
-
-		echo $button; return null;
+		return $button;
 	}
 
 
