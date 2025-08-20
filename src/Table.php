@@ -89,6 +89,7 @@ class Table extends Control implements EventHandler
 		$template->add('toolbar', $this->getToolbarActionsGrouped());
 		$template->add('columns', $this->getColumns());
 		$template->add('filters', $this->getFilters());
+		$template->add('autoSubmit', $this->getAutoSubmit());
 		$template->add('caption', $this->caption);
 
 		$template->render();

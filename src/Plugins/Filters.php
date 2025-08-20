@@ -29,6 +29,7 @@ trait Filters
 	/** @var array<string, mixed> */
 	protected array $filterDefault = [];
 
+	protected bool $autoSubmit = true;
 	protected ?bool $isFilterShown = null;
 	protected ?int $filterColumnCount = null;
 
@@ -55,7 +56,20 @@ trait Filters
 	}
 
 
-	public function setFilterShown(?bool $filterShown = true): self
+	public function setAutoSubmit(bool $autoSubmit): static
+	{
+		$this->autoSubmit = $autoSubmit;
+		return $this;
+	}
+
+
+	public function getAutoSubmit(): bool
+	{
+		return $this->autoSubmit;
+	}
+
+
+	public function setFilterShown(?bool $filterShown = true): static
 	{
 		$this->isFilterShown = $filterShown;
 		return $this;
@@ -84,7 +98,7 @@ trait Filters
 	}
 
 
-	public function setFilterColumnCount(?int $filterColumnCount): self
+	public function setFilterColumnCount(?int $filterColumnCount): static
 	{
 		$this->filterColumnCount = $filterColumnCount;
 		return $this;
@@ -199,7 +213,7 @@ trait Filters
 	 * @param  array<string, mixed> $filterDefault
 	 * @throws FilterNotFoundException
 	 */
-	public function setDefaultFilter(array $filterDefault): self
+	public function setDefaultFilter(array $filterDefault): static
 	{
 		$this->filterDefault = [];
 
@@ -253,6 +267,8 @@ trait Filters
 
 		$form->onSuccess[] = function() {
 			$this->setOption(Option::IsFiltered, true);
+			$this->setPage(1);
+
 			$this->filter = array_filter(
 				array_map(fn($x) => $x->getValueFormatted(), $this->filters)
 			);
