@@ -52,6 +52,16 @@ class InvalidStateException extends \Exception
 	}
 
 
+	/**
+	 * @param class-string $parent
+	 * @param object $child
+	 */
+	public static function parentForbidden(string $parent, object $child): self
+	{
+		return new self('Component '.$child::class.' cannot be child of '.$parent.' parent.');
+	}
+
+
 	public static function rowRequired(Component $component): self
 	{
 		return new self('Component "'.Format::className($component, Casing::Pascal).'#'.$component->getName().'" requires access to '.Row::class.' instance.');

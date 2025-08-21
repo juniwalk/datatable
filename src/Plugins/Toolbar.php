@@ -11,7 +11,9 @@ use Closure;
 use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Actions\ButtonAction;
 use JuniWalk\DataTable\Actions\CallbackAction;
+use JuniWalk\DataTable\Actions\DropdownAction;
 use JuniWalk\DataTable\Actions\LinkAction;
+use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
 
 trait Toolbar
 {
@@ -33,7 +35,10 @@ trait Toolbar
 	}
 
 
-	// todo: new action addToolbarDropdown ?
+	public function addToolbarDropdown(string $name, string $label, ?string $group = null): DropdownAction
+	{
+		return $this->addToolbarAction($name, new DropdownAction($label, $group));
+	}
 
 
 	public function addToolbarCallback(string $name, string $label, ?string $group = null): CallbackAction
@@ -58,12 +63,12 @@ trait Toolbar
 
 	/**
 	 * @return ($require is true ? Action : ?Action)
+	 * @throws ActionNotFoundException
 	 */
 	public function getToolbarAction(string $name, bool $require = true): ?Action
 	{
 		if ($require && !isset($this->toolbar[$name])) {
-			// todo: throw ActionNotFound::fromName($name);
-			throw new \Exception;
+			throw ActionNotFoundException::fromName($name);
 		}
 
 		return $this->toolbar[$name] ?? null;

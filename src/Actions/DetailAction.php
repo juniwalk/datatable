@@ -55,17 +55,15 @@ class DetailAction extends AbstractAction implements CallbackRenderable, Templat
 			throw InvalidStateException::rowRequired($this);
 		}
 
-		$button = parent::createButton($row);
-		$button->setHref($this->link('open!', [
-			'id' => $row->getId(),
-		]));
-
 		$snippetId = sprintf('row-%s-detail', $row->getId());
 		$snippetId = $this->getTable()->getSnippetId($snippetId);
 
+		$button = parent::createButton($row)->addClass('ajax');
 		$button->setAttribute('data-dt-action', $this->getName());
 		$button->setAttribute('data-dt-target', '#'.$snippetId);
-		$button->addClass('ajax');
+		$button->setHref($this->link('open!', [
+			'id' => $row->getId(),
+		]));
 
 		return $button;
 	}

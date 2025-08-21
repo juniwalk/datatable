@@ -11,6 +11,7 @@ use Closure;
 use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Actions\CallbackAction;
 use JuniWalk\DataTable\Actions\DetailAction;
+use JuniWalk\DataTable\Actions\DropdownAction;
 use JuniWalk\DataTable\Actions\LinkAction;
 use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
 
@@ -30,7 +31,10 @@ trait Actions
 	}
 
 
-	// todo: new action addActionDropdown ?
+	public function addActionDropdown(string $name, string $label): DropdownAction
+	{
+		return $this->addAction($name, new DropdownAction($label));
+	}
 
 
 	public function addActionCallback(string $name, string $label): CallbackAction
@@ -108,7 +112,10 @@ trait Actions
 
 	public function hasDetailAction(): bool
 	{
-		return $this->hasDetailAction ??= (bool) array_filter($this->actions, fn($x) => $x instanceof DetailAction);
+		return $this->hasDetailAction ??= (bool) array_filter(
+			$this->getComponentTree(),
+			fn($x) => $x instanceof DetailAction,
+		);
 	}
 
 

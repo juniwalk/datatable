@@ -113,11 +113,11 @@ abstract class AbstractAction extends Control implements Action
 
 	protected function validateParent(IContainer $parent): void
 	{
+		parent::validateParent($parent);
+
 		$this->monitor($this::class, fn() => $this->lookup(Table::class));
 		$this->monitor(Table::class, function(Table $table) {
 			$this->setTranslator($table->getTranslator());
 		});
-
-		parent::validateParent($parent);
 	}
 }
