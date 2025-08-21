@@ -84,7 +84,7 @@ abstract class AbstractColumn extends Control implements Column
 	 */
 	public function render(Row $row): void
 	{
-		$value = $this->renderValue($row);
+		$value = $this->formatValue($row);
 
 		if ($this instanceof CallbackRenderable && $this->hasRenderer()) {
 			$value = $this->callbackRender($row, $value);
@@ -100,7 +100,7 @@ abstract class AbstractColumn extends Control implements Column
 	}
 
 
-	abstract protected function renderValue(Row $row): Html|string;
+	abstract protected function formatValue(Row $row): Html|string;
 
 
 	/**

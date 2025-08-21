@@ -25,10 +25,10 @@ class LinkColumn extends TextColumn
 	 * @throws FieldInvalidException
 	 * @throws InvalidLinkException
 	 */
-	protected function renderValue(Row $row): Html|string
+	protected function formatValue(Row $row): Html|string
 	{
 		$link = $this->createLink($this->dest, $this->createArgs($row));
-		$value = (string) parent::renderValue($row);
+		$value = (string) parent::formatValue($row);
 
 		return Html::el('a', $value)->setHref($link)
 			->addClass('fw-bold');

@@ -32,11 +32,11 @@ class ActionColumn extends AbstractColumn
 
 	public function render(Row $row): void
 	{
-		echo $this->renderValue($row);
+		echo $this->formatValue($row);
 	}
 
 
-	protected function renderValue(Row $row): Html
+	protected function formatValue(Row $row): Html
 	{
 		$toolbar = Html::el('div class="btn-toolbar flex-nowrap gap-1 justify-content-end"');
 

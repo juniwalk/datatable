@@ -14,10 +14,10 @@ use JuniWalk\DataTable\Columns\Traits\Sorting;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Interfaces\CallbackRenderable;
 use JuniWalk\DataTable\Row;
+use JuniWalk\DataTable\Tools\FormatValue;
 use JuniWalk\DataTable\Traits\RendererCallback;
 use Nette\Utils\Html;
 use Nette\Utils\Strings;
-use Stringable;
 
 class TextColumn extends AbstractColumn implements Sortable, Filterable, CallbackRenderable
 {
@@ -42,21 +42,17 @@ class TextColumn extends AbstractColumn implements Sortable, Filterable, Callbac
 	/**
 	 * @throws FieldInvalidException
 	 */
-	protected function renderValue(Row $row): Html|string
+	protected function formatValue(Row $row): Html|string
 	{
 		if (!$value = $row->getValue($this)) {
 			return '';
 		}
 
-		if ($value instanceof Stringable) {
-			$value = (string) $value;
-		}
+		$value = FormatValue::string($value);
 
 		if (!is_scalar($value)) {
 			throw FieldInvalidException::fromColumn($this, $value, 'string');
 		}
-
-		$value = (string) $value;
 
 		if ($this->truncate > 0) {
 			$value = Strings::truncate($value, $this->truncate);

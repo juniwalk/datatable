@@ -23,7 +23,7 @@ class EnumColumn extends TextColumn
 	/**
 	 * @throws FieldInvalidException
 	 */
-	protected function renderValue(Row $row): Html|string
+	protected function formatValue(Row $row): Html|string
 	{
 		if (!$value = $row->getValue($this)) {
 			return '';

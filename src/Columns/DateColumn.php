@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Columns;
 
+use DateMalformedStringException;
 use DateTimeInterface;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
@@ -16,6 +17,7 @@ use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Interfaces\CallbackRenderable;
 use JuniWalk\DataTable\Row;
+use JuniWalk\DataTable\Tools\FormatValue;
 use JuniWalk\DataTable\Traits\RendererCallback;
 use Nette\Utils\Html;
 
@@ -44,18 +46,21 @@ class DateColumn extends AbstractColumn implements Sortable, Filterable, Callbac
 	/**
 	 * @throws FieldInvalidException
 	 */
-	protected function renderValue(Row $row): Html|string
+	protected function formatValue(Row $row): Html|string
 	{
 		if (!$value = $row->getValue($this)) {
 			return '';
 		}
 
-		// todo: try to make DateTime from other value types
+		try {
+			$value = FormatValue::dateTime($value, [
+				$this->format,
+			]);
 
-		if (!$value instanceof DateTimeInterface) {
-			throw FieldInvalidException::fromColumn($this, $value, DateTimeInterface::class);
+		} catch (DateMalformedStringException $e) {
+			throw FieldInvalidException::fromColumn($this, $value, DateTimeInterface::class, $e);
 		}
 
-		return $value->format($this->format);
+		return $value?->format($this->format) ?? '';
 	}
 }
