@@ -9,6 +9,7 @@ namespace JuniWalk\DataTable\Traits;
 
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Table;
+use Throwable;
 
 trait TableAncestor
 {
@@ -18,16 +19,16 @@ trait TableAncestor
 	 */
 	protected function getTable(bool $require = true): ?Table
 	{
-		$parent = $this->getParent();
-
-		if ($require && !$parent) {
-			throw InvalidStateException::parentRequired(Table::class, $this);
+		if ($this instanceof Table) {
+			return $this;
 		}
 
-		if ($parent && !$parent instanceof Table) {
-			throw InvalidStateException::parentRequired(Table::class, $this);
+		try {
+			return $this->lookup(Table::class, $require);	// @phpstan-ignore return.type (Missing generics in Nette)
+
+		} catch (Throwable) {
 		}
 
-		return $parent;
+		throw InvalidStateException::parentRequired(Table::class, $this);
 	}
 }

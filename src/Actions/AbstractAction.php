@@ -9,7 +9,6 @@ namespace JuniWalk\DataTable\Actions;
 
 use Closure;
 use JuniWalk\DataTable\Action;
-use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Table;
 use JuniWalk\DataTable\Traits;
@@ -112,16 +111,13 @@ abstract class AbstractAction extends Control implements Action
 	}
 
 
-	/**
-	 * @throws InvalidStateException
-	 */
-	protected function validateParent(IContainer $table): void
+	protected function validateParent(IContainer $parent): void
 	{
-		if (!$table instanceof Table) {
-			throw InvalidStateException::parentRequired(Table::class, $this);
-		}
+		$this->monitor($this::class, fn() => $this->lookup(Table::class));
+		$this->monitor(Table::class, function(Table $table) {
+			$this->setTranslator($table->getTranslator());
+		});
 
-		$this->setTranslator($table->getTranslator());
-		parent::validateParent($table);
+		parent::validateParent($parent);
 	}
 }
