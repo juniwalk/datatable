@@ -86,6 +86,7 @@ class Table extends Control implements EventHandler
 		// bdump($this);
 
 		$template->add('rows', $rows);
+		$template->add('table', $this);
 		$template->add('toolbar', $this->getToolbarActionsGrouped());
 		$template->add('columns', $this->getColumns());
 		$template->add('filters', $this->getFilters());
@@ -111,6 +112,7 @@ class Table extends Control implements EventHandler
 		$this->when('render', function() {
 			$this->validateFilters();
 			$this->validateSorting();
+			$this->validateColumns();
 		});
 	}
 }

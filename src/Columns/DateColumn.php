@@ -10,8 +10,10 @@ namespace JuniWalk\DataTable\Columns;
 use DateMalformedStringException;
 use DateTimeInterface;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
+use JuniWalk\DataTable\Columns\Interfaces\Hideable;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Columns\Traits\Filters;
+use JuniWalk\DataTable\Columns\Traits\Hiding;
 use JuniWalk\DataTable\Columns\Traits\Sorting;
 use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
@@ -21,9 +23,9 @@ use JuniWalk\DataTable\Tools\FormatValue;
 use JuniWalk\DataTable\Traits\RendererCallback;
 use Nette\Utils\Html;
 
-class DateColumn extends AbstractColumn implements Sortable, Filterable, CallbackRenderable
+class DateColumn extends AbstractColumn implements Sortable, Filterable, Hideable, CallbackRenderable
 {
-	use Sorting, Filters, RendererCallback;
+	use Sorting, Filters, Hiding, RendererCallback;
 
 	protected Align $align = Align::Right;
 

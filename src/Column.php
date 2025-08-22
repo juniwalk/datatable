@@ -12,6 +12,8 @@ use Nette\ComponentModel\IComponent;
 
 interface Column extends IComponent
 {
+	public function getLabel(): string;
+
 	public function setField(?string $field): self;
 	public function getField(): ?string;
 
@@ -23,6 +25,7 @@ interface Column extends IComponent
 
 	public function isFiltered(): bool;
 	public function isSortable(): ?bool;
+	public function isHidden(): bool;
 
 	public function render(Row $row): void;
 	public function renderLabel(): void;

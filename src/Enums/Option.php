@@ -9,5 +9,6 @@ namespace JuniWalk\DataTable\Enums;
 
 enum Option: string
 {
+	case HiddenColumns = 'hiddenColumns';
 	case IsFiltered = 'isFiltered';
 }

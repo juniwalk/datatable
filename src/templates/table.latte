@@ -17,14 +17,14 @@
 	</div>
 	</div>
 
-	<div n:snippet="filters" n:class="collapse, $control->shouldShowFilters() ? show" n:if="!empty($filters)">
+	<div n:snippet="filters" n:class="collapse, $table->shouldShowFilters() ? show" n:if="!empty($filters)">
 	<form n:name="filterForm" class="card-header" autocomplete="off">
 
 		<template n:if="$autoSubmit" data-dt-clear>
 			<button type="button" class="btn btn-outline-danger" data-dt-clear><i class="fas fa-times fa-fw"></i></button>
 		</template>
 
-		<div class="row g-2 row-cols-auto row-cols-lg-{$control->getFilterColumnCount() ?? auto}">
+		<div class="row g-2 row-cols-auto row-cols-lg-{$table->getFilterColumnCount() ?? auto}">
 			<div class="col flex-grow-1 flex-lg-grow-0" n:foreach="$filters as $filter">
 				{control $filter, $form}
 
@@ -43,10 +43,10 @@
 
 		<caption class="sr-only">{$caption|translate|noescape}</caption>
 
-		<thead class="position-sticky top-0">
+		<thead class="position-sticky top-0 z-1">
 
 			<tr class="align-middle">
-				<th n:foreach="$columns as $name => $column" n:attr="$column->getAttributes()">
+				<th n:foreach="$columns as $name => $column" n:attr="$column->getAttributes()" n:if="!$column->isHidden()">
 					<div class="d-flex gap-2 py-1 justify-content-between">
 						<div n:class="flex-fill, $column->getAlign()->class()">
 							<a n:tag-if="$column->isSortable()" n:href="sort! $name" class="text-nowrap ajax">
@@ -54,7 +54,8 @@
 								<small>{control $column:label}</small>
 							</a>
 						</div>
-						<a n:if="$column->isFiltered()" n:href="clear! $name" class="text-danger ajax"><i class="fa-solid fa-times fa-fw"></i></a>
+						<a n:if="$column->isFiltered()" n:href="clear! $name" class="text-danger ajax"><i class="fa-solid fa-filter-circle-xmark fa-fw"></i></a>
+						<a n:if="$table->isColumnHideable($column)" n:href="toggle! $name" class="text-secondary ajax"><i class="fa-solid fa-eye-slash fa-fw"></i></a>
 					</div>
 				</th>
 			</tr>
@@ -64,11 +65,11 @@
 		<tbody n:snippetArea="rows" n:inner-foreach="$rows as $row">
 
 			<tr n:snippet="row-{$row->getId()}" n:attr="$row->getAttributes()" n:inner-foreach="$columns as $column">
-				<td n:attr="$column->getAttributes()">{control $column, $row}</td>
+				<td n:attr="$column->getAttributes()" n:if="!$column->isHidden()">{control $column, $row}</td>
 			</tr>
 
-			<tr n:if="$control->hasDetailAction()" class="d-none" n:snippet="row-{$row->getId()}-detail">
-				{var $activeDetail = $control->getActiveDetail()}
+			<tr n:if="$table->hasDetailAction()" class="d-none" n:snippet="row-{$row->getId()}-detail">
+				{var $activeDetail = $table->getActiveDetail()}
 				<td n:if="$activeDetail" class="p-0 border-0" colspan="{sizeof($columns)}">
 					<div class="collapse border-bottom" data-dt-action="{$activeDetail->getName()}">
 						<div class="bg-body p-3 px-4">
@@ -78,14 +79,14 @@
 					</div>
 				</td>
 			</tr>
-			<tr n:if="$control->hasDetailAction()" class="d-none"></tr>
+			<tr n:if="$table->hasDetailAction()" class="d-none"></tr>
 
 		</tbody>
 
 		<tbody n:if="empty($rows)">
 			<tr>
 				<td class="col-no-rows p-3 px-4" colspan="{sizeof($columns)}">
-					<em class="text-secondary">{_datatable.table.empty} <a n:href="clear!" n:if="$control->shouldShowFilters()"><i class="fas fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.cancel}</a></em>
+					<em class="text-secondary">{_datatable.table.empty} <a n:href="clear!" n:if="$table->shouldShowFilters()"><i class="fas fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.cancel}</a></em>
 				</td>
 			</tr>
 		</tbody>
@@ -98,17 +99,17 @@
 
 		<div class="flex-fill">
 
-			{control $control:pages}
+			{control $table:pages}
 
 		</div>
 
 		<div class="d-flex gap-2">
 
-			<a n:href="clear!" class="btn btn-sm btn-danger text-nowrap ajax" n:if="$control->shouldShowFilters()">
+			<a n:href="clear!" class="btn btn-sm btn-danger text-nowrap ajax" n:if="$table->shouldShowFilters()">
 				<i class="fas fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.cancel}
 			</a>
 
-			{control $control:limiter}
+			{control $table:limiter}
 
 		</div>
 

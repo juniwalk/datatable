@@ -8,6 +8,8 @@ table:
 	empty: 'Nenalezeny žádné záznamy.'
 
 column:
+	show-default: 'Ukaž základní sloupce'
+	show-all: 'Ukaž všechny sloupce'
 	action: 'Akce'
 
 page:

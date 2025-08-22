@@ -8,6 +8,7 @@
 namespace JuniWalk\DataTable\Columns;
 
 use JuniWalk\DataTable\Column;
+use JuniWalk\DataTable\Columns\Interfaces\Hideable;
 use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
@@ -33,6 +34,12 @@ abstract class AbstractColumn extends Control implements Column
 	public function __construct(
 		protected string $label,
 	) {
+	}
+
+
+	public function getLabel(): string
+	{
+		return $this->label;
 	}
 
 
@@ -65,18 +72,10 @@ abstract class AbstractColumn extends Control implements Column
 	}
 
 
-	// ? Overriden using {Filters|Sorting} traits
-	public function isSortable(): ?bool
-	{
-		return false;
-	}
-
-
-	// ? Overriden using {Filters|Sorting} traits
-	public function isFiltered(): bool
-	{
-		return false;
-	}
+	// ? Overriden using {Sorting, Filters, Hiding} traits
+	public function isSortable(): ?bool { return false; }
+	public function isFiltered(): bool { return false; }
+	public function isHidden(): bool { return false; }
 
 
 	/**

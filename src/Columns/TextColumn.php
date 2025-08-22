@@ -8,8 +8,10 @@
 namespace JuniWalk\DataTable\Columns;
 
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
+use JuniWalk\DataTable\Columns\Interfaces\Hideable;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Columns\Traits\Filters;
+use JuniWalk\DataTable\Columns\Traits\Hiding;
 use JuniWalk\DataTable\Columns\Traits\Sorting;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Interfaces\CallbackRenderable;
@@ -19,9 +21,9 @@ use JuniWalk\DataTable\Traits\RendererCallback;
 use Nette\Utils\Html;
 use Nette\Utils\Strings;
 
-class TextColumn extends AbstractColumn implements Sortable, Filterable, CallbackRenderable
+class TextColumn extends AbstractColumn implements Sortable, Filterable, Hideable, CallbackRenderable
 {
-	use Sorting, Filters, RendererCallback;
+	use Sorting, Filters, Hiding, RendererCallback;
 
 	protected ?int $truncate = null;
 

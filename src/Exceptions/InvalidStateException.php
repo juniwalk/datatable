@@ -7,6 +7,8 @@
 
 namespace JuniWalk\DataTable\Exceptions;
 
+use JuniWalk\DataTable\Column;
+use JuniWalk\DataTable\Columns\Interfaces\Hideable;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Row;
 use JuniWalk\Utils\Enums\Casing;
@@ -33,6 +35,12 @@ class InvalidStateException extends \Exception
 	public static function limitsEmpty(): self
 	{
 		return new self('No valid page limits were given.');
+	}
+
+
+	public static function columnNotHideable(Column $column): self
+	{
+		return new self('Column "'.$column->getName().'" does not implement '.Hideable::class);
 	}
 
 
