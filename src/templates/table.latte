@@ -47,11 +47,11 @@
 
 			<tr class="align-middle">
 				<th n:foreach="$columns as $name => $column" n:attr="$column->getAttributes()" n:if="!$column->isHidden()">
-					<div class="d-flex gap-2 py-1 justify-content-between">
+					<div class="d-flex gap-2 py-2 justify-content-between" style="font-size: .875em">
 						<div n:class="flex-fill, $column->getAlign()->class()">
 							<a n:tag-if="$column->isSortable()" n:href="sort! $name" class="text-nowrap ajax">
 								<i n:if="$column->isSortable()" n:class="fa-solid, $column->isSorted()?->icon() ?? fa-sort, fa-fw"></i>
-								<small>{control $column:label}</small>
+								{control $column:label}
 							</a>
 						</div>
 						<a n:if="$column->isFiltered()" n:href="clear! $name" class="text-danger ajax"><i class="fa-solid fa-filter-circle-xmark fa-fw"></i></a>
