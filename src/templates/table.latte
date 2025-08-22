@@ -20,10 +20,6 @@
 	<div n:snippet="filters" n:class="collapse, $table->shouldShowFilters() ? show" n:if="!empty($filters)">
 	<form n:name="filterForm" class="card-header" autocomplete="off">
 
-		<template n:if="$autoSubmit" data-dt-clear>
-			<button type="button" class="btn btn-outline-danger" data-dt-clear><i class="fas fa-times fa-fw"></i></button>
-		</template>
-
 		<div class="row g-2 row-cols-auto row-cols-lg-{$table->getFilterColumnCount() ?? auto}">
 			<div class="col flex-grow-1 flex-lg-grow-0" n:foreach="$filters as $name => $filter">
 
@@ -31,7 +27,8 @@
 					<label n:name="$filter->fieldName()" class="form-label col-form-label col-form-label-sm col-xl-3">{$filter->getLabel()|translate}</label>
 					<div class="col-xl-9">
 						<div class="input-group input-group-sm">
-							{include block $filter->getType(), input: $filter->fieldName(), filter: $filter |indent:6}
+							{include block $filter->getType(), input: $filter->fieldName(), filter: $filter |indent:5}
+
 							<a n:href="clear! $name" class="btn btn-outline-danger ajax" data-dt-clear n:if="$filter->isFiltered()"><i class="fas fa-times fa-fw"></i></a>
 						</div>
 					</div>
@@ -43,6 +40,14 @@
 		<button n:name="submit" type="submit" class="btn btn-sm btn-info ajax mt-3" n:if="!$autoSubmit">
 			<i class="fas fa-filter fa-fw"></i> {_datatable.filter.button|noescape}
 		</button>
+
+		<template n:if="$autoSubmit" data-dt-clear>
+			<button type="button" class="btn btn-outline-danger" data-dt-clear><i class="fas fa-times fa-fw"></i></button>
+		</template>
+
+		{define #date-filter}<input n:name="$input" type="date" class="form-control form-control-sm" data-dt-autosubmit="change">{/define}
+		{define #enum-filter}<select n:name="$input" class="form-select form-select-sm" data-dt-autosubmit="change"></select>{/define}
+		{define #text-filter}<input n:name="$input" type="text" class="form-control form-control-sm" data-dt-autosubmit="keyup">{/define}
 
 	</form>
 	</div>
@@ -126,16 +131,3 @@
 	</div>
 
 </div>
-
-
-{define #date-filter}
-	<input n:name="$input" type="date" class="form-control form-control-sm" data-dt-autosubmit="change">
-{/define}
-
-{define #enum-filter}
-	<select n:name="$input" class="form-select form-select-sm" data-dt-autosubmit="change"></select>
-{/define}
-
-{define #text-filter}
-	<input n:name="$input" type="text" class="form-control form-control-sm" data-dt-autosubmit="keyup">
-{/define}
