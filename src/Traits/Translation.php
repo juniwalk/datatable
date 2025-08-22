@@ -34,7 +34,7 @@ trait Translation
 			return $message;
 		}
 
-		if (is_string($message) && !preg_match('/^(([a-z0-9\_]+)\.)+(?2)$/i', $message)) {
+		if (is_string($message) && !preg_match('/^(([a-z0-9\_\-]+)\.)+(?2)$/i', $message)) {
 			return $message;
 		}
 
