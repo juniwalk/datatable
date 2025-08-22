@@ -12,10 +12,7 @@ use JuniWalk\DataTable\Exceptions\SourceUnknownException;
 use JuniWalk\DataTable\Sources\ArraySource;
 use JuniWalk\DataTable\Sources\DoctrineSource;
 
-/**
- * @phpstan-import-type Items from Source
- */
-class SourceFactory
+final class SourceFactory
 {
 	private function __construct() {}
 
@@ -30,10 +27,8 @@ class SourceFactory
 		}
 
 		return match (true) {
-			$model instanceof QueryBuilder => new DoctrineSource($model),
-
-			// todo: validate somehow that array has proper structure
-			is_array($model) => new ArraySource($model),	// @phpstan-ignore argument.type
+			$model instanceof QueryBuilder	=> new DoctrineSource($model),
+			is_array($model)				=> new ArraySource($model),	// @phpstan-ignore argument.type
 
 			default => throw SourceUnknownException::fromModel($model),
 		};
