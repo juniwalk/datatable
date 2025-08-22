@@ -85,12 +85,12 @@ class Table extends Control implements EventHandler
 
 		// bdump($this);
 
-		$template->add('rows', $rows);
-		$template->add('table', $this);
+		$template->add('autoSubmit', $this->getAutoSubmit());
 		$template->add('toolbar', $this->getToolbarActionsGrouped());
 		$template->add('columns', $this->getColumns());
 		$template->add('filters', $this->getFilters());
-		$template->add('autoSubmit', $this->getAutoSubmit());
+		$template->add('table', $this);
+		$template->add('rows', $rows);
 
 		$template->render();
 	}
