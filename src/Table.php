@@ -98,20 +98,16 @@ class Table extends Control implements EventHandler
 
 	protected function validateParent(IContainer $parent): void
 	{
-		$this->watch('render');
-		$this->watch('load');
-		$this->watch('item');
-
-		// ? Parent has to be validated first so the loadState is called
 		parent::validateParent($parent);
 
-		$this->monitor(Presenter::class, fn() => $this->validateSession());
-		$this->monitor(Presenter::class, fn() => $this->validateSources());
-
+		$this->watchAny('render,load,item');
 		$this->when('render', function() {
 			$this->validateFilters();
 			$this->validateSorting();
 			$this->validateColumns();
 		});
+
+		$this->monitor(Presenter::class, fn() => $this->validateSession());
+		$this->monitor(Presenter::class, fn() => $this->validateSources());
 	}
 }
