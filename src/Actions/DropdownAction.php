@@ -12,7 +12,6 @@ use JuniWalk\DataTable\Plugins\Actions;
 use JuniWalk\DataTable\Row;
 use Nette\ComponentModel\IContainer;
 use Nette\Utils\Html;
-use Nette\Utils\Random;
 
 class DropdownAction extends ButtonAction
 {
@@ -23,7 +22,8 @@ class DropdownAction extends ButtonAction
 
 	public function addDivider(): static
 	{
-		$this->addAction(Random::generate(6), new DividerAction);
+		$count = sizeof(array_filter($this->actions, fn($x) => $x instanceof DividerAction));
+		$this->addAction($this->name.'_divider'.$count, new DividerAction);
 		return $this;
 	}
 
