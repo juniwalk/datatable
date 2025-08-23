@@ -9,11 +9,12 @@ namespace JuniWalk\DataTable\Filters;
 
 use DateTimeImmutable;
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
+use JuniWalk\DataTable\FilterRanged;
 use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Application\UI\Form;
 use Throwable;
 
-class DateFilter extends AbstractFilter
+class DateFilter extends AbstractFilter implements FilterRanged
 {
 	protected ?DateTimeImmutable $value;
 
@@ -44,7 +45,28 @@ class DateFilter extends AbstractFilter
 	}
 
 
-	public function getValueFormatted(): int|string|float|null
+	/**
+	 * @return ?DateTimeImmutable
+	 */
+	public function getValueFrom(): mixed
+	{
+		return $this->value?->modify('midnight');
+	}
+
+
+	/**
+	 * @return ?DateTimeImmutable
+	 */
+	public function getValueTo(): mixed
+	{
+		return $this->value?->modify('midnight')?->modify('+1 day');
+	}
+
+
+	/**
+	 * @return string|null
+	 */
+	public function getValueFormatted(): mixed
 	{
 		return $this->value?->format('Y-m-d');
 	}

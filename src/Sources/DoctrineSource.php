@@ -8,7 +8,6 @@
 namespace JuniWalk\DataTable\Sources;
 
 use BackedEnum;
-use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -17,7 +16,10 @@ use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use JuniWalk\DataTable\Exceptions\FilterUnknownException;
 use JuniWalk\DataTable\Filter;
-use JuniWalk\DataTable\Filters;
+use JuniWalk\DataTable\Filters\DateFilter;
+use JuniWalk\DataTable\Filters\DateRangeFilter;
+use JuniWalk\DataTable\Filters\EnumFilter;
+use JuniWalk\DataTable\Filters\TextFilter;
 use JuniWalk\DataTable\Source;
 use Stringable;
 
@@ -88,9 +90,10 @@ class DoctrineSource extends AbstractSource
 				// ? Returns @true if the query matches field in the model
 				$filter->hasCondition() => $filter->applyCondition($this->queryBuilder),
 
-				$filter instanceof Filters\DateFilter => $this->applyDateFilter($filter),
-				$filter instanceof Filters\EnumFilter => $this->applyEnumFilter($filter),
-				$filter instanceof Filters\TextFilter => $this->applyTextFilter($filter),
+				$filter instanceof DateRangeFilter,
+				$filter instanceof DateFilter => $this->applyDateFilter($filter),
+				$filter instanceof EnumFilter => $this->applyEnumFilter($filter),
+				$filter instanceof TextFilter => $this->applyTextFilter($filter),
 
 				default => throw FilterUnknownException::fromFilter($filter),
 			};
@@ -246,31 +249,28 @@ class DoctrineSource extends AbstractSource
 	}
 
 
-	protected function applyDateFilter(Filters\DateFilter $filter): void
+	protected function applyDateFilter(DateFilter|DateRangeFilter $filter): void
 	{
-		if (!$query = $filter->getValue()) {
+		if (!$filter->isFiltered()) {
 			return;
 		}
-
-		$start = DateTime::createFromInterface($query)->modify('midnight');
-		$end = (clone $start)->modify('+1 day');
 
 		foreach ($filter->getColumns() as $name => $column) {
 			$field = $this->checkAlias($column->getField() ?? $name);
 			$param = $this->getPlaceholder();
 
 			$this->queryBuilder->andWhere("{$field} >= :{$param}S AND {$field} < :{$param}E")
-				->setParameter($param.'S', $start)
-				->setParameter($param.'E', $end);
+				->setParameter($param.'S', $filter->getValueFrom())
+				->setParameter($param.'E', $filter->getValueTo());
 		}
 	}
 
 
 	/**
 	 * @template T of BackedEnum
-	 * @param Filters\EnumFilter<T> $filter
+	 * @param EnumFilter<T> $filter
 	 */
-	protected function applyEnumFilter(Filters\EnumFilter $filter): void
+	protected function applyEnumFilter(EnumFilter $filter): void
 	{
 		if (!$query = $filter->getValue()) {
 			return;
@@ -286,7 +286,7 @@ class DoctrineSource extends AbstractSource
 	}
 
 
-	protected function applyTextFilter(Filters\TextFilter $filter): void
+	protected function applyTextFilter(TextFilter $filter): void
 	{
 		if (!$query = $filter->getValue()) {
 			return;

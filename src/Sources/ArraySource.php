@@ -11,9 +11,13 @@ use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
+use JuniWalk\DataTable\Exceptions\FilterUnknownException;
 use JuniWalk\DataTable\Filter;
+use JuniWalk\DataTable\Filters\DateFilter;
+use JuniWalk\DataTable\Filters\DateRangeFilter;
 use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Source;
+use JuniWalk\DataTable\Tools\FormatValue;
 use JuniWalk\Utils\Format;
 
 /**
@@ -55,11 +59,12 @@ class ArraySource extends AbstractSource
 
 
 	/**
-	 * @param array<string, Filter> $filters
+	 * @param  array<string, Filter> $filters
+	 * @throws FilterUnknownException
 	 */
 	protected function filter(array $filters): void
 	{
-		if (empty($this->items)) {
+		if (empty($filters) || empty($this->items)) {
 			return;
 		}
 
@@ -75,7 +80,10 @@ class ArraySource extends AbstractSource
 					// ? Returns @true if the query matches field in the model
 					$filter->hasCondition() => $filter->applyCondition($item),
 
-					default => $this->isMatching($row, $filter),
+					$filter instanceof DateRangeFilter,
+					$filter instanceof DateFilter => $this->applyDateFilter($row, $filter),
+
+					default => $this->applyTextFilter($row, $filter),
 				};
 
 				if ($isMatching) {
@@ -165,23 +173,50 @@ class ArraySource extends AbstractSource
 	}
 
 
-	protected function isMatching(Row $row, Filter $filter): bool
+	/**
+	 * @throws FilterUnknownException
+	 */
+	protected function applyTextFilter(Row $row, Filter $filter): bool
 	{
-		if (!$filter->isFiltered()) {
+		$query = $filter->getValueFormatted();
+
+		if (!$filter->isFiltered() || !$query) {
 			return false;
 		}
 
-		$query = (string) $filter->getValueFormatted();
+		if (is_array($query)) {
+			throw FilterUnknownException::fromFilter($filter);
+		}
 
 		foreach ($filter->getColumns() as $column) {
-			$value = $row->getValue($column);
-			$value = Format::stringify($value);
+			$value = FormatValue::string($row->getValue($column));
 
-			if (!strcasecmp($query, $value) <> 0) {
-				return false;
+			if (strcasecmp((string) $query, $value ?? '') <> 0) {
+				return true;
 			}
 		}
 
-		return true;
+		return false;
+	}
+
+
+	protected function applyDateFilter(Row $row, DateFilter|DateRangeFilter $filter): bool
+	{
+		$queryFrom = $filter->getValueFrom();
+		$queryTo = $filter->getValueTo();
+
+		if (!$filter->isFiltered() || !($queryFrom && $queryTo)) {
+			return false;
+		}
+
+		foreach ($filter->getColumns() as $column) {
+			$value = FormatValue::dateTime($row->getValue($column));
+
+			if ($value >= $queryFrom && $value <= $queryTo) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

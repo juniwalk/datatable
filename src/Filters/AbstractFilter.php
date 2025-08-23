@@ -130,16 +130,13 @@ abstract class AbstractFilter extends Control implements Filter
 	}
 
 
-	/**
-	 * @throws InvalidStateException
-	 */
-	protected function validateParent(IContainer $table): void
+	protected function validateParent(IContainer $parent): void
 	{
-		if (!$table instanceof Table) {
-			throw InvalidStateException::parentRequired(Table::class, $this);
-		}
+		parent::validateParent($parent);
 
-		$this->setTranslator($table->getTranslator());
-		parent::validateParent($table);
+		$this->monitor($this::class, fn() => $this->lookup(Table::class));
+		$this->monitor(Table::class, function(Table $table) {
+			$this->setTranslator($table->getTranslator());
+		});
 	}
 }

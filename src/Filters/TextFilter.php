@@ -43,7 +43,10 @@ class TextFilter extends AbstractFilter
 	}
 
 
-	public function getValueFormatted(): int|string|float|null
+	/**
+	 * @return string|null
+	 */
+	public function getValueFormatted(): mixed
 	{
 		return $this->value ?? null;
 	}

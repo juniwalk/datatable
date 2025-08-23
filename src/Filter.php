@@ -23,12 +23,15 @@ interface Filter extends IComponent
 	public function setCondition(?Closure $condition): static;
 	public function hasCondition(): bool;
 	public function applyCondition(mixed $model): bool;
+	public function isFiltered(): bool;
 
 	public function setValue(mixed $filter): static;
 	public function getValue(): mixed;
-	public function getValueFormatted(): int|string|float|null;
 
-	public function isFiltered(): bool;
+	/**
+	 * @return scalar|scalar[]|null
+	 */
+	public function getValueFormatted(): mixed;
 
 	public function attachToForm(Form $form): void;
 	public function render(Form $form): void;

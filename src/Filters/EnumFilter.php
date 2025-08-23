@@ -75,7 +75,10 @@ class EnumFilter extends AbstractFilter
 	}
 
 
-	public function getValueFormatted(): int|string|float|null
+	/**
+	 * @return string|int|null
+	 */
+	public function getValueFormatted(): mixed
 	{
 		return $this->value?->value;
 	}
