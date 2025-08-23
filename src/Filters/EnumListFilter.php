@@ -18,12 +18,10 @@ use Throwable;
 /**
  * @template T of BackedEnum
  */
-class EnumFilter extends AbstractFilter
+class EnumListFilter extends AbstractFilter
 {
-	/** @var ?T */
-	protected ?BackedEnum $value;
-
-	protected string|bool $placeholder = true;
+	/** @var T[] */
+	protected ?array $value = null;
 
 
 	/**
@@ -45,30 +43,26 @@ class EnumFilter extends AbstractFilter
 	}
 
 
-	public function setPlaceholder(string|bool $placeholder): static
-	{
-		$this->placeholder = $placeholder;
-		return $this;
-	}
-
-
-	public function getPlaceholder(): string|bool
-	{
-		return $this->placeholder;
-	}
-
-
 	/**
+	 * @param  null|array<int|string|T> $value
 	 * @throws FilterValueInvalidException
 	 */
 	public function setValue(mixed $value): static
 	{
+		if ($value && !is_array($value)) {
+			throw FilterValueInvalidException::fromFilter($this, $this->enum.'[]', $value);
+		}
+
 		try {
-			$this->value = FormatValue::enum($value, $this->enum);
+			$this->value = array_filter(
+				array_map(fn($x) => FormatValue::enum($x, $this->enum), $value ?? [])
+			);;
+
+			$this->value = $this->value ?: null;
 			$this->isFiltered = !empty($this->value);
 
 		} catch (Throwable $e) {
-			throw FilterValueInvalidException::fromFilter($this, $this->enum, $value, $e);
+			throw FilterValueInvalidException::fromFilter($this, $this->enum.'[]', $value, $e);
 		}
 
 		return $this;
@@ -76,7 +70,7 @@ class EnumFilter extends AbstractFilter
 
 
 	/**
-	 * @return ?T
+	 * @return null|T[]
 	 */
 	public function getValue(): mixed
 	{
@@ -85,11 +79,15 @@ class EnumFilter extends AbstractFilter
 
 
 	/**
-	 * @return string|int|null
+	 * @return null|array<value-of<T>>
 	 */
 	public function getValueFormatted(): mixed
 	{
-		return $this->value?->value;
+		if (empty($this->value)) {
+			return null;
+		}
+
+		return array_map(fn($x) => $x->value, $this->value);
 	}
 
 
@@ -116,15 +114,8 @@ class EnumFilter extends AbstractFilter
 
 	public function attachToForm(Form $form): void
 	{
-		$placeholder = $this->placeholder;
-
-		if ($placeholder === true) {
-			$placeholder = 'datatable.filter.select-placeholder';
-		}
-
-		$form->addSelect($this->fieldName(), $this->label, $this->getItems())
-			->setValue($this->value ?? null)
-			->setPrompt($placeholder);
+		$form->addMultiSelect($this->fieldName(), $this->label, $this->getItems())
+			->setValue($this->value ?? null);
 
 		$form->onSuccess[] = function($form, $data) {
 			$this->setValue($data[$this->fieldName()] ?? null);

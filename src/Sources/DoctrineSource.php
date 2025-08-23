@@ -19,6 +19,7 @@ use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\DateRangeFilter;
 use JuniWalk\DataTable\Filters\EnumFilter;
+use JuniWalk\DataTable\Filters\EnumListFilter;
 use JuniWalk\DataTable\Filters\TextFilter;
 use JuniWalk\DataTable\Source;
 use Stringable;
@@ -92,6 +93,7 @@ class DoctrineSource extends AbstractSource
 
 				$filter instanceof DateRangeFilter,
 				$filter instanceof DateFilter => $this->applyDateFilter($filter),
+				$filter instanceof EnumListFilter,
 				$filter instanceof EnumFilter => $this->applyEnumFilter($filter),
 				$filter instanceof TextFilter => $this->applyTextFilter($filter),
 
@@ -268,19 +270,21 @@ class DoctrineSource extends AbstractSource
 
 	/**
 	 * @template T of BackedEnum
-	 * @param EnumFilter<T> $filter
+	 * @param EnumFilter<T>|EnumListFilter<T> $filter
 	 */
-	protected function applyEnumFilter(EnumFilter $filter): void
+	protected function applyEnumFilter(EnumFilter|EnumListFilter $filter): void
 	{
 		if (!$query = $filter->getValue()) {
 			return;
 		}
 
+		$query = (array) $query;
+
 		foreach ($filter->getColumns() as $name => $column) {
 			$field = $this->checkAlias($column->getField() ?? $name);
 			$param = $this->getPlaceholder();
 
-			$this->queryBuilder->andWhere("LOWER({$field}) = LOWER(:{$param})")
+			$this->queryBuilder->andWhere("{$field} IN(:{$param})")
 				->setParameter($param, $query);
 		}
 	}

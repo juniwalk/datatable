@@ -16,6 +16,7 @@ use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\DateRangeFilter;
 use JuniWalk\DataTable\Filters\EnumFilter;
+use JuniWalk\DataTable\Filters\EnumListFilter;
 use JuniWalk\DataTable\Filters\TextFilter;
 use JuniWalk\Utils\Arrays;
 use Nette\Application\Attributes\Persistent;
@@ -148,6 +149,18 @@ trait Filters
 	public function addFilterEnum(string $name, string $label, string $enum, string|array $columns = []): EnumFilter
 	{
 		return $this->addFilter($name, new EnumFilter($label, $enum), $columns);
+	}
+
+
+	/**
+	 * @template T of BackedEnum
+	 * @param  class-string<T> $enum
+	 * @param  string|string[] $columns
+	 * @return EnumListFilter<T>
+	 */
+	public function addFilterEnumMultiple(string $name, string $label, string $enum, string|array $columns = []): EnumListFilter
+	{
+		return $this->addFilter($name, new EnumListFilter($label, $enum), $columns);
 	}
 
 

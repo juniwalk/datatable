@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Sources;
 
+use BackedEnum;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
@@ -15,6 +16,8 @@ use JuniWalk\DataTable\Exceptions\FilterUnknownException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\DateRangeFilter;
+use JuniWalk\DataTable\Filters\EnumFilter;
+use JuniWalk\DataTable\Filters\EnumListFilter;
 use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Source;
 use JuniWalk\DataTable\Tools\FormatValue;
@@ -82,6 +85,8 @@ class ArraySource extends AbstractSource
 
 					$filter instanceof DateRangeFilter,
 					$filter instanceof DateFilter => $this->applyDateFilter($row, $filter),
+					$filter instanceof EnumListFilter,
+					$filter instanceof EnumFilter => $this->applyEnumFilter($row, $filter),
 
 					default => $this->applyTextFilter($row, $filter),
 				};
@@ -173,6 +178,55 @@ class ArraySource extends AbstractSource
 	}
 
 
+	protected function applyDateFilter(Row $row, DateFilter|DateRangeFilter $filter): bool
+	{
+		$queryFrom = $filter->getValueFrom();
+		$queryTo = $filter->getValueTo();
+
+		if (!$filter->isFiltered() || !($queryFrom && $queryTo)) {
+			return false;
+		}
+
+		foreach ($filter->getColumns() as $column) {
+			$value = FormatValue::dateTime($row->getValue($column));
+
+			if ($value >= $queryFrom && $value <= $queryTo) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+	/**
+	 * @template T of BackedEnum
+	 * @param EnumFilter<T>|EnumListFilter<T> $filter
+	 */
+	protected function applyEnumFilter(Row $row, EnumFilter|EnumListFilter $filter): bool
+	{
+		$query = $filter->getValue();
+
+		if (!$filter->isFiltered() || !$query) {
+			return false;
+		}
+
+		if (!is_array($query)) {
+			$query = [$query];
+		}
+
+		foreach ($filter->getColumns() as $column) {
+			$value = FormatValue::enum($row->getValue($column), $filter->getEnumType());
+
+			if (in_array($value, $query)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
 	/**
 	 * @throws FilterUnknownException
 	 */
@@ -192,27 +246,6 @@ class ArraySource extends AbstractSource
 			$value = FormatValue::string($row->getValue($column));
 
 			if (strcasecmp((string) $query, $value ?? '') <> 0) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-
-	protected function applyDateFilter(Row $row, DateFilter|DateRangeFilter $filter): bool
-	{
-		$queryFrom = $filter->getValueFrom();
-		$queryTo = $filter->getValueTo();
-
-		if (!$filter->isFiltered() || !($queryFrom && $queryTo)) {
-			return false;
-		}
-
-		foreach ($filter->getColumns() as $column) {
-			$value = FormatValue::dateTime($row->getValue($column));
-
-			if ($value >= $queryFrom && $value <= $queryTo) {
 				return true;
 			}
 		}
