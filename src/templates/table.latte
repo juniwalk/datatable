@@ -21,18 +21,8 @@
 	<form n:name="filterForm" class="card-header" autocomplete="off">
 
 		<div class="row g-2 row-cols-auto row-cols-lg-{$table->getFilterColumnCount() ?? auto}">
-			<div class="col flex-grow-1 flex-lg-grow-0" n:foreach="$filters as $name => $filter">
-
-				<div class="form-group row text-xl-end">
-					<label n:name="$filter->fieldName()" class="form-label col-form-label col-form-label-sm col-xl-3">{$filter->getLabel()|translate}</label>
-					<div class="col-xl-9">
-						<div class="input-group input-group-sm">
-							{include block $filter->getType(), input: $filter->fieldName(), filter: $filter |indent:5}
-
-							<a n:href="clear! $name" class="btn btn-outline-danger ajax" data-dt-clear n:if="$filter->isFiltered()"><i class="fas fa-times fa-fw"></i></a>
-						</div>
-					</div>
-				</div>
+			<div class="col flex-grow-1 flex-lg-grow-0" n:foreach="$filters as $filter">
+				{control $filter, $form}
 
 			</div>
 		</div>
@@ -44,10 +34,6 @@
 		<template n:if="$autoSubmit" data-dt-clear>
 			<button type="button" class="btn btn-outline-danger" data-dt-clear><i class="fas fa-times fa-fw"></i></button>
 		</template>
-
-		{define #date-filter}<input n:name="$input" type="date" class="form-control form-control-sm" data-dt-autosubmit="change">{/define}
-		{define #enum-filter}<select n:name="$input" class="form-select form-select-sm" data-dt-autosubmit="change"></select>{/define}
-		{define #text-filter}<input n:name="$input" type="text" class="form-control form-control-sm" data-dt-autosubmit="keyup">{/define}
 
 	</form>
 	</div>

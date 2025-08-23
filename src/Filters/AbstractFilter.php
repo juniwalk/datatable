@@ -10,16 +10,19 @@ namespace JuniWalk\DataTable\Filters;
 use Closure;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Table;
 use JuniWalk\DataTable\Traits;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Strings;
-use Nette\Application\UI\Component;
+use Nette\Application\UI\Control;
 use Nette\ComponentModel\IContainer;
+use Nette\Application\UI\Form;
 
-abstract class AbstractFilter extends Component implements Filter
+abstract class AbstractFilter extends Control implements Filter
 {
+	use Traits\LinkHandler;
 	use Traits\Translation;
 
 	/** @var array<string, Column> */
@@ -32,24 +35,6 @@ abstract class AbstractFilter extends Component implements Filter
 	public function __construct(
 		protected string $label,
 	) {
-	}
-
-
-	public function getType(): string
-	{
-		return Format::className($this);
-	}
-
-
-	public function getLabel(): string
-	{
-		return $this->label;
-	}
-
-
-	public function isFiltered(): bool
-	{
-		return $this->isFiltered;
 	}
 
 
@@ -107,19 +92,54 @@ abstract class AbstractFilter extends Component implements Filter
 	}
 
 
-	public function fieldName(): string
+	public function isFiltered(): bool
+	{
+		return $this->isFiltered;
+	}
+
+
+	/**
+	 * @throws InvalidStateException
+	 */
+	public function render(Form $form): void
+	{
+		if (!$input = $form->getComponent($this->fieldName(), false)) {
+			throw InvalidStateException::filterInputMissing($this);
+		}
+
+		$className = Format::className($this, suffix: 'Filter');
+		$clearLink = $this->createLink('clear!', ['column' => $this->name]);
+
+		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
+		$template = $this->getTemplate();
+		$template->setFile(__DIR__.'/../templates/filter-'.$className.'.latte');
+
+		$template->add('isFiltered', $this->isFiltered);
+		$template->add('clearLink', $clearLink);
+		$template->add('label', $this->translate($this->label));
+		$template->add('name', $this->fieldName());
+		$template->add('input', $input);
+
+		$template->render();
+	}
+
+
+	protected function fieldName(): string
 	{
 		return Format::camelCase(Strings::webalize($this->name));
 	}
 
 
-	protected function validateParent(IContainer $parent): void
+	/**
+	 * @throws InvalidStateException
+	 */
+	protected function validateParent(IContainer $table): void
 	{
-		parent::validateParent($parent);
+		if (!$table instanceof Table) {
+			throw InvalidStateException::parentRequired(Table::class, $this);
+		}
 
-		$this->monitor($this::class, fn() => $this->lookup(Table::class));
-		$this->monitor(Table::class, function(Table $table) {
-			$this->setTranslator($table->getTranslator());
-		});
+		$this->setTranslator($table->getTranslator());
+		parent::validateParent($table);
 	}
 }

@@ -13,10 +13,6 @@ use Nette\ComponentModel\IComponent;
 
 interface Filter extends IComponent
 {
-	public function getType(): string;
-	public function getLabel(): string;
-	public function isFiltered(): bool;
-
 	/**
 	 * @return array<string, Column>
 	 */
@@ -32,6 +28,8 @@ interface Filter extends IComponent
 	public function getValue(): mixed;
 	public function getValueFormatted(): int|string|float|null;
 
+	public function isFiltered(): bool;
+
 	public function attachToForm(Form $form): void;
-	public function fieldName(): string;
+	public function render(Form $form): void;
 }
