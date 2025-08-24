@@ -9,6 +9,7 @@ namespace JuniWalk\DataTable\Filters;
 
 use BackedEnum;
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
+use JuniWalk\DataTable\Filters\Interfaces\FilterList;
 use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Application\UI\Form;
 use JuniWalk\Utils\Enums\Interfaces\LabeledEnum;
@@ -18,7 +19,7 @@ use Throwable;
 /**
  * @template T of BackedEnum
  */
-class EnumListFilter extends AbstractFilter
+class EnumListFilter extends AbstractFilter implements FilterList
 {
 	/** @var T[] */
 	protected ?array $value = null;
@@ -47,12 +48,8 @@ class EnumListFilter extends AbstractFilter
 	 * @param  null|array<int|string|T> $value
 	 * @throws FilterValueInvalidException
 	 */
-	public function setValue(mixed $value): static
+	public function setValue(?array $value): static
 	{
-		if ($value && !is_array($value)) {
-			throw FilterValueInvalidException::fromFilter($this, $this->enum.'[]', $value);
-		}
-
 		try {
 			$this->value = array_filter(
 				array_map(fn($x) => FormatValue::enum($x, $this->enum), $value ?? [])
@@ -72,7 +69,7 @@ class EnumListFilter extends AbstractFilter
 	/**
 	 * @return null|T[]
 	 */
-	public function getValue(): mixed
+	public function getValue(): ?array
 	{
 		return $this->value ?? null;
 	}
@@ -81,7 +78,7 @@ class EnumListFilter extends AbstractFilter
 	/**
 	 * @return null|array<value-of<T>>
 	 */
-	public function getValueFormatted(): mixed
+	public function getValueFormatted(): ?array
 	{
 		if (empty($this->value)) {
 			return null;
@@ -118,7 +115,7 @@ class EnumListFilter extends AbstractFilter
 			->setValue($this->value ?? null);
 
 		$form->onSuccess[] = function($form, $data) {
-			$this->setValue($data[$this->fieldName()] ?? null);
+			$this->setValue((array) $data[$this->fieldName()]);
 		};
 	}
 }

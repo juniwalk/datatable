@@ -9,12 +9,12 @@ namespace JuniWalk\DataTable\Filters;
 
 use DateTimeImmutable;
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
-use JuniWalk\DataTable\FilterRanged;
+use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Application\UI\Form;
 use Throwable;
 
-class DateFilter extends AbstractFilter implements FilterRanged
+class DateFilter extends AbstractFilter implements FilterSingle
 {
 	protected ?DateTimeImmutable $value;
 

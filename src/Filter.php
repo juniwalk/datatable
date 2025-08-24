@@ -8,9 +8,15 @@
 namespace JuniWalk\DataTable;
 
 use Closure;
+use JuniWalk\DataTable\Filters\Interfaces\FilterList;
+use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
+use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use Nette\Application\UI\Form;
 use Nette\ComponentModel\IComponent;
 
+/**
+ * @phpstan-type FilterStruct Filter&(FilterSingle|FilterRange|FilterList)
+ */
 interface Filter extends IComponent
 {
 	/**
@@ -23,15 +29,8 @@ interface Filter extends IComponent
 	public function setCondition(?Closure $condition): static;
 	public function hasCondition(): bool;
 	public function applyCondition(mixed $model): bool;
+
 	public function isFiltered(): bool;
-
-	public function setValue(mixed $filter): static;
-	public function getValue(): mixed;
-
-	/**
-	 * @return scalar|scalar[]|null
-	 */
-	public function getValueFormatted(): mixed;
 
 	public function attachToForm(Form $form): void;
 	public function render(Form $form): void;

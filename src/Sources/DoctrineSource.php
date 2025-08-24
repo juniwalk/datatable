@@ -14,7 +14,7 @@ use Doctrine\ORM\QueryBuilder;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
-use JuniWalk\DataTable\Exceptions\FilterUnknownException;
+use JuniWalk\DataTable\Exceptions\FilterInvalidException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\DateRangeFilter;
@@ -78,7 +78,7 @@ class DoctrineSource extends AbstractSource
 
 	/**
 	 * @param  array<string, Filter> $filters
-	 * @throws FilterUnknownException
+	 * @throws FilterInvalidException
 	 */
 	protected function filter(array $filters): void
 	{
@@ -97,7 +97,7 @@ class DoctrineSource extends AbstractSource
 				$filter instanceof EnumFilter => $this->applyEnumFilter($filter),
 				$filter instanceof TextFilter => $this->applyTextFilter($filter),
 
-				default => throw FilterUnknownException::fromFilter($filter),
+				default => throw FilterInvalidException::unableToHandle($filter),
 			};
 		}
 	}
@@ -261,9 +261,15 @@ class DoctrineSource extends AbstractSource
 			$field = $this->checkAlias($column->getField() ?? $name);
 			$param = $this->getPlaceholder();
 
-			$this->queryBuilder->andWhere("{$field} >= :{$param}S AND {$field} < :{$param}E")
-				->setParameter($param.'S', $filter->getValueFrom())
-				->setParameter($param.'E', $filter->getValueTo());
+			if ($queryFrom = $filter->getValueFrom()) {
+				$this->queryBuilder->andWhere("{$field} >= :{$param}S")
+					->setParameter($param.'S', $queryFrom);
+			}
+
+			if ($queryTo = $filter->getValueTo()) {
+				$this->queryBuilder->andWhere("{$field} < :{$param}E")
+					->setParameter($param.'E', $queryTo);
+			}
 		}
 	}
 

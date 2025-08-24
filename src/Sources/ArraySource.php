@@ -12,7 +12,7 @@ use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
-use JuniWalk\DataTable\Exceptions\FilterUnknownException;
+use JuniWalk\DataTable\Exceptions\FilterInvalidException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\DateRangeFilter;
@@ -24,6 +24,7 @@ use JuniWalk\DataTable\Tools\FormatValue;
 use JuniWalk\Utils\Format;
 
 /**
+ * @phpstan-import-type FilterStruct from Filter
  * @phpstan-import-type Items from Source
  */
 class ArraySource extends AbstractSource
@@ -62,8 +63,8 @@ class ArraySource extends AbstractSource
 
 
 	/**
-	 * @param  array<string, Filter> $filters
-	 * @throws FilterUnknownException
+	 * @param  array<string, FilterStruct> $filters
+	 * @throws FilterInvalidException
 	 */
 	protected function filter(array $filters): void
 	{
@@ -228,7 +229,8 @@ class ArraySource extends AbstractSource
 
 
 	/**
-	 * @throws FilterUnknownException
+	 * @param  FilterStruct $filter
+	 * @throws FilterInvalidException
 	 */
 	protected function applyTextFilter(Row $row, Filter $filter): bool
 	{
@@ -239,7 +241,7 @@ class ArraySource extends AbstractSource
 		}
 
 		if (is_array($query)) {
-			throw FilterUnknownException::fromFilter($filter);
+			throw FilterInvalidException::unableToHandle($filter);
 		}
 
 		foreach ($filter->getColumns() as $column) {

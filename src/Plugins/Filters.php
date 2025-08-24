@@ -11,6 +11,7 @@ use BackedEnum;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Enums\Option;
+use JuniWalk\DataTable\Exceptions\FilterInvalidException;
 use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
@@ -18,10 +19,16 @@ use JuniWalk\DataTable\Filters\DateRangeFilter;
 use JuniWalk\DataTable\Filters\EnumFilter;
 use JuniWalk\DataTable\Filters\EnumListFilter;
 use JuniWalk\DataTable\Filters\TextFilter;
+use JuniWalk\DataTable\Filters\Interfaces\FilterList;
+use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
+use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\Utils\Arrays;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
 
+/**
+ * @phpstan-import-type FilterStruct from Filter
+ */
 trait Filters
 {
 	/** @var array<string, mixed> */
@@ -35,7 +42,7 @@ trait Filters
 	protected ?bool $isFilterShown = null;
 	protected ?int $filterColumnCount = null;
 
-	/** @var array<string, Filter> */
+	/** @var array<string, FilterStruct> */
 	protected array $filters = [];
 
 
@@ -169,9 +176,17 @@ trait Filters
 	 * @param  T $filter
 	 * @param  string|string[] $columns
 	 * @return T
+	 * @throws FilterInvalidException
 	 */
 	public function addFilter(string $name, Filter $filter, string|array $columns = []): Filter
 	{
+		if (!$filter instanceof FilterSingle &&
+			!$filter instanceof FilterRange &&
+			!$filter instanceof FilterList
+		) {
+			throw FilterInvalidException::missingImplement($filter);
+		}
+
 		$columns = (array) $columns;
 		$columns[] = $name;
 
@@ -190,7 +205,7 @@ trait Filters
 
 
 	/**
-	 * @return ($require is true ? Filter : ?Filter)
+	 * @return ($require is true ? FilterStruct : ?FilterStruct)
 	 * @throws FilterNotFoundException
 	 */
 	public function getFilter(string $name, bool $require = true): ?Filter
@@ -204,7 +219,7 @@ trait Filters
 
 
 	/**
-	 * @return array<string, Filter>
+	 * @return array<string, FilterStruct>
 	 */
 	public function getFilters(): array
 	{

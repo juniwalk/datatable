@@ -9,6 +9,7 @@ namespace JuniWalk\DataTable\Filters;
 
 use BackedEnum;
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
+use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Application\UI\Form;
 use JuniWalk\Utils\Enums\Interfaces\LabeledEnum;
@@ -18,7 +19,7 @@ use Throwable;
 /**
  * @template T of BackedEnum
  */
-class EnumFilter extends AbstractFilter
+class EnumFilter extends AbstractFilter implements FilterSingle
 {
 	/** @var ?T */
 	protected ?BackedEnum $value;

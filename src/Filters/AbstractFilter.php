@@ -10,8 +10,12 @@ namespace JuniWalk\DataTable\Filters;
 use Closure;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
+use JuniWalk\DataTable\Exceptions\FilterInvalidException;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Filter;
+use JuniWalk\DataTable\Filters\Interfaces\FilterList;
+use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
+use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Table;
 use JuniWalk\DataTable\Traits;
 use JuniWalk\Utils\Format;
@@ -20,6 +24,9 @@ use Nette\Application\UI\Control;
 use Nette\ComponentModel\IContainer;
 use Nette\Application\UI\Form;
 
+/**
+ * @phpstan-import-type FilterStruct from Filter
+ */
 abstract class AbstractFilter extends Control implements Filter
 {
 	use Traits\LinkHandler;
@@ -82,13 +89,22 @@ abstract class AbstractFilter extends Control implements Filter
 	}
 
 
+	/**
+	 * @throws FilterInvalidException
+	 */
 	public function applyCondition(mixed $model): bool
 	{
 		if (!$this->isFiltered || !isset($this->condition)) {
 			return false;
 		}
 
-		return (bool) call_user_func($this->condition, $model, $this->getValue());
+		return (bool) match (true) {
+			$this instanceof FilterList,
+			$this instanceof FilterSingle => call_user_func($this->condition, $model, $this->getValue()),
+			$this instanceof FilterRange  => call_user_func($this->condition, $model, $this->getValueFrom(), $this->getValueTo()),
+
+			default => throw FilterInvalidException::missingImplement($this),
+		};
 	}
 
 

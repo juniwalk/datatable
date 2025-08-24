@@ -9,27 +9,27 @@ namespace JuniWalk\DataTable\Filters;
 
 use DateTimeImmutable;
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
-use JuniWalk\DataTable\FilterRanged;
+use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
 use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Application\UI\Form;
 use Throwable;
 
-class DateRangeFilter extends AbstractFilter implements FilterRanged
+class DateRangeFilter extends AbstractFilter implements FilterRange
 {
-	protected ?DateTimeImmutable $valueFrom;
-	protected ?DateTimeImmutable $valueTo;
+	protected ?DateTimeImmutable $valueFrom = null;
+	protected ?DateTimeImmutable $valueTo = null;
 
 
 	/**
 	 * @param  array{from: mixed, to: mixed} $value
 	 * @throws FilterValueInvalidException
 	 */
-	public function setValue(mixed $value): static
+	public function setValue(?array $value): static
 	{
 		try {
 			$this->valueFrom = FormatValue::dateTime($value['from'] ?? null);
 			$this->valueTo = FormatValue::dateTime($value['to'] ?? null);
-			$this->isFiltered = !empty($this->valueFrom) && !empty($this->valueTo);
+			$this->isFiltered = !empty($this->valueFrom) || !empty($this->valueTo);
 
 		} catch (Throwable $e) {
 			// todo: cannot use $value
@@ -43,11 +43,11 @@ class DateRangeFilter extends AbstractFilter implements FilterRanged
 	/**
 	 * @return array{from: ?DateTimeImmutable, to: ?DateTimeImmutable}
 	 */
-	public function getValue(): mixed
+	public function getValue(): ?array
 	{
 		return [
-			'from' => $this->valueFrom ?? null,
-			'to' => $this->valueTo ?? null,
+			'from' => $this->getValueFrom(),
+			'to' => $this->getValueTo(),
 		];
 	}
 
@@ -57,7 +57,7 @@ class DateRangeFilter extends AbstractFilter implements FilterRanged
 	 */
 	public function getValueFrom(): mixed
 	{
-		return $this->valueFrom;
+		return $this->valueFrom?->modify('midnight');
 	}
 
 
@@ -66,15 +66,20 @@ class DateRangeFilter extends AbstractFilter implements FilterRanged
 	 */
 	public function getValueTo(): mixed
 	{
-		return $this->valueTo;
+		return $this->valueTo?->modify('midnight');
 	}
 
 
 	/**
 	 * @return array{from: ?string, to: ?string}
 	 */
-	public function getValueFormatted(): mixed
+	public function getValueFormatted(): ?array
 	{
+		// ? With || it does not allow partial filtering
+		if (!$this->valueFrom && !$this->valueTo) {
+			return null;
+		}
+
 		return [
 			'from' => $this->valueFrom?->format('Y-m-d'),
 			'to' => $this->valueTo?->format('Y-m-d'),
@@ -91,7 +96,10 @@ class DateRangeFilter extends AbstractFilter implements FilterRanged
 			->setValue($this->valueTo ?? null);
 
 		$form->onSuccess[] = function($form, $data) {
-			$this->setValue($data[$this->fieldName()] ?? []);
+			$this->setValue([
+				'from' => $data[$this->fieldName()]['from'],
+				'to' => $data[$this->fieldName()]['to'],
+			]);
 		};
 	}
 }
