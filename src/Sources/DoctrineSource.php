@@ -7,7 +7,6 @@
 
 namespace JuniWalk\DataTable\Sources;
 
-use BackedEnum;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -16,12 +15,12 @@ use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use JuniWalk\DataTable\Exceptions\FilterInvalidException;
 use JuniWalk\DataTable\Filter;
-use JuniWalk\DataTable\Filters\DateFilter;
-use JuniWalk\DataTable\Filters\DateRangeFilter;
-use JuniWalk\DataTable\Filters\EnumFilter;
-use JuniWalk\DataTable\Filters\EnumListFilter;
-use JuniWalk\DataTable\Filters\TextFilter;
+use JuniWalk\DataTable\Filters;
+use JuniWalk\DataTable\Filters\Interfaces\FilterList;
+use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
+use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Source;
+use JuniWalk\DataTable\Tools\FormatValue;
 use Stringable;
 
 /**
@@ -91,11 +90,9 @@ class DoctrineSource extends AbstractSource
 				// ? Returns @true if the query matches field in the model
 				$filter->hasCondition() => $filter->applyCondition($this->queryBuilder),
 
-				$filter instanceof DateRangeFilter,
-				$filter instanceof DateFilter => $this->applyDateFilter($filter),
-				$filter instanceof EnumListFilter,
-				$filter instanceof EnumFilter => $this->applyEnumFilter($filter),
-				$filter instanceof TextFilter => $this->applyTextFilter($filter),
+				$filter instanceof FilterSingle => $this->applyFilterSingle($filter),
+				$filter instanceof FilterRange => $this->applyFilterRange($filter),
+				$filter instanceof FilterList => $this->applyFilterList($filter),
 
 				default => throw FilterInvalidException::unableToHandle($filter),
 			};
@@ -251,40 +248,13 @@ class DoctrineSource extends AbstractSource
 	}
 
 
-	protected function applyDateFilter(DateFilter|DateRangeFilter $filter): void
+	protected function applyFilterList(Filter&FilterList $filter): void
 	{
 		if (!$filter->isFiltered()) {
 			return;
 		}
 
-		foreach ($filter->getColumns() as $name => $column) {
-			$field = $this->checkAlias($column->getField() ?? $name);
-			$param = $this->getPlaceholder();
-
-			if ($queryFrom = $filter->getValueFrom()) {
-				$this->queryBuilder->andWhere("{$field} >= :{$param}S")
-					->setParameter($param.'S', $queryFrom);
-			}
-
-			if ($queryTo = $filter->getValueTo()) {
-				$this->queryBuilder->andWhere("{$field} < :{$param}E")
-					->setParameter($param.'E', $queryTo);
-			}
-		}
-	}
-
-
-	/**
-	 * @template T of BackedEnum
-	 * @param EnumFilter<T>|EnumListFilter<T> $filter
-	 */
-	protected function applyEnumFilter(EnumFilter|EnumListFilter $filter): void
-	{
-		if (!$query = $filter->getValue()) {
-			return;
-		}
-
-		$query = (array) $query;
+		$query = $filter->getValue() ?? [];
 
 		foreach ($filter->getColumns() as $name => $column) {
 			$field = $this->checkAlias($column->getField() ?? $name);
@@ -296,18 +266,63 @@ class DoctrineSource extends AbstractSource
 	}
 
 
-	protected function applyTextFilter(TextFilter $filter): void
+	protected function applyFilterRange(Filter&FilterRange $filter): void
 	{
-		if (!$query = $filter->getValue()) {
+		if (!$filter->isFiltered()) {
 			return;
 		}
+
+		$queryFrom = $filter->getValueFrom();
+		$queryTo = $filter->getValueTo();
 
 		foreach ($filter->getColumns() as $name => $column) {
 			$field = $this->checkAlias($column->getField() ?? $name);
 			$param = $this->getPlaceholder();
 
-			$this->queryBuilder->andWhere("LOWER({$field}) LIKE LOWER(:{$param})")
-				->setParameter($param, '%'.$query.'%');
+			if ($queryFrom) {
+				$this->queryBuilder->andWhere("{$field} >= :{$param}S")
+					->setParameter($param.'S', $queryFrom);
+			}
+
+			if ($queryTo) {
+				$this->queryBuilder->andWhere("{$field} < :{$param}E")
+					->setParameter($param.'E', $queryTo);
+			}
+		}
+	}
+
+
+	protected function applyFilterSingle(Filter&FilterSingle $filter): void
+	{
+		if (!$filter->isFiltered()) {
+			return;
+		}
+
+		$query = $filter->getValue();
+
+		foreach ($filter->getColumns() as $name => $column) {
+			$field = $this->checkAlias($column->getField() ?? $name);
+			$param = $this->getPlaceholder();
+
+			switch (true) {
+				case $filter instanceof Filters\DateFilter:
+					$this->queryBuilder->andWhere("{$field} >= :{$param}S AND {$field} < :{$param}E")
+						->setParameter($param.'S', $filter->getValueFrom())
+						->setParameter($param.'E', $filter->getValueTo());
+				break;
+
+				case $filter instanceof Filters\EnumFilter:
+					$this->queryBuilder->andWhere("{$field} = :{$param}")
+						->setParameter($param, $query);
+				break;
+
+				case $filter instanceof Filters\TextFilter:
+					$this->queryBuilder->andWhere("LOWER({$field}) LIKE LOWER(:{$param})")
+						->setParameter($param, '%'.FormatValue::string($query).'%');
+					break;
+
+				default: break;
+			}
 		}
 	}
 }

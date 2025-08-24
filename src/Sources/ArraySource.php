@@ -7,20 +7,19 @@
 
 namespace JuniWalk\DataTable\Sources;
 
-use BackedEnum;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use JuniWalk\DataTable\Exceptions\FilterInvalidException;
 use JuniWalk\DataTable\Filter;
-use JuniWalk\DataTable\Filters\DateFilter;
-use JuniWalk\DataTable\Filters\DateRangeFilter;
-use JuniWalk\DataTable\Filters\EnumFilter;
-use JuniWalk\DataTable\Filters\EnumListFilter;
+use JuniWalk\DataTable\Filters;
+use JuniWalk\DataTable\Filters\Interfaces\FilterList;
+use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
+use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Source;
-use JuniWalk\DataTable\Tools\FormatValue;
+use JuniWalk\DataTable\Tools\Compare;
 use JuniWalk\Utils\Format;
 
 /**
@@ -84,12 +83,11 @@ class ArraySource extends AbstractSource
 					// ? Returns @true if the query matches field in the model
 					$filter->hasCondition() => $filter->applyCondition($item),
 
-					$filter instanceof DateRangeFilter,
-					$filter instanceof DateFilter => $this->applyDateFilter($row, $filter),
-					$filter instanceof EnumListFilter,
-					$filter instanceof EnumFilter => $this->applyEnumFilter($row, $filter),
+					$filter instanceof FilterSingle => $this->applyFilterSingle($filter, $row),
+					$filter instanceof FilterRange => $this->applyFilterRange($filter, $row),
+					$filter instanceof FilterList => $this->applyFilterList($filter, $row),
 
-					default => $this->applyTextFilter($row, $filter),
+					default => throw FilterInvalidException::unableToHandle($filter),
 				};
 
 				if ($isMatching) {
@@ -179,45 +177,16 @@ class ArraySource extends AbstractSource
 	}
 
 
-	protected function applyDateFilter(Row $row, DateFilter|DateRangeFilter $filter): bool
+	protected function applyFilterList(Filter&FilterList $filter, Row $row): bool
 	{
-		$queryFrom = $filter->getValueFrom();
-		$queryTo = $filter->getValueTo();
-
-		if (!$filter->isFiltered() || !($queryFrom && $queryTo)) {
+		if (!$filter->isFiltered()) {
 			return false;
 		}
 
-		foreach ($filter->getColumns() as $column) {
-			$value = FormatValue::dateTime($row->getValue($column));
-
-			if ($value >= $queryFrom && $value <= $queryTo) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-
-	/**
-	 * @template T of BackedEnum
-	 * @param EnumFilter<T>|EnumListFilter<T> $filter
-	 */
-	protected function applyEnumFilter(Row $row, EnumFilter|EnumListFilter $filter): bool
-	{
-		$query = $filter->getValue();
-
-		if (!$filter->isFiltered() || !$query) {
-			return false;
-		}
-
-		if (!is_array($query)) {
-			$query = [$query];
-		}
+		$query = $filter->getValue() ?? [];
 
 		foreach ($filter->getColumns() as $column) {
-			$value = FormatValue::enum($row->getValue($column), $filter->getEnumType());
+			$value = $row->getValue($column);
 
 			if (in_array($value, $query)) {
 				return true;
@@ -228,26 +197,52 @@ class ArraySource extends AbstractSource
 	}
 
 
-	/**
-	 * @param  FilterStruct $filter
-	 * @throws FilterInvalidException
-	 */
-	protected function applyTextFilter(Row $row, Filter $filter): bool
+	protected function applyFilterRange(Filter&FilterRange $filter, Row $row): bool
 	{
-		$query = $filter->getValueFormatted();
-
-		if (!$filter->isFiltered() || !$query) {
+		if (!$filter->isFiltered()) {
 			return false;
 		}
 
-		if (is_array($query)) {
-			throw FilterInvalidException::unableToHandle($filter);
-		}
+		$queryFrom = $filter->getValueFrom();
+		$queryTo = $filter->getValueTo();
 
 		foreach ($filter->getColumns() as $column) {
-			$value = FormatValue::string($row->getValue($column));
+			$value = $row->getValue($column);
 
-			if (strcasecmp((string) $query, $value ?? '') <> 0) {
+			if ($queryFrom && $value < $queryFrom) {
+				continue;
+			}
+
+			if ($queryTo && $value >= $queryTo) {
+				continue;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+
+	protected function applyFilterSingle(Filter&FilterSingle $filter, Row $row): bool
+	{
+		if (!$filter->isFiltered()) {
+			return false;
+		}
+
+		$query = $filter->getValue();
+
+		foreach ($filter->getColumns() as $column) {
+			$value = $row->getValue($column);
+			$isMatching = match (true) {
+				$filter instanceof Filters\DateFilter => Compare::date($value, $query),
+				$filter instanceof Filters\EnumFilter => Compare::enum($value, $query, $filter->getEnumType()),
+				$filter instanceof Filters\TextFilter => Compare::string($value, $query),
+
+				default => $value == $query,
+			};
+
+			if ($isMatching) {
 				return true;
 			}
 		}

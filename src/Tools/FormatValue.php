@@ -58,7 +58,7 @@ class FormatValue
 	 * @param  string[] $formats
 	 * @throws DateMalformedStringException
 	 */
-	public static function dateTime(mixed $value, array $formats = []): ?DateTimeImmutable
+	public static function datetime(mixed $value, array $formats = []): ?DateTimeImmutable
 	{
 		if (empty($value)) {
 			return null;
