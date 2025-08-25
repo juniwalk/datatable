@@ -66,8 +66,7 @@ class Table extends Control implements EventHandler
 			$this->addColumnAction('__actions', 'datatable.column.action', $actions);
 		}
 
-		// todo: add some argumens like $template
-		$this->trigger('render');
+		$this->trigger('render', $template);
 
 		$source = $this->getSource();
 		$items = isset($this->redrawItem)
