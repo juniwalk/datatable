@@ -11,7 +11,6 @@ use Closure;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Exceptions\FilterInvalidException;
-use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\Interfaces\FilterList;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
@@ -20,28 +19,46 @@ use JuniWalk\DataTable\Table;
 use JuniWalk\DataTable\Traits;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Strings;
-use Nette\Application\UI\Control;
-use Nette\ComponentModel\IContainer;
+use Nette\Application\UI\Component;
 use Nette\Application\UI\Form;
+use Nette\ComponentModel\IComponent;
+use Nette\ComponentModel\IContainer;
 
 /**
  * @phpstan-import-type FilterStruct from Filter
  */
-abstract class AbstractFilter extends Control implements Filter
+abstract class AbstractFilter extends Component implements Filter
 {
-	use Traits\LinkHandler;
 	use Traits\Translation;
-
-	/** @var array<string, Column> */
-	protected array $columns;
 
 	protected ?Closure $condition = null;
 	protected bool $isFiltered = false;
+
+	/** @var array<string, Column> */
+	protected array $columns;
 
 
 	public function __construct(
 		protected string $label,
 	) {
+	}
+
+
+	public function getLabel(): string
+	{
+		return $this->label;
+	}
+
+
+	public function getType(): string
+	{
+		return Format::className($this, suffix: 'Filter');
+	}
+
+
+	public function isFiltered(): bool
+	{
+		return $this->isFiltered;
 	}
 
 
@@ -108,39 +125,13 @@ abstract class AbstractFilter extends Control implements Filter
 	}
 
 
-	public function isFiltered(): bool
+	public function firstInput(Form $form): IComponent
 	{
-		return $this->isFiltered;
+		return $form->getComponent($this->fieldName());
 	}
 
 
-	/**
-	 * @throws InvalidStateException
-	 */
-	public function render(Form $form): void
-	{
-		if (!$input = $form->getComponent($this->fieldName(), false)) {
-			throw InvalidStateException::filterInputMissing($this);
-		}
-
-		$className = Format::className($this, suffix: 'Filter');
-		$clearLink = $this->createLink('clear!', ['column' => $this->name]);
-
-		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
-		$template = $this->getTemplate();
-		$template->setFile(__DIR__.'/../templates/filter-'.$className.'.latte');
-
-		$template->add('isFiltered', $this->isFiltered);
-		$template->add('clearLink', $clearLink);
-		$template->add('label', $this->translate($this->label));
-		$template->add('name', $this->fieldName());
-		$template->add('input', $input);
-
-		$template->render();
-	}
-
-
-	protected function fieldName(): string
+	public function fieldName(): string
 	{
 		return Format::camelCase(Strings::webalize($this->name));
 	}

@@ -25,3 +25,4 @@ filter:
 	select-placeholder: 'Vše…'
 	button: 'Filtrovat'
 	cancel: 'Zrušit filtraci'
+	cancel-short: 'zrušit'

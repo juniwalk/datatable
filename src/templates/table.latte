@@ -20,20 +20,25 @@
 	<div n:snippet="filters" n:class="collapse, $table->shouldShowFilters() ? show" n:if="!empty($filters)">
 	<form n:name="filterForm" class="card-header" autocomplete="off">
 
-		<div class="row g-2 row-cols-auto row-cols-lg-{$table->getFilterColumnCount() ?? auto}">
-			<div class="col flex-grow-1 flex-lg-grow-0" n:foreach="$filters as $filter">
-				{control $filter, $form}
+		<div class="row g-3 row-cols-auto">
+			<div class="col flex-grow-1 flex-lg-grow-0" n:foreach="$filters as $name => $filter">
+
+				<div n:class="form-group, $filter->getType()" n:snippet="filter-{$name}">
+					<div class="d-flex gap-2" n:snippet="filter-{$name}-clear">
+						<label n:name="$filter->firstInput($form)" class="form-label">{$filter->getLabel()|translate}</label>
+						<a n:href="clear! $name" class="text-danger text-nowrap ajax ms-auto" n:if="$filter->isFiltered()">
+							<i class="fa-solid fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.cancel-short}
+						</a>
+					</div>
+					{include block 'filter-'.$filter->getType(), name: $filter->fieldName() |indent:5}
+				</div>
 
 			</div>
 		</div>
 
-		<button n:name="submit" type="submit" class="btn btn-sm btn-info ajax mt-3" n:if="!$autoSubmit">
+		<button n:name="__submit" type="submit" class="btn btn-sm btn-info ajax mt-3" n:if="!$autoSubmit">
 			<i class="fas fa-filter fa-fw"></i> {_datatable.filter.button|noescape}
 		</button>
-
-		<template n:if="$autoSubmit" data-dt-clear>
-			<button type="button" class="btn btn-outline-danger" data-dt-clear><i class="fas fa-times fa-fw"></i></button>
-		</template>
 
 	</form>
 	</div>
@@ -117,3 +122,37 @@
 	</div>
 
 </div>
+
+
+
+{define #filter-date, $name}
+<div class="input-group input-group-sm" style="min-width: 150px">
+	<input n:name="$name" type="date" class="form-control form-control-sm" data-dt-autosubmit="change">
+</div>
+{/define}
+
+{define #filter-date-range, $name}
+<div class="input-group input-group-sm" style="min-width: 325px" n:formContainer="$name">
+	<input n:name="from" type="date" class="form-control form-control-sm" data-dt-autosubmit="change">
+	<span class="input-group-text">&ndash;</span>
+	<input n:name="to" type="date" class="form-control form-control-sm" data-dt-autosubmit="change">
+</div>
+{/define}
+
+{define #filter-enum-list, $name}
+<div class="input-group input-group-sm" style="min-width: 250px">
+	<select n:name="$name" class="form-select form-select-sm" multiple data-dt-autosubmit="change"></select>
+</div>
+{/define}
+
+{define #filter-enum, $name}
+<div class="input-group input-group-sm" style="min-width: 250px">
+	<select n:name="$name" class="form-select form-select-sm" data-dt-autosubmit="change"></select>
+</div>
+{/define}
+
+{define #filter-text, $name}
+<div class="input-group input-group-sm" style="min-width: 250px">
+	<input n:name="$name" type="text" class="form-control form-control-sm" data-dt-autosubmit="keyup">
+</div>
+{/define}

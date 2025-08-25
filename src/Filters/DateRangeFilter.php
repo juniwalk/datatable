@@ -12,6 +12,7 @@ use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
 use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Application\UI\Form;
+use Nette\ComponentModel\IComponent;
 use Throwable;
 
 class DateRangeFilter extends AbstractFilter implements FilterRange
@@ -101,5 +102,11 @@ class DateRangeFilter extends AbstractFilter implements FilterRange
 				'to' => $data[$this->fieldName()]['to'],
 			]);
 		};
+	}
+
+
+	public function firstInput(Form $form): IComponent
+	{
+		return $form->getComponent($this->fieldName())->getComponent('from');
 	}
 }

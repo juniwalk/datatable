@@ -19,6 +19,9 @@ use Nette\ComponentModel\IComponent;
  */
 interface Filter extends IComponent
 {
+	public function getLabel(): string;
+	public function isFiltered(): bool;
+
 	/**
 	 * @return array<string, Column>
 	 */
@@ -30,8 +33,7 @@ interface Filter extends IComponent
 	public function hasCondition(): bool;
 	public function applyCondition(mixed $model): bool;
 
-	public function isFiltered(): bool;
-
 	public function attachToForm(Form $form): void;
-	public function render(Form $form): void;
+	public function firstInput(Form $form): IComponent;
+	public function fieldName(): string;
 }

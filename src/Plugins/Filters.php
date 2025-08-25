@@ -40,7 +40,6 @@ trait Filters
 
 	protected bool $autoSubmit = true;
 	protected ?bool $isFilterShown = null;
-	protected ?int $filterColumnCount = null;
 
 	/** @var array<string, FilterStruct> */
 	protected array $filters = [];
@@ -104,19 +103,6 @@ trait Filters
 		}
 
 		return $this->isFiltered() || !$this->isDefaultFilter();
-	}
-
-
-	public function setFilterColumnCount(?int $filterColumnCount): static
-	{
-		$this->filterColumnCount = $filterColumnCount;
-		return $this;
-	}
-
-
-	public function getFilterColumnCount(): ?int
-	{
-		return $this->filterColumnCount;
 	}
 
 
@@ -292,26 +278,29 @@ trait Filters
 	{
 		$form = new Form;
 		$form->setTranslator($this->getTranslator());
+		$form->addSubmit('__submit');
 		$form->addProtection();
-		$form->addSubmit('submit');
 
-		foreach ($this->getFilters() as $filter) {
-			$filter->attachToForm($form);
-		}
+		Arrays::map($this->filters, fn($filter) => $filter->attachToForm($form));
 
 		$form->onError[] = function($form) {
 			Arrays::map($form->getErrors(), fn($msg) => $this->flashMessage($msg, 'danger'));
 		};
 
+		// ? Filter values are set in onSuccess attached in Filter::attachToForm()
 		$form->onSuccess[] = function() {
 			$this->setOption(Option::IsFiltered, true);
 			$this->setPage(1);
 
 			$this->filter = array_filter(
-				array_map(fn($x) => $x->getValueFormatted(), $this->filters)
+				Arrays::map($this->filters, function($filter, string $name) {
+					$this->redrawControl('filter-'.$name.'-clear');
+					return $filter->getValueFormatted();
+				})
 			);
 
 			$this->redrawControl('paginator');
+			$this->redrawControl('filters');
 			$this->redrawControl('table');
 			$this->redirect('this');
 		};

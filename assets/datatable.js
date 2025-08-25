@@ -70,7 +70,6 @@ JuniWalk.DataTable = JuniWalk.DataTable || {};
 JuniWalk.DataTable.AutoSubmitExtension = class {
 	#selectorTable = '[data-dt-allow-autosubmit]';
 	#selectorInput = '[data-dt-autosubmit]';
-	#selectorClear = '[data-dt-clear]';
 
 	#allowedEvents = ['change', 'keyup'];
 	#ignoredKeys = [
@@ -105,30 +104,6 @@ JuniWalk.DataTable.AutoSubmitExtension = class {
 		let request = naja.uiHandler.submitForm(
 			element.closest('form')
 		);
-
-		request.then(() => {
-			let input = document.querySelector('#'+element.id);
-			let group = input.closest('.input-group');
-
-			if (!input.value || group.querySelector(this.#selectorClear)) {
-				return;
-			}
-
-			let template = group.closest(this.#selectorTable).querySelector('template'+this.#selectorClear);
-			group.append(template.content.cloneNode(true));
-
-			let button = group.querySelector(this.#selectorClear);
-			button.addEventListener('click', () => {
-				input.value = '';
-
-				if ('tomselect' in input) {
-					input.tomselect.setValue('');
-				}
-
-				input.dispatchEvent(new Event(event.type));
-				group.removeChild(button);
-			});
-		});
 
 		return request;
 	}
