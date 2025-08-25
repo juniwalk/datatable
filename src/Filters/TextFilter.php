@@ -24,7 +24,7 @@ class TextFilter extends AbstractFilter implements FilterSingle
 	public function setValue(mixed $value): static
 	{
 		try {
-			$this->value = FormatValue::string($value);
+			$this->value = FormatValue::string($value) ?: null;
 			$this->isFiltered = !empty($this->value);
 
 		} catch (Throwable $e) {

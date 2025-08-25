@@ -264,11 +264,17 @@ trait Filters
 
 	public function isDefaultFilter(): bool
 	{
-		// todo: this needs to be writen for filters which can be array
-		// todo: make sure formatting of the value is the same when comparing
+		$filterActive = Arrays::map($this->filters, function($filter) {
+			if (!$filter->isFiltered()) {
+				return null;
+			}
+
+			return $filter->getValue();
+		});
+
 		return ! (bool) array_udiff_assoc(
 			$this->getDefaultFilter(),
-			$this->getCurrentFilter(),
+			array_filter($filterActive),
 			fn($a, $b) => $a <=> $b,
 		);
 	}
