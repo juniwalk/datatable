@@ -60,7 +60,7 @@
 							</a>
 						</div>
 						<a n:if="$column->isFiltered()" n:href="clear! $name" class="text-danger ajax"><i class="fa-solid fa-filter-circle-xmark fa-fw"></i></a>
-						<a n:if="$table->isColumnHideable($column)" n:href="toggle! $name" class="text-secondary ajax"><i class="fa-solid fa-eye-slash fa-fw"></i></a>
+						<a n:if="$table->isColumnHideable($column)" n:href="showToggle! $name" class="text-secondary ajax"><i class="fa-solid fa-eye-slash fa-fw"></i></a>
 					</div>
 				</th>
 			</tr>

@@ -61,8 +61,7 @@ trait Columns
 	/**
 	 * @throws InvalidStateException
 	 */
-	// todo: rename to handleShowToggle
-	public function handleToggle(string $column): void
+	public function handleShowToggle(string $column): void
 	{
 		$column = $this->getColumn($column);
 		$name = $column->getName();
@@ -233,7 +232,7 @@ trait Columns
 			$actionName = '__column_toggle_'.Casing::Camel->format(Strings::webalize($name));
 			$action = $dropdown->addActionLink($actionName, $column->getLabel())
 				->setIcon('fa-square-check')->addClass('ajax')
-				->setLink('toggle!', ['column' => $name]);
+				->setLink('showToggle!', ['column' => $name]);
 
 			$column->setHidden($columnsHidden[$name] ?? null);
 
