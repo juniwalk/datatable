@@ -26,6 +26,12 @@ class FormatValue
 	}
 
 
+	public static function number(mixed $value, ?int $precision = null): int|float|null
+	{
+		return Format::numeric($value, $precision);
+	}
+
+
 	/**
 	 * @template T of BackedEnum
 	 * @param  class-string<T> $className

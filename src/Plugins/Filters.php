@@ -22,6 +22,7 @@ use JuniWalk\DataTable\Filters\TextFilter;
 use JuniWalk\DataTable\Filters\Interfaces\FilterList;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
+use JuniWalk\DataTable\Filters\NumberRangeFilter;
 use JuniWalk\Utils\Arrays;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
@@ -109,15 +110,6 @@ trait Filters
 	/**
 	 * @param string|string[] $columns
 	 */
-	public function addFilterText(string $name, string $label, string|array $columns = []): TextFilter
-	{
-		return $this->addFilter($name, new TextFilter($label), $columns);
-	}
-
-
-	/**
-	 * @param string|string[] $columns
-	 */
 	public function addFilterDate(string $name, string $label, string|array $columns = []): DateFilter
 	{
 		return $this->addFilter($name, new DateFilter($label), $columns);
@@ -151,9 +143,27 @@ trait Filters
 	 * @param  string|string[] $columns
 	 * @return EnumListFilter<T>
 	 */
-	public function addFilterEnumMultiple(string $name, string $label, string $enum, string|array $columns = []): EnumListFilter
+	public function addFilterEnumList(string $name, string $label, string $enum, string|array $columns = []): EnumListFilter
 	{
 		return $this->addFilter($name, new EnumListFilter($label, $enum), $columns);
+	}
+
+
+	/**
+	 * @param string|string[] $columns
+	 */
+	public function addFilterNumberRange(string $name, string $label, string|array $columns = []): NumberRangeFilter
+	{
+		return $this->addFilter($name, new NumberRangeFilter($label), $columns);
+	}
+
+
+	/**
+	 * @param string|string[] $columns
+	 */
+	public function addFilterText(string $name, string $label, string|array $columns = []): TextFilter
+	{
+		return $this->addFilter($name, new TextFilter($label), $columns);
 	}
 
 
