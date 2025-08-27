@@ -8,7 +8,6 @@
 namespace JuniWalk\DataTable\Columns;
 
 use JuniWalk\DataTable\Column;
-use JuniWalk\DataTable\Columns\Interfaces\Hideable;
 use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
