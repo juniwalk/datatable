@@ -32,7 +32,7 @@ trait Attributes
 	 * @param  string[] $args
 	 * @throws MemberAccessException
 	 */
-	public function __call(string $name, array $args): mixed
+	public function __call(string $name, array $args): static|string|bool|null
 	{
 		$attr = explode('-', Format::kebabCase($name), 2);
 
