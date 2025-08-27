@@ -12,6 +12,7 @@ use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Hideable;
 use JuniWalk\DataTable\Columns\ActionColumn;
 use JuniWalk\DataTable\Columns\DateColumn;
+use JuniWalk\DataTable\Columns\DropdownColumn;
 use JuniWalk\DataTable\Columns\EnumColumn;
 use JuniWalk\DataTable\Columns\LinkColumn;
 use JuniWalk\DataTable\Columns\NumberColumn;
@@ -60,6 +61,7 @@ trait Columns
 	/**
 	 * @throws InvalidStateException
 	 */
+	// todo: rename to handleShowToggle
 	public function handleToggle(string $column): void
 	{
 		$column = $this->getColumn($column);
@@ -113,6 +115,15 @@ trait Columns
 	public function addColumnDate(string $name, string $label): DateColumn
 	{
 		return $this->addColumn($name, new DateColumn($label));
+	}
+
+
+	/**
+	 * @param mixed[] $items
+	 */
+	public function addColumnDropdown(string $name, string $label, array $items): DropdownColumn
+	{
+		return $this->addColumn($name, new DropdownColumn($label))->setItems($items);
 	}
 
 

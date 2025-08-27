@@ -17,6 +17,12 @@ use Nette\ComponentModel\Component;
 
 class InvalidStateException extends \Exception
 {
+	public static function callbackMissing(Component $component, string $property): self
+	{
+		return new self('Missing callback "'.$property.'" for '.Format::className($component, Casing::Pascal).'#'.$component->getName());
+	}
+
+
 	public static function customRendererMissing(Component $component, string $type): self
 	{
 		return new self('Custom render '.$type.' for "'.Format::className($component, Casing::Pascal).'#'.$component->getName().'" is not set.');
