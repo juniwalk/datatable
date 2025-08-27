@@ -104,18 +104,18 @@ abstract class AbstractColumn extends Control implements Column
 	/**
 	 * @throws InvalidStateException
 	 */
-	protected function validateParent(IContainer $table): void
+	protected function validateParent(IContainer $parent): void
 	{
-		if (!$table instanceof Table) {
-			throw InvalidStateException::parentRequired(Table::class, $this);
-		}
+		parent::validateParent($parent);
 
-		$table->when('render', function() {
-			$this->addAttribute('class', 'col-'.Strings::webalize($this->name));
-			$this->addAttribute('class', $this->align->class());
+		$this->monitor($this::class, fn() => $this->lookup(Table::class));
+		$this->monitor(Table::class, function(Table $table) {
+			$this->setTranslator($table->getTranslator());
+
+			$table->when('render', function() {
+				$this->addAttribute('class', 'col-'.Strings::webalize($this->name));
+				$this->addAttribute('class', $this->align->class());
+			});
 		});
-
-		$this->setTranslator($table->getTranslator());
-		parent::validateParent($table);
 	}
 }

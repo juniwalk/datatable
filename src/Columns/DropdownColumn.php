@@ -117,17 +117,13 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 	}
 
 
-	/**
-	 * @throws InvalidStateException
-	 */
-	protected function validateParent(IContainer $table): void
+	protected function validateParent(IContainer $parent): void
 	{
-		parent::validateParent($table);
+		parent::validateParent($parent);
 
-		if (!$table instanceof Table) {
-			throw InvalidStateException::parentRequired(Table::class, $this);
-		}
-
-		$table->when('render', fn() => $this->createActions($table));
+		$this->monitor($this::class, fn() => $this->lookup(Table::class));
+		$this->monitor(Table::class, function(Table $table) {
+			$table->when('render', fn() => $this->createActions($table));
+		});
 	}
 }
