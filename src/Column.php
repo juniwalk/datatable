@@ -8,9 +8,10 @@
 namespace JuniWalk\DataTable;
 
 use JuniWalk\DataTable\Enums\Align;
+use JuniWalk\DataTable\Interfaces\Attributable;
 use Nette\ComponentModel\IComponent;
 
-interface Column extends IComponent
+interface Column extends IComponent, Attributable
 {
 	public function getLabel(): string;
 

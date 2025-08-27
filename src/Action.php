@@ -8,11 +8,12 @@
 namespace JuniWalk\DataTable;
 
 use Closure;
+use JuniWalk\DataTable\Interfaces\Attributable;
 use JuniWalk\DataTable\Row;
 use Nette\ComponentModel\IComponent;
 use Nette\Utils\Html;
 
-interface Action extends IComponent
+interface Action extends IComponent, Attributable
 {
 	public function setLabel(string $label): self;
 	public function getLabel(): string;
