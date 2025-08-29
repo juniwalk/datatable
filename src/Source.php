@@ -15,7 +15,9 @@ interface Source
 {
 	public function setPrimaryKey(string $primaryKey): self;
 	public function getPrimaryKey(): string;
-	public function getCount(): int;
+
+	public function getCount(): ?int;
+	public function getCountOnPage(): int;
 
 	/**
 	 * @return Items

@@ -17,6 +17,37 @@ use JuniWalk\DataTable\Table;
  */
 abstract class AbstractSource implements Source
 {
+	protected string $primaryKey = 'id';
+
+	protected ?int $count = null;
+	protected int $countOnPage;
+
+
+	public function setPrimaryKey(string $primaryKey): self
+	{
+		$this->primaryKey = $primaryKey;
+		return $this;
+	}
+
+
+	public function getPrimaryKey(): string
+	{
+		return $this->primaryKey;
+	}
+
+
+	public function getCount(): ?int
+	{
+		return $this->count;
+	}
+
+
+	public function getCountOnPage(): int
+	{
+		return $this->countOnPage ?? 0;
+	}
+
+
 	/**
 	 * @return Items
 	 */
@@ -33,7 +64,11 @@ abstract class AbstractSource implements Source
 		$this->sort(array_filter($columns));
 		$this->limit($table->getOffset(), $table->getCurrentLimit());
 
-		return $this->getData();
+		$items = $this->fetchData();
+
+		$this->countOnPage = sizeof($items);
+
+		return $items;
 	}
 
 
@@ -44,7 +79,7 @@ abstract class AbstractSource implements Source
 	{
 		$this->filterOne($id);
 
-		return $this->getData();
+		return $this->fetchData();
 	}
 
 
@@ -65,5 +100,5 @@ abstract class AbstractSource implements Source
 	/**
 	 * @return Items
 	 */
-	abstract protected function getData(): iterable;
+	abstract protected function fetchData(): array;
 }

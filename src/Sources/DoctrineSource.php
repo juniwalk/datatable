@@ -29,7 +29,6 @@ use Stringable;
 class DoctrineSource extends AbstractSource
 {
 	protected int $placeholder;
-	protected int $count;
 
 	/** @var array<string, mixed> */
 	protected array $hints = [];
@@ -43,20 +42,7 @@ class DoctrineSource extends AbstractSource
 	}
 
 
-	public function setPrimaryKey(string $primaryKey): self
-	{
-		$this->primaryKey = $primaryKey;
-		return $this;
-	}
-
-
-	public function getPrimaryKey(): string
-	{
-		return $this->primaryKey;
-	}
-
-
-	public function getCount(): int
+	public function getCount(): ?int
 	{
 		return $this->count ??= (int) $this->getQueryCount()->getSingleScalarResult();
 	}
@@ -149,7 +135,7 @@ class DoctrineSource extends AbstractSource
 	/**
 	 * @return Items
 	 */
-	protected function getData(): iterable
+	protected function fetchData(): array
 	{
 		/** @var Items */
 		return $this->getQuery()->getResult();

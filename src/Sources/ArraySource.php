@@ -28,9 +28,6 @@ use JuniWalk\Utils\Format;
  */
 class ArraySource extends AbstractSource
 {
-	protected int $count;
-
-
 	/**
 	 * @param Items $items
 	 */
@@ -39,25 +36,6 @@ class ArraySource extends AbstractSource
 		protected string $primaryKey = 'id',
 	) {
 		$this->count = sizeof($items);
-	}
-
-
-	public function setPrimaryKey(string $primaryKey): self
-	{
-		$this->primaryKey = $primaryKey;
-		return $this;
-	}
-
-
-	public function getPrimaryKey(): string
-	{
-		return $this->primaryKey;
-	}
-
-
-	public function getCount(): int
-	{
-		return $this->count;
 	}
 
 
@@ -171,7 +149,7 @@ class ArraySource extends AbstractSource
 	/**
 	 * @return Items
 	 */
-	protected function getData(): iterable
+	protected function fetchData(): array
 	{
 		return $this->items;
 	}
