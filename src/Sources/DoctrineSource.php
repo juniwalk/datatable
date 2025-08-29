@@ -44,6 +44,10 @@ class DoctrineSource extends AbstractSource
 
 	public function getCount(): ?int
 	{
+		if ($this->isIndeterminate) {
+			return null;
+		}
+
 		return $this->count ??= (int) $this->getQueryCount()->getSingleScalarResult();
 	}
 

@@ -19,8 +19,10 @@ abstract class AbstractSource implements Source
 {
 	protected string $primaryKey;
 
-	protected ?int $count = null;
+	protected int $count;
 	protected int $countOnPage;
+
+	protected bool $isIndeterminate = false;
 
 
 	public function setPrimaryKey(string $primaryKey): self
@@ -38,13 +40,30 @@ abstract class AbstractSource implements Source
 
 	public function getCount(): ?int
 	{
-		return $this->count;
+		if ($this->isIndeterminate) {
+			return null;
+		}
+
+		return $this->count ?? 0;
 	}
 
 
 	public function getCountOnPage(): int
 	{
 		return $this->countOnPage ?? 0;
+	}
+
+
+	public function setIndeterminate(bool $isIndeterminate = true): static
+	{
+		$this->isIndeterminate = $isIndeterminate;
+		return $this;
+	}
+
+
+	public function isIndeterminate(): bool
+	{
+		return $this->isIndeterminate;
 	}
 
 
