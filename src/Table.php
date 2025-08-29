@@ -58,6 +58,8 @@ class Table extends Control implements EventHandler
 	 */
 	public function render(): void
 	{
+		$source = $this->getSource();
+
 		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/templates/table.latte');
@@ -68,14 +70,13 @@ class Table extends Control implements EventHandler
 
 		$this->trigger('render', $template);
 
-		$source = $this->getSource();
 		$items = isset($this->redrawItem)
 			? $source->fetchItem($this->redrawItem)
 			: $source->fetchItems($this);
 
 		$rows = [];
 
-		$this->trigger('load', $items);
+		$this->trigger('load', $items, $source);
 
 		foreach ($items as $item) {
 			$rows[] = $row = new Row($item, $source);
@@ -88,7 +89,6 @@ class Table extends Control implements EventHandler
 		$template->add('filters', $this->getFilters());
 		$template->add('table', $this);
 		$template->add('rows', $rows);
-
 		$template->render();
 	}
 
