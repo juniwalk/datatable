@@ -40,7 +40,7 @@ trait Columns
 		$columnsHidden = array_filter($this->columns, fn($x) => $x instanceof Hideable);
 		$columnsHidden = array_map(fn() => false, $columnsHidden);
 
-		$this->setOption(Option::HiddenColumns, $columnsHidden);
+		$this->setOption(Option::StateColumns, $columnsHidden);
 
 		$this->redrawControl('toolbar');
 		$this->redrawControl('table');
@@ -50,7 +50,7 @@ trait Columns
 
 	public function handleShowDefault(): void
 	{
-		$this->setOption(Option::HiddenColumns, []);
+		$this->setOption(Option::StateColumns, null);
 
 		$this->redrawControl('toolbar');
 		$this->redrawControl('table');
@@ -71,12 +71,12 @@ trait Columns
 		}
 
 		/** @var array<string, bool> */
-		$columnsHidden = $this->getOption(Option::HiddenColumns, []);
+		$columnsHidden = $this->getOption(Option::StateColumns, []);
 		$isHidden = $columnsHidden[$name] ?? $column->isDefaultHide();
 
 		$columnsHidden[$name] = !$isHidden;
 
-		$this->setOption(Option::HiddenColumns, $columnsHidden);
+		$this->setOption(Option::StateColumns, $columnsHidden);
 
 		$this->redrawControl('toolbar');
 		$this->redrawControl('table');
@@ -202,7 +202,7 @@ trait Columns
 	}
 
 
-	protected function validateColumns(): void
+	protected function onRenderColumns(): void
 	{
 		if (!$this->isColumnsHideable) {
 			return;
@@ -222,7 +222,7 @@ trait Columns
 		$dropdown->addDivider();
 
 		/** @var array<string, bool> */
-		$columnsHidden = $this->getOption(Option::HiddenColumns, []);
+		$columnsHidden = $this->getOption(Option::StateColumns, []);
 
 		foreach ($this->columns as $name => $column) {
 			if (!$column instanceof Hideable) {

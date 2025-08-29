@@ -9,27 +9,54 @@ namespace JuniWalk\DataTable\Plugins;
 
 use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\Utils\Format;
+use Nette\Application\UI\Presenter;
 use Nette\Http\SessionSection;
 
 trait Session
 {
+	protected bool $rememberState = false;
+
 	protected SessionSection $session;
 
-	// protected bool $rememberFilters = true;
-	// protected bool $rememberSorting = true;
 
-
-	public function getSessionName(): string
+	/**
+	 * @param array<string, mixed> $params
+	 */
+	public function loadState(array $params): void
 	{
-		if (!$presenter = $this->getPresenterIfExists()) {
-			// todo: throw ComponentNotAnchoredException
-			throw new \Exception;
+		if ($this->rememberState && $this->getOption(Option::IsFiltered, false)) {
+			$params['filter'] ??= $this->getOption(Option::StateFilters, []);
 		}
 
-		return Format::tokens('DataTable\{controlName}@{presenterName}', [
-			'presenterName'	=> $presenter->getName(),
-			'controlName'	=> $this->getUniqueId(),
-		]);
+		if ($this->rememberState && $this->getOption(Option::IsLimited, false)) {
+			$params['limit'] ??= $this->getOption(Option::StateLimit, null);
+		}
+
+		if ($this->rememberState && $this->getOption(Option::IsSorted, false)) {
+			$params['sort'] ??= $this->getOption(Option::StateSorting, []);
+		}
+
+		parent::loadState($params);
+	}
+
+
+	public function setRememberState(bool $rememberState = true): static
+	{
+		$this->rememberState = $rememberState;
+		return $this;
+	}
+
+
+	public function isRememberState(): bool
+	{
+		return $this->rememberState;
+	}
+
+
+	public function clearRememberedState(): static
+	{
+		$this->session->remove();
+		return $this;
 	}
 
 
@@ -46,13 +73,13 @@ trait Session
 	}
 
 
-	protected function validateSession(): void
+	protected function validateSession(Presenter $presenter): void
 	{
-		if (!$presenter = $this->getPresenterIfExists()) {
-			// todo: throw ComponentNotAnchoredException
-			throw new \Exception;
-		}
+		$sessionName = Format::tokens('DataTable\{controlName}@{presenterName}', [
+			'presenterName'	=> $presenter->getName(),
+			'controlName'	=> $this->getUniqueId(),
+		]);
 
-		$this->session = $presenter->getSession($this->getSessionName());
+		$this->session = $presenter->getSession($sessionName);
 	}
 }

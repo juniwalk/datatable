@@ -82,8 +82,6 @@ class Table extends Control implements EventHandler
 			$this->trigger('item', $item, $row);
 		}
 
-		// bdump($this);
-
 		$template->add('autoSubmit', $this->getAutoSubmit());
 		$template->add('toolbar', $this->getToolbarActionsGrouped());
 		$template->add('columns', $this->getColumns());
@@ -97,16 +95,18 @@ class Table extends Control implements EventHandler
 
 	protected function validateParent(IContainer $parent): void
 	{
+		$this->monitor(Presenter::class, function(Presenter $presenter) {
+			$this->validateSession($presenter);
+			$this->validateSources($presenter);
+		});
+
 		parent::validateParent($parent);
 
 		$this->watchAny('render,load,item');
 		$this->when('render', function() {
-			$this->validateFilters();
-			$this->validateSorting();
-			$this->validateColumns();
+			$this->onRenderFilters();
+			$this->onRenderSorting();
+			$this->onRenderColumns();
 		});
-
-		$this->monitor(Presenter::class, fn() => $this->validateSession());
-		$this->monitor(Presenter::class, fn() => $this->validateSources());
 	}
 }

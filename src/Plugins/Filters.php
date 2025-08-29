@@ -60,6 +60,10 @@ trait Filters
 		$this->setOption(Option::IsFiltered, $column <> null);
 		$this->getComponent('filterForm')->reset();
 
+		if ($this->rememberState) {
+			$this->setOption(Option::StateFilters, $this->filter ?: null);
+		}
+
 		$this->redrawControl();
 		$this->redirect('this');
 	}
@@ -315,6 +319,12 @@ trait Filters
 				})
 			);
 
+			// todo: clear $this->filter if it is the same as default filter
+
+			if ($this->rememberState) {
+				$this->setOption(Option::StateFilters, $this->filter ?: null);
+			}
+
 			$this->redrawControl('paginator');
 			$this->redrawControl('filters');
 			$this->redrawControl('table');
@@ -325,7 +335,7 @@ trait Filters
 	}
 
 
-	protected function validateFilters(): void
+	protected function onRenderFilters(): void
 	{
 		$current = $this->getCurrentFilter();
 

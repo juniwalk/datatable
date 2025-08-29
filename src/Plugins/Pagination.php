@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Plugins;
 
+use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use Nette\Application\Attributes\Persistent;
 use Nette\Utils\Paginator;
@@ -58,6 +59,11 @@ trait Pagination
 
 		if ($this->isLimitDefault()) {
 			$this->limit = null;
+		}
+
+		if ($this->rememberState) {
+			$this->setOption(Option::IsLimited, !empty($this->limit));
+			$this->setOption(Option::StateLimit, $this->limit);
 		}
 
 		$this->redrawControl();
@@ -119,7 +125,11 @@ trait Pagination
 
 	public function getCurrentLimit(): int
 	{
-		return $this->limit ?? $this->limitDefault ?? $this->limits[0];
+		if ($this->limit && $this->getOption(Option::IsLimited)) {
+			return $this->limit;
+		}
+
+		return $this->limitDefault ?? $this->limits[0];
 	}
 
 

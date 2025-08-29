@@ -9,6 +9,12 @@ namespace JuniWalk\DataTable\Enums;
 
 enum Option: string
 {
-	case HiddenColumns = 'hiddenColumns';
 	case IsFiltered = 'isFiltered';
+	case IsSorted = 'isSorted';
+	case IsLimited = 'isLimited';
+
+	case StateSorting = 'sortingState';
+	case StateFilters = 'filtersState';
+	case StateColumns = 'columnsState';
+	case StateLimit = 'limitState';
 }

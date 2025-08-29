@@ -11,6 +11,7 @@ use JuniWalk\DataTable\Exceptions\SourceMissingException;
 use JuniWalk\DataTable\Exceptions\SourceUnknownException;
 use JuniWalk\DataTable\Source;
 use JuniWalk\DataTable\SourceFactory;
+use Nette\Application\UI\Presenter;
 
 trait Sources
 {
@@ -68,7 +69,7 @@ trait Sources
 	/**
 	 * @throws SourceUnknownException
 	 */
-	protected function validateSources(): void
+	protected function validateSources(Presenter $presenter): void
 	{
 		if ($model = $this->createModel()) {
 			$this->source = SourceFactory::fromModel($model);

@@ -8,6 +8,7 @@
 namespace JuniWalk\DataTable\Plugins;
 
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
+use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Exceptions\ColumnNotFoundException;
 use Nette\Application\Attributes\Persistent;
@@ -61,6 +62,11 @@ trait Sorting
 			$this->sort = [];
 		}
 
+		if ($this->rememberState) {
+			$this->setOption(Option::IsSorted, !empty($this->sort));
+			$this->setOption(Option::StateSorting, $this->sort ?: null);
+		}
+
 		$this->redrawControl('table');
 		$this->redirect('this');
 	}
@@ -96,7 +102,11 @@ trait Sorting
 	 */
 	public function getCurrentSort(): array
 	{
-		return $this->sort ?: $this->sortDefault;
+		if ($this->sort || $this->getOption(Option::IsSorted)) {
+			return $this->sort;
+		}
+
+		return $this->sortDefault;
 	}
 
 
@@ -147,7 +157,7 @@ trait Sorting
 	}
 
 
-	protected function validateSorting(): void
+	protected function onRenderSorting(): void
 	{
 		$sort = $this->getCurrentSort();
 
