@@ -69,6 +69,33 @@ trait Filters
 	}
 
 
+	protected function handleFilter(): void
+	{
+		$this->setOption(Option::IsFiltered, true);
+		$this->setPage(1);
+
+		$this->filter = array_filter(
+			Arrays::map($this->filters, function($filter, string $name) {
+				$this->redrawControl('filter-'.$name.'-clear');
+				return $filter->getValueFormatted();
+			})
+		);
+
+		if ($this->isDefaultFilter()) {
+			$this->filter = [];
+		}
+
+		if ($this->rememberState) {
+			$this->setOption(Option::StateFilters, $this->filter ?: null);
+		}
+
+		$this->redrawControl('paginator');
+		$this->redrawControl('filters');
+		$this->redrawControl('table');
+		$this->redirect('this');
+	}
+
+
 	public function setAutoSubmit(bool $autoSubmit): static
 	{
 		$this->autoSubmit = $autoSubmit;
@@ -294,47 +321,6 @@ trait Filters
 	}
 
 
-	protected function createComponentFilterForm(): Form
-	{
-		$form = new Form;
-		$form->setTranslator($this->getTranslator());
-		$form->addSubmit('__submit');
-		$form->addProtection();
-
-		Arrays::map($this->filters, fn($filter) => $filter->attachToForm($form));
-
-		$form->onError[] = function($form) {
-			Arrays::map($form->getErrors(), fn($msg) => $this->flashMessage($msg, 'danger'));
-		};
-
-		// ? Filter values are set in onSuccess attached in Filter::attachToForm()
-		$form->onSuccess[] = function() {
-			$this->setOption(Option::IsFiltered, true);
-			$this->setPage(1);
-
-			$this->filter = array_filter(
-				Arrays::map($this->filters, function($filter, string $name) {
-					$this->redrawControl('filter-'.$name.'-clear');
-					return $filter->getValueFormatted();
-				})
-			);
-
-			// todo: clear $this->filter if it is the same as default filter
-
-			if ($this->rememberState) {
-				$this->setOption(Option::StateFilters, $this->filter ?: null);
-			}
-
-			$this->redrawControl('paginator');
-			$this->redrawControl('filters');
-			$this->redrawControl('table');
-			$this->redirect('this');
-		};
-
-		return $form;
-	}
-
-
 	protected function onRenderFilters(): void
 	{
 		$current = $this->getCurrentFilter();
@@ -368,5 +354,24 @@ trait Filters
 			->setTitle('datatable.filter.cancel');
 
 		$this->allowToolbarAction('__filter_clear', $this->shouldShowFilters());
+	}
+
+
+	protected function createComponentFilterForm(): Form
+	{
+		$form = new Form;
+		$form->setTranslator($this->getTranslator());
+		$form->addSubmit('__submit');
+		$form->addProtection();
+
+		// ? Filter values are set in onSuccess attached in Filter::attachToForm()
+		Arrays::map($this->filters, fn($filter) => $filter->attachToForm($form));
+
+		$form->onSuccess[] = $this->handleFilter(...);
+		$form->onError[] = function($form) {
+			Arrays::map($form->getErrors(), fn($msg) => $this->flashMessage($msg, 'danger'));
+		};
+
+		return $form;
 	}
 }
