@@ -60,7 +60,7 @@ trait Session
 	}
 
 
-	protected function setOption(Option $key, mixed $value): self
+	protected function setOption(Option $key, mixed $value): static
 	{
 		$this->session->set($key->value, $value);
 		return $this;

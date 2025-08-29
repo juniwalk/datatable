@@ -7,10 +7,10 @@
 
 namespace JuniWalk\DataTable\Exceptions;
 
-class FieldNotFoundException extends \Exception
+final class FieldNotFoundException extends AbstractTableException
 {
-	public static function fromName(string $field): self
+	public static function fromName(string $field): static
 	{
-		return new self('Field "'.$field.'" not found in the row.');
+		return new static('Field "'.$field.'" not found in the row.');
 	}
 }

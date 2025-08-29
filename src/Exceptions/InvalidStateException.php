@@ -15,54 +15,44 @@ use JuniWalk\Utils\Enums\Casing;
 use JuniWalk\Utils\Format;
 use Nette\ComponentModel\Component;
 
-class InvalidStateException extends \Exception
+final class InvalidStateException extends AbstractTableException
 {
-	public static function callbackMissing(Component $component, string $property): self
+	public static function callbackMissing(Component $component, string $property): static
 	{
-		return new self('Missing callback "'.$property.'" for '.Format::className($component, Casing::Pascal).'#'.$component->getName());
+		return new static('Missing callback "'.$property.'" for '.Format::className($component, Casing::Pascal).'#'.$component->getName());
 	}
 
 
-	public static function customRendererMissing(Component $component, string $type): self
+	public static function customRendererMissing(Component $component, string $type): static
 	{
-		return new self('Custom render '.$type.' for "'.Format::className($component, Casing::Pascal).'#'.$component->getName().'" is not set.');
+		return new static('Custom render '.$type.' for "'.Format::className($component, Casing::Pascal).'#'.$component->getName().'" is not set.');
 	}
 
 
 	/**
 	 * @param int[] $limits
 	 */
-	public static function limitUnknown(?int $limit, array $limits): self
+	public static function limitUnknown(?int $limit, array $limits): static
 	{
-		return new self('Limit "'.$limit.'" must be one of "'.implode(', ', $limits).'".');
+		return new static('Limit "'.$limit.'" must be one of "'.implode(', ', $limits).'".');
 	}
 
 
-	public static function limitsEmpty(): self
+	public static function limitsEmpty(): static
 	{
-		return new self('No valid page limits were given.');
+		return new static('No valid page limits were given.');
 	}
 
 
-	public static function columnNotHideable(Column $column): self
+	public static function columnNotHideable(Column $column): static
 	{
-		return new self('Column "'.$column->getName().'" does not implement '.Hideable::class);
+		return new static('Column "'.$column->getName().'" does not implement '.Hideable::class);
 	}
 
 
-	public static function filterInputMissing(Filter $filter): self
+	public static function filterInputMissing(Filter $filter): static
 	{
-		return new self('Input for filter "'.$filter->getName().'" is missing.');
-	}
-
-
-	/**
-	 * @param class-string $parent
-	 * @param object $child
-	 */
-	public static function parentRequired(string $parent, object $child): self
-	{
-		return new self('Component '.$child::class.' needs to have access to '.$parent.' parent.');
+		return new static('Input for filter "'.$filter->getName().'" is missing.');
 	}
 
 
@@ -70,14 +60,24 @@ class InvalidStateException extends \Exception
 	 * @param class-string $parent
 	 * @param object $child
 	 */
-	public static function parentForbidden(string $parent, object $child): self
+	public static function parentRequired(string $parent, object $child): static
 	{
-		return new self('Component '.$child::class.' cannot be child of '.$parent.' parent.');
+		return new static('Component '.$child::class.' needs to have access to '.$parent.' parent.');
 	}
 
 
-	public static function rowRequired(Component $component): self
+	/**
+	 * @param class-string $parent
+	 * @param object $child
+	 */
+	public static function parentForbidden(string $parent, object $child): static
 	{
-		return new self('Component "'.Format::className($component, Casing::Pascal).'#'.$component->getName().'" requires access to '.Row::class.' instance.');
+		return new static('Component '.$child::class.' cannot be child of '.$parent.' parent.');
+	}
+
+
+	public static function rowRequired(Component $component): static
+	{
+		return new static('Component "'.Format::className($component, Casing::Pascal).'#'.$component->getName().'" requires access to '.Row::class.' instance.');
 	}
 }

@@ -7,6 +7,8 @@
 
 namespace JuniWalk\DataTable\Exceptions;
 
-final class SourceMissingException extends AbstractTableException
+use RuntimeException;
+
+abstract class AbstractTableException extends RuntimeException
 {
 }

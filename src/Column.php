@@ -15,13 +15,13 @@ interface Column extends IComponent, Attributable
 {
 	public function getLabel(): string;
 
-	public function setField(?string $field): self;
+	public function setField(?string $field): static;
 	public function getField(): ?string;
 
 	/**
 	 * @param value-of<Align> $align
 	 */
-	public function setAlign(Align|string $align): self;
+	public function setAlign(Align|string $align): static;
 	public function getAlign(): Align;
 
 	public function isFiltered(): bool;

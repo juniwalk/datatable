@@ -7,9 +7,6 @@
 
 namespace JuniWalk\DataTable\Actions;
 
-/**
- * @inheritDoc
- */
 class ButtonAction extends AbstractAction
 {
 	protected string $tag = 'button';

@@ -95,7 +95,7 @@ trait Pagination
 	 * @param  int[] $limits
 	 * @throws InvalidStateException
 	 */
-	public function setLimits(array $limits, bool $allowAll = false): self
+	public function setLimits(array $limits, bool $allowAll = false): static
 	{
 		$limits = array_filter($limits, fn($i) => $i > 0);
 		$limits = array_unique(array_filter($limits));
@@ -136,7 +136,7 @@ trait Pagination
 	/**
 	 * @throws InvalidStateException
 	 */
-	public function setDefaultLimit(?int $limit): self
+	public function setDefaultLimit(?int $limit): static
 	{
 		if (!in_array($limit, $this->limits)) {
 			throw InvalidStateException::limitUnknown($limit, $this->limits);

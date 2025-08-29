@@ -28,7 +28,7 @@ class TextColumn extends AbstractColumn implements Sortable, Filterable, Hideabl
 	protected ?int $truncate = null;
 
 
-	public function setTruncate(?int $truncate): self
+	public function setTruncate(?int $truncate): static
 	{
 		$this->truncate = $truncate;
 		return $this;

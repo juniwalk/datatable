@@ -14,7 +14,7 @@ interface Filterable extends Column
 {
 	public function isFiltered(): bool;
 
-	public function addFilter(Filter $filter): self;
+	public function addFilter(Filter $filter): static;
 
 	/**
 	 * @return array<string, Filter>

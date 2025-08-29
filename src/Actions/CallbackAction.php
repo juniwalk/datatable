@@ -34,7 +34,7 @@ class CallbackAction extends AbstractAction implements EventHandler
 	}
 
 
-	public function addClickCallback(callable $callback): self
+	public function addClickCallback(callable $callback): static
 	{
 		$this->when('click', $callback);
 		return $this;

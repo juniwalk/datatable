@@ -34,7 +34,7 @@ abstract class AbstractAction extends Control implements Action
 	}
 
 
-	public function setLabel(string $label): self
+	public function setLabel(string $label): static
 	{
 		$this->label = $label;
 		return $this;
@@ -47,7 +47,7 @@ abstract class AbstractAction extends Control implements Action
 	}
 
 
-	public function setGroup(?string $group): self
+	public function setGroup(?string $group): static
 	{
 		$this->group = $group;
 		return $this;
@@ -60,7 +60,7 @@ abstract class AbstractAction extends Control implements Action
 	}
 
 
-	public function setAllowCondition(Closure|bool $condition): self
+	public function setAllowCondition(Closure|bool $condition): static
 	{
 		$this->allowCondition = $condition;
 		return $this;

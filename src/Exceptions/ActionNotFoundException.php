@@ -7,10 +7,10 @@
 
 namespace JuniWalk\DataTable\Exceptions;
 
-class ActionNotFoundException extends \Exception
+final class ActionNotFoundException extends AbstractTableException
 {
-	public static function fromName(string $name): self
+	public static function fromName(string $name): static
 	{
-		return new self('Action "'.$name.'" not found in the table.');
+		return new static('Action "'.$name.'" not found in the table.');
 	}
 }

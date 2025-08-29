@@ -121,7 +121,7 @@ trait Toolbar
 	}
 
 
-	public function allowToolbarAction(string $name, Closure|bool $condition): self
+	public function allowToolbarAction(string $name, Closure|bool $condition): static
 	{
 		$this->getToolbarAction($name)->setAllowCondition($condition);
 		return $this;

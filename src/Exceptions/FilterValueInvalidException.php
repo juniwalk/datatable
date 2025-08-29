@@ -13,13 +13,13 @@ use Throwable;
 /**
  * @phpstan-import-type FilterStruct from Filter
  */
-class FilterValueInvalidException extends \Exception
+final class FilterValueInvalidException extends AbstractTableException
 {
 	/**
 	 * @param FilterStruct $filter
 	 */
-	public static function fromFilter(Filter $filter, string $expected, mixed $value = null, ?Throwable $previous = null): self
+	public static function fromFilter(Filter $filter, string $expected, mixed $value = null, ?Throwable $previous = null): static
 	{
-		return new self('Filter "'.$filter->getName().'" has invalid value of type "'.gettype($value ?? $filter->getValue()).'", but "'.$expected.'" was expected.', previous: $previous);
+		return new static('Filter "'.$filter->getName().'" has invalid value of type "'.gettype($value ?? $filter->getValue()).'", but "'.$expected.'" was expected.', previous: $previous);
 	}
 }

@@ -24,7 +24,7 @@ trait LinkArguments
 	/**
 	 * @param LinkArgs $args
 	 */
-	public function setLink(string $dest, array $args = []): self
+	public function setLink(string $dest, array $args = []): static
 	{
 		$this->dest = $dest;
 		$this->args = $args;

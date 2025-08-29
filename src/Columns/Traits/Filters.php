@@ -29,7 +29,7 @@ trait Filters
 	}
 
 
-	public function addFilter(Filter $filter): self
+	public function addFilter(Filter $filter): static
 	{
 		if ($filter->isFiltered()) {
 			$this->isFiltered = true;

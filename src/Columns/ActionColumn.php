@@ -23,7 +23,7 @@ class ActionColumn extends AbstractColumn
 	/**
 	 * @param array<string, Action> $actions
 	 */
-	public function addActions(array $actions): self
+	public function addActions(array $actions): static
 	{
 		$this->actions = $actions;
 		return $this;

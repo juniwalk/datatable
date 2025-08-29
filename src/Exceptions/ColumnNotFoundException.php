@@ -7,10 +7,10 @@
 
 namespace JuniWalk\DataTable\Exceptions;
 
-class ColumnNotFoundException extends \Exception
+final class ColumnNotFoundException extends AbstractTableException
 {
-	public static function fromName(string $name): self
+	public static function fromName(string $name): static
 	{
-		return new self('Column "'.$name.'" not found in the table.');
+		return new static('Column "'.$name.'" not found in the table.');
 	}
 }

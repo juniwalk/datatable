@@ -7,10 +7,10 @@
 
 namespace JuniWalk\DataTable\Exceptions;
 
-class FilterNotFoundException extends \Exception
+final class FilterNotFoundException extends AbstractTableException
 {
-	public static function fromName(string $name): self
+	public static function fromName(string $name): static
 	{
-		return new self('Filter "'.$name.'" not found in the table.');
+		return new static('Filter "'.$name.'" not found in the table.');
 	}
 }

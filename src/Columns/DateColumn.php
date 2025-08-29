@@ -32,7 +32,7 @@ class DateColumn extends AbstractColumn implements Sortable, Filterable, Hideabl
 	protected string $format = 'j. n. Y';
 
 
-	public function setFormat(string $format): self
+	public function setFormat(string $format): static
 	{
 		$this->format = $format;
 		return $this;

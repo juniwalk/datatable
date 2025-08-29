@@ -12,9 +12,9 @@ use JuniWalk\DataTable\Enums\Sort;
 
 interface Sortable extends Column
 {
-	public function setSortable(bool|string $sortable): self;
+	public function setSortable(bool|string $sortable): static;
 	public function isSortable(): ?bool;
 
-	public function setSorted(?Sort $sort): self;
+	public function setSorted(?Sort $sort): static;
 	public function isSorted(): ?Sort;
 }

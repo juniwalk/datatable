@@ -31,7 +31,7 @@ class NumberColumn extends AbstractColumn implements Sortable, Filterable, Hidea
 	protected ?string $separator = '.';
 
 
-	public function setFormat(int $precision = 0, ?string $separator = '.'): self
+	public function setFormat(int $precision = 0, ?string $separator = '.'): static
 	{
 		$this->precision = $precision;
 		$this->separator = $separator;

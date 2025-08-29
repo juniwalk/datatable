@@ -17,9 +17,6 @@ use JuniWalk\DataTable\Traits\TableAncestor;
 use JuniWalk\Utils\Traits\RedirectAjaxHandler;
 use Nette\Utils\Html;
 
-/**
- * @inheritDoc
- */
 class DetailAction extends AbstractAction implements CallbackRenderable, TemplateRenderable
 {
 	use RedirectAjaxHandler;

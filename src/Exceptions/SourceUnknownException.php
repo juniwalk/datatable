@@ -7,10 +7,10 @@
 
 namespace JuniWalk\DataTable\Exceptions;
 
-class SourceUnknownException extends \Exception
+final class SourceUnknownException extends AbstractTableException
 {
-	public static function fromModel(mixed $model): self
+	public static function fromModel(mixed $model): static
 	{
-		return new self('Unable to find suitable Source from given model of type '.gettype($model).'.');
+		return new static('Unable to find suitable Source from given model of type '.gettype($model).'.');
 	}
 }

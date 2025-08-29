@@ -118,7 +118,7 @@ trait Actions
 	}
 
 
-	public function allowRowAction(string $name, Closure|bool $condition): self
+	public function allowRowAction(string $name, Closure|bool $condition): static
 	{
 		$this->getAction($name)->setAllowCondition($condition);
 		return $this;

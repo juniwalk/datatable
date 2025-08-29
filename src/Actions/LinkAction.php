@@ -12,9 +12,6 @@ use JuniWalk\DataTable\Traits\LinkArguments;
 use JuniWalk\DataTable\Traits\LinkHandler;
 use Nette\Utils\Html;
 
-/**
- * @inheritDoc
- */
 class LinkAction extends AbstractAction
 {
 	use LinkArguments;

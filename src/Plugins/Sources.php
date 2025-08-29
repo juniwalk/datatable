@@ -27,7 +27,7 @@ trait Sources
 	}
 
 
-	public function setSource(Source $source): self
+	public function setSource(Source $source): static
 	{
 		$this->source = $source;
 		return $this;
@@ -47,14 +47,14 @@ trait Sources
 	}
 
 
-	public function addLoadCallback(callable $callback): self
+	public function addLoadCallback(callable $callback): static
 	{
 		$this->when('load', $callback);
 		return $this;
 	}
 
 
-	public function addItemCallback(callable $callback): self
+	public function addItemCallback(callable $callback): static
 	{
 		$this->when('item', $callback);
 		return $this;

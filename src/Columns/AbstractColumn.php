@@ -42,7 +42,7 @@ abstract class AbstractColumn extends Control implements Column
 	}
 
 
-	public function setField(?string $field): self
+	public function setField(?string $field): static
 	{
 		$this->field = $field;
 		return $this;
@@ -58,7 +58,7 @@ abstract class AbstractColumn extends Control implements Column
 	/**
 	 * @param value-of<Align> $align
 	 */
-	public function setAlign(Align|string $align): self
+	public function setAlign(Align|string $align): static
 	{
 		$this->align = Align::make($align);
 		return $this;

@@ -21,7 +21,7 @@ trait Sorting
 	protected ?Sort $sort = null;
 
 
-	public function setSortable(bool|string $sortable): self
+	public function setSortable(bool|string $sortable): static
 	{
 		if (is_string($sortable) && $sortable <> '') {
 			$this->field ??= $sortable;
@@ -38,7 +38,7 @@ trait Sorting
 	}
 
 
-	public function setSorted(?Sort $sort): self
+	public function setSorted(?Sort $sort): static
 	{
 		$this->sort = $sort;
 		return $this;
