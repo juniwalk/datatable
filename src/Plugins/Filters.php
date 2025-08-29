@@ -81,10 +81,6 @@ trait Filters
 			})
 		);
 
-		if ($this->isDefaultFilter()) {
-			$this->filter = [];
-		}
-
 		if ($this->rememberState) {
 			$this->setOption(Option::StateFilters, $this->filter ?: null);
 		}
