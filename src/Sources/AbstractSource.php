@@ -25,7 +25,7 @@ abstract class AbstractSource implements Source
 	protected bool $isIndeterminate = false;
 
 
-	public function setPrimaryKey(string $primaryKey): self
+	public function setPrimaryKey(string $primaryKey): static
 	{
 		$this->primaryKey = $primaryKey;
 		return $this;
@@ -70,7 +70,7 @@ abstract class AbstractSource implements Source
 	/**
 	 * @return Items
 	 */
-	public function fetchItems(Table $table): iterable
+	public function fetchItems(Table $table): array
 	{
 		$columns = [];
 
@@ -94,7 +94,7 @@ abstract class AbstractSource implements Source
 	/**
 	 * @return Items
 	 */
-	public function fetchItem(int|string $id): iterable
+	public function fetchItem(int|string $id): array
 	{
 		$this->filterOne($id);
 

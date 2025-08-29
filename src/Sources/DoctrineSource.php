@@ -58,7 +58,7 @@ class DoctrineSource extends AbstractSource
 	}
 
 
-	public function setQueryHint(string $name, mixed $value): self
+	public function setQueryHint(string $name, mixed $value): static
 	{
 		$this->hints[$name] = $value;
 		return $this;

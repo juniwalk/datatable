@@ -13,19 +13,22 @@ namespace JuniWalk\DataTable;
  */
 interface Source
 {
-	public function setPrimaryKey(string $primaryKey): self;
+	public function setPrimaryKey(string $primaryKey): static;
 	public function getPrimaryKey(): string;
 
 	public function getCount(): ?int;
 	public function getCountOnPage(): int;
 
-	/**
-	 * @return Items
-	 */
-	public function fetchItems(Table $table): iterable;
+	public function setIndeterminate(bool $isIndeterminate = true): static;
+	public function isIndeterminate(): bool;
 
 	/**
 	 * @return Items
 	 */
-	public function fetchItem(int|string $id): iterable;
+	public function fetchItems(Table $table): array;
+
+	/**
+	 * @return Items
+	 */
+	public function fetchItem(int|string $id): array;
 }
