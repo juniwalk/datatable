@@ -26,7 +26,6 @@ trait Actions
 
 	public function addActionLink(string $name, string $label): LinkAction
 	{
-		// todo: allow $name to be signal (clear unwanted characters for $name)
 		return $this->addAction($name, new LinkAction($label));
 	}
 

@@ -23,8 +23,6 @@ trait Toolbar
 
 	public function addToolbarLink(string $name, string $label, ?string $group = null): LinkAction
 	{
-		// todo: allow $name to be signal (clear unwanted characters for $name)
-
 		return $this->addToolbarAction($name, new LinkAction($label, $group));
 	}
 
