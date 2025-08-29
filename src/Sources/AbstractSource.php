@@ -17,7 +17,7 @@ use JuniWalk\DataTable\Table;
  */
 abstract class AbstractSource implements Source
 {
-	protected string $primaryKey = 'id';
+	protected string $primaryKey;
 
 	protected ?int $count = null;
 	protected int $countOnPage;
