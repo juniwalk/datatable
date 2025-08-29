@@ -55,7 +55,7 @@ trait Sorting
 			$sort = [$column => $sort[$column]];
 		}
 
-		$this->sort = $sort;
+		$this->sort = $sort;	// @phpstan-ignore assign.propertyType (null is not accepted but it is filtered in setter)
 
 		if ($this->isDefaultSort()) {
 			$this->sort = [];

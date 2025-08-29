@@ -29,14 +29,19 @@ class DateRangeFilter extends AbstractFilter implements FilterRange
 	{
 		try {
 			$this->valueFrom = FormatValue::dateTime($value['from'] ?? null);
-			$this->valueTo = FormatValue::dateTime($value['to'] ?? null);
-			$this->isFiltered = !empty($this->valueFrom) || !empty($this->valueTo);
 
 		} catch (Throwable $e) {
-			// todo: cannot use $value
-			throw FilterValueInvalidException::fromFilter($this, DateTimeImmutable::class, $value, $e);
+			throw FilterValueInvalidException::fromFilter($this, DateTimeImmutable::class, $value['from'] ?? null, $e);
 		}
 
+		try {
+			$this->valueTo = FormatValue::dateTime($value['to'] ?? null);
+
+		} catch (Throwable $e) {
+			throw FilterValueInvalidException::fromFilter($this, DateTimeImmutable::class, $value['to'] ?? null, $e);
+		}
+
+		$this->isFiltered = !empty($this->valueFrom) || !empty($this->valueTo);
 		return $this;
 	}
 

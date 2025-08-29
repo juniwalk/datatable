@@ -40,7 +40,6 @@ trait Sources
 	public function getSource(): Source
 	{
 		if (!isset($this->source)) {
-			// todo: give more details with the exception
 			throw new SourceMissingException;
 		}
 

@@ -37,13 +37,19 @@ class NumberRangeFilter extends AbstractFilter implements FilterRange
 	{
 		try {
 			$this->valueFrom = FormatValue::number($value['from'] ?? null, $this->precission);
-			$this->valueTo = FormatValue::number($value['to'] ?? null, $this->precission);
-			$this->isFiltered = !empty($this->valueFrom) || !empty($this->valueTo);
 
 		} catch (Throwable $e) {
-			throw FilterValueInvalidException::fromFilter($this, 'int|float', $value, $e);
+			throw FilterValueInvalidException::fromFilter($this, 'int|float', $value['from'] ?? null, $e);
 		}
 
+		try {
+			$this->valueTo = FormatValue::number($value['to'] ?? null, $this->precission);
+
+		} catch (Throwable $e) {
+			throw FilterValueInvalidException::fromFilter($this, 'int|float', $value['to'] ?? null, $e);
+		}
+
+		$this->isFiltered = !empty($this->valueFrom) || !empty($this->valueTo);
 		return $this;
 	}
 
