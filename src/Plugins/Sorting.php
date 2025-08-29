@@ -55,8 +55,7 @@ trait Sorting
 			$sort = [$column => $sort[$column]];
 		}
 
-		// todo: array_filter might not be needed anymore since it is filtered in setter hook
-		$this->sort = array_filter($sort);
+		$this->sort = $sort;
 
 		if ($this->isDefaultSort()) {
 			$this->sort = [];
