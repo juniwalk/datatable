@@ -27,7 +27,7 @@
 		<thead class="position-sticky top-0 z-1">
 
 			<tr n:if="$isPinned && !empty($filters)">
-				<td class="p-0 border-0 bg-body-tertiary" colspan="{sizeof($columns)}">
+				<td class="p-0 border-0" colspan="{sizeof($columns)}">
 					{include block filter-control-panel, isPinned: false |indent:5}
 				</td>
 			</tr>
@@ -108,7 +108,7 @@
 
 {define #filter-control-panel}
 <div n:snippet="filters" n:class="collapse, $table->shouldShowFilters() ? show" n:if="!$isPinned && !empty($filters)">
-<form n:name="filterForm" class="card-header" autocomplete="off">
+<form n:name="filterForm" class="card-header bg-body-tertiary" autocomplete="off">
 
 	<div class="row g-3 row-cols-auto">
 		<div class="col flex-grow-1 flex-lg-grow-0" n:foreach="$filters as $name => $filter">
