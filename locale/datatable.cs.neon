@@ -19,7 +19,7 @@ page:
 limit:
 	rows: 'Záznamy: %from% - %to% z %count%'
 	label: 'Limit'
-	all: 'Vše'
+	none: 'Žádný'
 
 filter:
 	select-placeholder: 'Vše…'
