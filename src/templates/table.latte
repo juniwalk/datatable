@@ -73,7 +73,12 @@
 		<tbody n:if="empty($rows)">
 			<tr>
 				<td class="col-no-rows p-3 px-4" colspan="{sizeof($columns)}">
-					<em class="text-secondary">{_datatable.table.empty} <a n:href="clear!" n:if="$table->shouldShowFilters()"><i class="fas fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.cancel}</a></em>
+					<em class="text-secondary">
+						{_datatable.table.empty}
+						<a n:href="clear!" class="text-danger text-nowrap ajax" n:if="$table->shouldShowFilters()">
+							<i class="fas fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.cancel|lower}
+						</a>
+					</em>
 				</td>
 			</tr>
 		</tbody>
