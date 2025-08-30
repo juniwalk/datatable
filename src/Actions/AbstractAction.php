@@ -92,7 +92,7 @@ abstract class AbstractAction extends Control implements Action
 		$button = Html::el($this->tag, $this->attributes);
 
 		if ($confirm = $this->createConfirm($row)) {
-			$button->setAttribute('data-confirm', $confirm);
+			$button->setAttribute(static::ConfirmAttribute, $confirm);
 		}
 
 		if ($icon = $this->createIcon()) {

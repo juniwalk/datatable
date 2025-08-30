@@ -7,6 +7,24 @@
 var JuniWalk = JuniWalk || {};
 
 JuniWalk.DataTable = JuniWalk.DataTable || {};
+JuniWalk.DataTable.ConfirmExtension = class {
+	initialize(naja) {
+		naja.uiHandler.addEventListener('interaction', (event) => this.#confirm(event, event.detail.element));
+		document.querySelectorAll('[data-dt-confirm]:not(.ajax)').forEach((element) => {
+			element.addEventListener('click', (event) => this.#confirm(event, element));
+		});
+	}
+
+	#confirm(event, element) {
+		let question = element.dataset.dtConfirm ?? null;
+
+		if (question && !window.confirm(question)) {
+			event.preventDefault();
+		}
+	}
+}
+
+JuniWalk.DataTable = JuniWalk.DataTable || {};
 JuniWalk.DataTable.DetailActionExtension = class {
 	#isDetailButton = false;
 	#activeAction = null;
@@ -118,5 +136,6 @@ JuniWalk.DataTable.AutoSubmitExtension = class {
 	}
 }
 
+naja.registerExtension(new JuniWalk.DataTable.ConfirmExtension);
 naja.registerExtension(new JuniWalk.DataTable.AutoSubmitExtension);
 naja.registerExtension(new JuniWalk.DataTable.DetailActionExtension);

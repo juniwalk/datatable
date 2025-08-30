@@ -14,6 +14,8 @@ trait Confirmation
 {
 	use Translation;
 
+	public const string ConfirmAttribute = 'data-dt-confirm';
+
 	protected ?string $confirmMessage = null;
 
 
