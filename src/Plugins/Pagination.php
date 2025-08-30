@@ -62,7 +62,7 @@ trait Pagination
 		}
 
 		if ($this->rememberState) {
-			$this->setOption(Option::IsLimited, !empty($this->limit));
+			$this->setOption(Option::IsLimited, isset($this->limit));
 			$this->setOption(Option::StateLimit, $this->limit);
 		}
 
@@ -125,7 +125,7 @@ trait Pagination
 
 	public function getCurrentLimit(): int
 	{
-		if ($this->limit && $this->getOption(Option::IsLimited)) {
+		if ($this->limit || $this->getOption(Option::IsLimited)) {
 			return $this->limit;
 		}
 
