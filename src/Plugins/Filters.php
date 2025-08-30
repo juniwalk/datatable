@@ -26,6 +26,7 @@ use JuniWalk\DataTable\Filters\NumberRangeFilter;
 use JuniWalk\Utils\Arrays;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
+use Nette\Bridges\ApplicationLatte\DefaultTemplate;
 
 /**
  * @phpstan-import-type FilterStruct from Filter
@@ -35,6 +36,9 @@ trait Filters
 	/** @var array<string, mixed> */
 	#[Persistent]
 	public array $filter = [];
+
+	#[Persistent]
+	public bool $isPinned = false;
 
 	/** @var array<string, mixed> */
 	protected array $filterDefault = [];
@@ -46,8 +50,24 @@ trait Filters
 	protected array $filters = [];
 
 
+	public function handleTogglePin(): void
+	{
+		$this->isPinned = !$this->isPinned;
+
+		if ($this->rememberState) {
+			$this->setOption(Option::IsPinned, $this->isPinned);
+		}
+
+		$this->redrawControl();
+		$this->redirect('this');
+	}
+
+
 	public function handleClear(?string $column = null): void
 	{
+		// ? Unpin if filters are reset to default state
+		$this->isPinned = $this->isPinned && $column;
+
 		foreach ($this->getFilters() as $name => $filter) {
 			if ($column && !$filter->hasColumn($column)) {
 				continue;
@@ -62,6 +82,7 @@ trait Filters
 
 		if ($this->rememberState) {
 			$this->setOption(Option::StateFilters, $this->filter ?: null);
+			$this->setOption(Option::IsPinned, $this->isPinned);
 		}
 
 		$this->redrawControl();
@@ -115,6 +136,13 @@ trait Filters
 	public function isFilterShown(): ?bool
 	{
 		return $this->isFilterShown;
+	}
+
+
+	public function isFilterPinned(): bool
+	{
+		/** @var bool */
+		return $this->getOption(Option::IsPinned, $this->isPinned);
 	}
 
 
@@ -317,15 +345,19 @@ trait Filters
 	}
 
 
-	protected function onRenderFilters(): void
+	protected function onRenderFilters(DefaultTemplate $template): void
 	{
-		$current = $this->getCurrentFilter();
-
-		if (!$filters = $this->getFilters()) {
+		if (!$this->filters) {
 			return;
 		}
 
-		foreach ($filters as $name => $filter) {
+		$template->add('autoSubmit', $this->autoSubmit);
+		$template->add('isPinned', $this->isPinned);
+		$template->add('filters', $this->filters);
+
+		$current = $this->getCurrentFilter();
+
+		foreach ($this->filters as $name => $filter) {
 			$filter->setValue($current[$name] ?? null);
 		}
 
@@ -338,6 +370,12 @@ trait Filters
 		}
 
 		$this->getComponent('filterForm')->setDefaults($current, true);
+
+		$this->addToolbarLink('__filter_pin', '', '__filters')->setLink('togglePin!')
+			->setIcon($this->isPinned ? 'fa-thumbtack-slash' : 'fa-thumbtack')
+			->setClass('btn btn-sm btn-info ajax')
+			->setAttribute('data-bs-toggle', 'tooltip')
+			->setTitle('datatable.filter.pin');
 
 		$this->addToolbarButton('__filter_toggle', 'datatable.filter.button', '__filters')
 			->setIcon('fa-filter')->setClass('btn btn-sm btn-info collapsed')

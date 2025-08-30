@@ -24,5 +24,6 @@ limit:
 filter:
 	select-placeholder: 'Vše…'
 	button: 'Filtrovat'
+	pin: 'Připnout k hlavičce'
 	cancel: 'Zrušit filtraci'
 	cancel-short: 'zrušit'

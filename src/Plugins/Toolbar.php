@@ -14,6 +14,7 @@ use JuniWalk\DataTable\Actions\CallbackAction;
 use JuniWalk\DataTable\Actions\DropdownAction;
 use JuniWalk\DataTable\Actions\LinkAction;
 use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
+use Nette\Bridges\ApplicationLatte\DefaultTemplate;
 
 trait Toolbar
 {
@@ -82,34 +83,6 @@ trait Toolbar
 	}
 
 
-	/**
-	 * @return array<?string, array<string, Action>>
-	 */
-	public function getToolbarActionsGrouped(): array
-	{
-		static $internal = [
-			'__filters' => null,
-			'__columns' => null,
-		];
-
-		$actions = $this->getToolbarActions();
-		$toolbar = [];
-
-		foreach ($actions as $name => $action) {
-			if (!$action->isAllowed()) {
-				continue;
-			}
-
-			$toolbar[$action->getGroup()][$name] = $action;
-		}
-
-		return [
-			... array_intersect_key($toolbar, $internal),
-			... array_diff_key($toolbar, $internal),
-		];
-	}
-
-
 	public function removeToolbarAction(string $name): void
 	{
 		if (!$action = $this->getToolbarAction($name)) {
@@ -125,5 +98,30 @@ trait Toolbar
 	{
 		$this->getToolbarAction($name)->setAllowCondition($condition);
 		return $this;
+	}
+
+
+	protected function onRenderToolbar(DefaultTemplate $template): void
+	{
+		static $internal = [
+			'__filters' => null,
+			'__columns' => null,
+		];
+
+		$toolbar = [];
+
+		foreach ($this->toolbar as $name => $action) {
+			if (!$action->isAllowed()) {
+				continue;
+			}
+
+			$toolbar[$action->getGroup()][$name] = $action;
+		}
+
+		$template->add('toolbar', [
+			// ? Render internal toolbar actions first (on the left)
+			... array_intersect_key($toolbar, $internal),
+			... array_diff_key($toolbar, $internal),
+		]);
 	}
 }

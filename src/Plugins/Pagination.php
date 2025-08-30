@@ -125,11 +125,13 @@ trait Pagination
 
 	public function getCurrentLimit(): int
 	{
+		$limitDefault = $this->limitDefault ?? $this->limits[0];
+
 		if ($this->limit || $this->getOption(Option::IsLimited)) {
-			return $this->limit;
+			return $this->limit ?? $limitDefault;
 		}
 
-		return $this->limitDefault ?? $this->limits[0];
+		return $limitDefault;
 	}
 
 

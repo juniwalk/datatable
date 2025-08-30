@@ -14,6 +14,7 @@ use JuniWalk\Utils\Traits\Events;
 use JuniWalk\Utils\Traits\RedirectAjaxHandler;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
+use Nette\Bridges\ApplicationLatte\DefaultTemplate;
 use Nette\ComponentModel\IContainer;
 use stdClass;
 use Stringable;
@@ -60,13 +61,9 @@ class Table extends Control implements EventHandler
 	{
 		$source = $this->getSource();
 
-		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
+		/** @var DefaultTemplate */
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/templates/table.latte');
-
-		if ($actions = $this->getActions()) {
-			$this->addColumnAction('__actions', 'datatable.column.action', $actions);
-		}
 
 		$this->trigger('render', $template);
 
@@ -83,10 +80,6 @@ class Table extends Control implements EventHandler
 			$this->trigger('item', $item, $row);
 		}
 
-		$template->add('autoSubmit', $this->getAutoSubmit());
-		$template->add('toolbar', $this->getToolbarActionsGrouped());
-		$template->add('columns', $this->getColumns());
-		$template->add('filters', $this->getFilters());
 		$template->add('table', $this);
 		$template->add('rows', $rows);
 		$template->render();
@@ -103,10 +96,11 @@ class Table extends Control implements EventHandler
 		parent::validateParent($parent);
 
 		$this->watchAny('render,load,item');
-		$this->when('render', function() {
-			$this->onRenderFilters();
-			$this->onRenderSorting();
-			$this->onRenderColumns();
+		$this->when('render', function(DefaultTemplate $template) {
+			$this->onRenderFilters($template);
+			$this->onRenderSorting($template);
+			$this->onRenderColumns($template);
+			$this->onRenderToolbar($template);
 		});
 	}
 }

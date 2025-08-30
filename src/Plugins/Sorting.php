@@ -12,6 +12,7 @@ use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Exceptions\ColumnNotFoundException;
 use Nette\Application\Attributes\Persistent;
+use Nette\Bridges\ApplicationLatte\DefaultTemplate;
 
 trait Sorting
 {
@@ -156,7 +157,7 @@ trait Sorting
 	}
 
 
-	protected function onRenderSorting(): void
+	protected function onRenderSorting(DefaultTemplate $template): void
 	{
 		$sort = $this->getCurrentSort();
 
