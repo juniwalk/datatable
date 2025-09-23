@@ -68,20 +68,20 @@ abstract class AbstractSource implements Source
 
 
 	/**
+	 * @param  Filter[] $filters
+	 * @param  Column[] $sorting
 	 * @return Items
 	 */
-	public function fetchItems(Table $table): array
-	{
-		$columns = [];
-
-		foreach ($table->getCurrentSort() as $name => $sort) {
-			$columns[$name] = $table->getColumn($name, false);
-		}
-
+	public function fetchItems(
+		array $filters,
+		array $sorting,
+		int $offset,
+		int $limit,
+	): array {
 		// ! first filter, then sort and then limit
-		$this->filter($table->getFilters());
-		$this->sort(array_filter($columns));
-		$this->limit($table->getOffset(), $table->getCurrentLimit());
+		$this->filter($filters);
+		$this->sort($sorting);
+		$this->limit($offset, $limit);
 
 		$items = $this->fetchData();
 

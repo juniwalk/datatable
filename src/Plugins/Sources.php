@@ -9,6 +9,7 @@ namespace JuniWalk\DataTable\Plugins;
 
 use JuniWalk\DataTable\Exceptions\SourceMissingException;
 use JuniWalk\DataTable\Exceptions\SourceUnknownException;
+use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Source;
 use JuniWalk\DataTable\SourceFactory;
 use Nette\Application\UI\Presenter;
@@ -63,6 +64,36 @@ trait Sources
 
 	protected function createModel(): mixed { return null; }
 	protected function createTable(): void {}
+
+
+	/**
+	 * @return Row[]
+	 */
+	protected function getRows(): array
+	{
+		$source = $this->getSource();
+
+		$items = isset($this->redrawItem)
+			? $source->fetchItem($this->redrawItem)
+			: $source->fetchItems(
+				$this->getFilters(),
+				$this->getColumnsSorted(),
+				$this->getOffset(),
+				$this->getCurrentLimit(),
+			);
+
+		$this->trigger('load', $items, $source);
+
+		$primaryKey = $source->getPrimaryKey();
+		$rows = [];
+
+		foreach ($items as $item) {
+			$rows[] = $row = new Row($item, $primaryKey);
+			$this->trigger('item', $item, $row);
+		}
+
+		return $rows;
+	}
 
 
 	/**

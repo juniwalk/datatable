@@ -59,29 +59,14 @@ class Table extends Control implements EventHandler
 	 */
 	public function render(): void
 	{
-		$source = $this->getSource();
-
 		/** @var DefaultTemplate */
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/templates/table.latte');
 
 		$this->trigger('render', $template);
 
-		$items = isset($this->redrawItem)
-			? $source->fetchItem($this->redrawItem)
-			: $source->fetchItems($this);
-
-		$rows = [];
-
-		$this->trigger('load', $items, $source);
-
-		foreach ($items as $item) {
-			$rows[] = $row = new Row($item, $source->getPrimaryKey());
-			$this->trigger('item', $item, $row);
-		}
-
 		$template->add('table', $this);
-		$template->add('rows', $rows);
+		$template->add('rows', $this->getRows());
 		$template->render();
 	}
 

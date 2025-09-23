@@ -23,9 +23,11 @@ interface Source
 	public function isIndeterminate(): bool;
 
 	/**
+	 * @param  Filter[] $filters
+	 * @param  Column[] $sorting
 	 * @return Items
 	 */
-	public function fetchItems(Table $table): array;
+	public function fetchItems(array $filters, array $sorting, int $offset, int $limit): array;
 
 	/**
 	 * @return Items

@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Plugins;
 
+use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\DataTable\Enums\Sort;
@@ -154,6 +155,21 @@ trait Sorting
 		}
 
 		return empty($sortCurrent);
+	}
+
+
+	/**
+	 * @return Column[]
+	 */
+	protected function getColumnsSorted(): array
+	{
+		$sorting = [];
+
+		foreach ($this->getCurrentSort() as $name => $sort) {
+			$sorting[$name] = $this->getColumn($name, false);
+		}
+
+		return array_filter($sorting);
 	}
 
 
