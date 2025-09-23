@@ -90,9 +90,7 @@ class Row
 	 */
 	protected function fetchPrimaryKey(string $primaryKey): void
 	{
-		$id = $this->getValue($primaryKey);
-
-		if (is_null($id)) {
+		if (!$id = $this->getValue($primaryKey)) {
 			throw FieldNotFoundException::fromName($primaryKey);
 		}
 
