@@ -68,8 +68,8 @@ abstract class AbstractSource implements Source
 
 
 	/**
-	 * @param  Filter[] $filters
-	 * @param  Column[] $sorting
+	 * @param  array<string, Filter> $filters
+	 * @param  array<string, Column> $sorting
 	 * @return Items
 	 */
 	public function fetchItems(
