@@ -1,5 +1,10 @@
 <?php declare(strict_types=1);
 
+/**
+ * @copyright Martin Procházka (c) 2025
+ * @license   MIT License
+ */
+
 require __DIR__ . '/../bootstrap.php';
 
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
