@@ -76,7 +76,7 @@ class Table extends Control implements EventHandler
 		$this->trigger('load', $items, $source);
 
 		foreach ($items as $item) {
-			$rows[] = $row = new Row($item, $source);
+			$rows[] = $row = new Row($item, $source->getPrimaryKey());
 			$this->trigger('item', $item, $row);
 		}
 

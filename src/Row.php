@@ -31,11 +31,11 @@ class Row
 	 */
 	public function __construct(
 		protected object|array $item,
-		protected readonly Source $source,
+		protected readonly string $primaryKey,
 	) {
 		$this->reader = PropertyAccess::createPropertyAccessor();
 
-		$this->fetchPrimaryKey($source->getPrimaryKey());
+		$this->fetchPrimaryKey($primaryKey);
 		$this->setAttribute('class', 'align-middle');
 	}
 
@@ -57,7 +57,7 @@ class Row
 
 	public function getPrimaryKey(): string
 	{
-		return $this->source->getPrimaryKey();
+		return $this->primaryKey;
 	}
 
 
@@ -91,6 +91,10 @@ class Row
 	protected function fetchPrimaryKey(string $primaryKey): void
 	{
 		$id = $this->getValue($primaryKey);
+
+		if (is_null($id)) {
+			throw FieldNotFoundException::fromName($primaryKey);
+		}
 
 		if (!is_string($id) && !is_int($id)) {
 			throw FieldInvalidException::fromName($primaryKey, $id, 'int|string');

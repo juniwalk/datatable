@@ -50,7 +50,7 @@ class ArraySource extends AbstractSource
 		}
 
 		foreach ($this->items as $key => $item) {
-			$row = new Row($item, $this);
+			$row = new Row($item, $this->primaryKey);
 
 			foreach ($filters as $filter) {
 				if (!$filter->isFiltered()) {
@@ -85,7 +85,7 @@ class ArraySource extends AbstractSource
 		$items = [];
 
 		foreach ($this->items as $key => $item) {
-			$row = new Row($item, $this);
+			$row = new Row($item, $this->primaryKey);
 
 			if ($id <> $row->getId()) {
 				continue;
@@ -117,7 +117,7 @@ class ArraySource extends AbstractSource
 			}
 
 			$ordering[] = array_map(array: $this->items, callback: function($item) use ($name): string {
-				$value = (new Row($item, $this))->getValue($name);
+				$value = (new Row($item, $this->primaryKey))->getValue($name);
 				return Format::stringify($value);
 			});
 
