@@ -10,6 +10,7 @@ require __DIR__ . '/../../bootstrap.php';
 use JuniWalk\DataTable\Columns\TextColumn;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Filters\TextFilter;
+use JuniWalk\DataTable\SourceFactory;
 use JuniWalk\DataTable\Sources\ArraySource;
 use Tester\Assert;
 use Tester\TestCase;
@@ -33,6 +34,8 @@ class ArraySourceTest extends TestCase
 
 		Assert::same('name', $source->getPrimaryKey());
 		Assert::true($source->isIndeterminate());
+
+		Assert::type(ArraySource::class, SourceFactory::fromModel(static::ItemsData));
 	}
 
 
