@@ -11,8 +11,8 @@ use Closure;
 use JuniWalk\DataTable\Filters\Interfaces\FilterList;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
-use Nette\Application\UI\Form;
 use Nette\ComponentModel\IComponent;
+use Nette\Forms\Form;
 
 /**
  * @phpstan-type FilterStruct Filter&(FilterSingle|FilterRange|FilterList)

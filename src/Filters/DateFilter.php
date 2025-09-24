@@ -11,7 +11,7 @@ use DateTimeImmutable;
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Tools\FormatValue;
-use Nette\Application\UI\Form;
+use Nette\Forms\Form;
 use Throwable;
 
 class DateFilter extends AbstractFilter implements FilterSingle

@@ -10,8 +10,8 @@ namespace JuniWalk\DataTable\Filters;
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
 use JuniWalk\DataTable\Tools\FormatValue;
-use Nette\Application\UI\Form;
 use Nette\ComponentModel\IComponent;
+use Nette\Forms\Form;
 use Throwable;
 
 class NumberRangeFilter extends AbstractFilter implements FilterRange

@@ -11,9 +11,9 @@ use BackedEnum;
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filters\Interfaces\FilterList;
 use JuniWalk\DataTable\Tools\FormatValue;
-use Nette\Application\UI\Form;
 use JuniWalk\Utils\Enums\Interfaces\LabeledEnum;
 use JuniWalk\Utils\Html;
+use Nette\Forms\Form;
 use Throwable;
 
 /**

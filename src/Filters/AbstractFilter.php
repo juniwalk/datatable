@@ -20,9 +20,9 @@ use JuniWalk\DataTable\Traits;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Strings;
 use Nette\Application\UI\Component;
-use Nette\Application\UI\Form;
 use Nette\ComponentModel\IComponent;
 use Nette\ComponentModel\IContainer;
+use Nette\Forms\Form;
 
 /**
  * @phpstan-import-type FilterStruct from Filter
