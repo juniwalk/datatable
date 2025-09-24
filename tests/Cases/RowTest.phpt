@@ -86,4 +86,4 @@ class RowTest extends TestCase
 	}
 }
 
-(new RowTest())->run();
+(new RowTest)->run();

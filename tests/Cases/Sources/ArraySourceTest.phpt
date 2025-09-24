@@ -101,4 +101,4 @@ class ArraySourceTest extends TestCase
 	}
 }
 
-(new ArraySourceTest())->run();
+(new ArraySourceTest)->run();
