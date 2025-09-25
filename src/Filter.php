@@ -20,6 +20,7 @@ use Nette\Forms\Form;
 interface Filter extends IComponent
 {
 	public function getLabel(): string;
+	public function getType(): string;
 	public function isFiltered(): bool;
 
 	/**
