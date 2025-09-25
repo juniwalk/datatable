@@ -12,6 +12,8 @@ use Nette\Utils\Html;
 
 final class DividerAction extends AbstractAction
 {
+	protected string $tag = 'div';
+
 	public function __construct(
 		protected string $label = '',
 		protected ?string $group = null,
@@ -21,6 +23,8 @@ final class DividerAction extends AbstractAction
 
 	public function createButton(?Row $row): Html
 	{
-		return Html::el('div class="dropdown-divider"');
+		return Html::el($this->tag, [
+			'class' => 'dropdown-divider',
+		]);
 	}
 }
