@@ -7,6 +7,7 @@
 
 namespace JuniWalk\Tests\Files;
 
+use JuniWalk\DataTable\Sources\ArraySource;
 use JuniWalk\DataTable\Table;
 use JuniWalk\Utils\Enums\Casing;
 use JuniWalk\Utils\Format;
@@ -41,6 +42,9 @@ class TestPresenter extends Presenter
 
 	protected function createComponentTable(): Table
 	{
-		return new Table;
+		$table = new Table;
+		$table->setSource(new ArraySource(ItemsData));
+
+		return $table;
 	}
 }
