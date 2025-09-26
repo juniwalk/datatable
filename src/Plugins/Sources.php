@@ -28,6 +28,12 @@ trait Sources
 	}
 
 
+	public function isItemInvalid(int|string|null $id): bool
+	{
+		return $this->redrawItem === $id;
+	}
+
+
 	public function setSource(Source $source): static
 	{
 		$this->source = $source;
