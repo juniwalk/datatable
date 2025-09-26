@@ -10,6 +10,7 @@ namespace JuniWalk\DataTable\Traits;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Interfaces\TemplateRenderable;
 use JuniWalk\DataTable\Row;
+use JuniWalk\DataTable\Tools\Output;
 use Throwable;
 
 /**
@@ -69,23 +70,6 @@ trait RendererTemplate
 		$template->setFile($this->templateFile);
 		$template->item = $row->getItem();
 
-		foreach ($params as $key => $value) {
-			if (is_int($key)) {
-				$key = 'param'.$key;
-			}
-
-			$template->$key = $value;
-		}
-
-		try {
-			ob_start(fn() => '');
-			$template->render();
-
-			return ob_get_clean() ?: null;
-
-		} catch (Throwable $e) {
-			ob_end_clean();
-			throw $e;
-		}
+		return Output::captureTemplate($template, $params);
 	}
 }
