@@ -63,10 +63,6 @@ class DropdownAction extends ButtonAction
 	{
 		parent::validateParent($parent);
 
-		$this->monitor($this::class, function() {
-			if ($this->lookup($this::class, false)) {
-				throw InvalidStateException::parentForbidden($this::class, $this);
-			}
-		});
+		$this->monitor($this::class, fn() => throw InvalidStateException::parentForbidden($this::class, $this));
 	}
 }
