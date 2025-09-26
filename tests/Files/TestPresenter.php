@@ -8,6 +8,8 @@
 namespace JuniWalk\Tests\Files;
 
 use JuniWalk\DataTable\Table;
+use JuniWalk\Utils\Enums\Casing;
+use JuniWalk\Utils\Format;
 use Nette\Application\PresenterFactory;
 use Nette\Application\Routers\SimpleRouter;
 use Nette\Application\UI\Presenter;
@@ -18,16 +20,21 @@ class TestPresenter extends Presenter
 	public function __construct()
 	{
 		$url = new Http\UrlScript('http://localhost/index.php', '/index.php');
-		$request = new Http\Request($url);
-		$response = new Http\Response;
+		$name = Format::className($this, Casing::Pascal, 'Presenter');
 
-		$this->setParent(null, 'Test');
+		$httpRequest = new Http\Request($url);
+		$httpResponse = new Http\Response;
+		$session = new Http\Session($httpRequest, $httpResponse);
+
+		$this->setParent(null, $name);
 		$this->injectPrimary(
-			$request,
-			$response,
-			new PresenterFactory,
-			new SimpleRouter,
-			new Http\Session($request, $response),
+			httpRequest: $httpRequest,
+			httpResponse: $httpResponse,
+			router: new SimpleRouter,
+			session: $session,
+
+			presenterFactory: new PresenterFactory,
+			templateFactory: new TemplateFactory,
 		);
 	}
 
