@@ -5,6 +5,8 @@
  * @license   MIT License
  */
 
+namespace JuniWalk\Tests\Files;
+
 use JuniWalk\DataTable\Columns\TextColumn;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters;

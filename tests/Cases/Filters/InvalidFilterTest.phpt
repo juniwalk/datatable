@@ -5,11 +5,13 @@
  * @license   MIT License
  */
 
+namespace JuniWalk\Tests\Cases\Filters;
+
 require __DIR__ . '/../../bootstrap.php';
-require './AbstractFilterCase.php';
 
 use JuniWalk\DataTable\Exceptions\FilterInvalidException;
 use JuniWalk\DataTable\Filters\AbstractFilter;
+use JuniWalk\Tests\Files\AbstractFilterCase;
 use Nette\Forms\Form;
 use Tester\Assert;
 
