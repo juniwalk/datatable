@@ -13,6 +13,7 @@ use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Table;
 use JuniWalk\DataTable\Traits;
 use Nette\Application\UI\Control;
+use Nette\Application\UI\Component;
 use Nette\ComponentModel\IContainer;
 use Nette\Utils\Html;
 
@@ -113,11 +114,14 @@ abstract class AbstractAction extends Control implements Action
 
 	protected function validateParent(IContainer $parent): void
 	{
-		parent::validateParent($parent);
-
-		$this->monitor($this::class, fn() => $this->lookup(Table::class));
 		$this->monitor(Table::class, function(Table $table) {
 			$this->setTranslator($table->getTranslator());
 		});
+
+		parent::validateParent($parent);
+
+		$this->onAnchor[] = function() {
+			$this->lookup(Table::class);
+		};
 	}
 }
