@@ -5,6 +5,8 @@
  * @license   MIT License
  */
 
+namespace JuniWalk\Tests\Cases;
+
 require __DIR__ . '/../bootstrap.php';
 
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
@@ -15,17 +17,10 @@ use Tester\TestCase;
 
 class RowTest extends TestCase
 {
-	private const array ItemData = [
-		'id' => 1,
-		'name' => 'John Doe',
-		'height' => 186.5,
-	];
-
-
 	public function testFieldNotFound(): void
 	{
 		Assert::exception(
-			fn() => new Row(self::ItemData, 'age'),
+			fn() => new Row(ItemsData[0], 'age'),
 			FieldNotFoundException::class,
 		);
 	}
@@ -34,7 +29,7 @@ class RowTest extends TestCase
 	public function testFieldInvalid(): void
 	{
 		Assert::exception(
-			fn() => new Row(self::ItemData, 'height'),
+			fn() => new Row(ItemsData[0], 'height'),
 			FieldInvalidException::class,
 		);
 	}
@@ -42,7 +37,7 @@ class RowTest extends TestCase
 
 	public function testArray(): void
 	{
-		$row = new Row(self::ItemData, 'id');
+		$row = new Row(ItemsData[0], 'id');
 
 		Assert::same(1, $row->getId());
 		Assert::same('John Doe', $row->getValue('name'));
@@ -51,7 +46,7 @@ class RowTest extends TestCase
 
 	public function testObject(): void
 	{
-		$row = new Row((object) self::ItemData, 'id');
+		$row = new Row((object) ItemsData[0], 'id');
 
 		Assert::same(1, $row->getId());
 		Assert::same('John Doe', $row->getValue('name'));
@@ -60,7 +55,7 @@ class RowTest extends TestCase
 
 	public function testClass(): void
 	{
-		$item = new class(... self::ItemData) {
+		$item = new class(... ItemsData[0]) {
 			public function __construct(
 				private int $id,
 				private string $name,

@@ -5,8 +5,11 @@
  * @license   MIT License
  */
 
+namespace JuniWalk\Tests\Cases\Tools;
+
 require __DIR__ . '/../../bootstrap.php';
 
+use DateTime;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Tools\Compare;
 use Tester\Assert;

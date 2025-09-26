@@ -21,12 +21,6 @@ use Tester\Assert;
 
 class DetailActionTest extends AbstractActionCase
 {
-	private const array ItemData = [
-		'id' => 1,
-		'name' => 'John Doe',
-		'height' => 186.5,
-	];
-
 	/** @var class-string<Action> */
 	protected string $className = DetailAction::class;
 
@@ -55,7 +49,7 @@ class DetailActionTest extends AbstractActionCase
 	public function testRender(): void
 	{
 		$action = $this->createAction('btn', 'Button');
-		$row = new Row(self::ItemData, 'id');
+		$row = new Row(ItemsData[0], 'id');
 
 		$link = '/index.php?table-btn-id=1&action=default&do=table-btn-open&presenter=Test';
 		$html = $action->createButton($row);
