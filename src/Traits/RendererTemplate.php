@@ -65,20 +65,27 @@ trait RendererTemplate
 			throw InvalidStateException::customRendererMissing($this, 'template');
 		}
 
-		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
 		$template = $this->getTemplate();
 		$template->setFile($this->templateFile);
-
-		$template->add('item', $row->getItem());
+		$template->item = $row->getItem();
 
 		foreach ($params as $key => $value) {
 			if (is_int($key)) {
 				$key = 'param'.$key;
 			}
 
-			$template->add($key, $value);
+			$template->$key = $value;
 		}
 
-		return $template->renderToString();
+		try {
+			ob_start(fn() => '');
+			$template->render();
+
+			return ob_get_clean() ?: null;
+
+		} catch (Throwable $e) {
+			ob_end_clean();
+			throw $e;
+		}
 	}
 }

@@ -26,7 +26,7 @@ use JuniWalk\DataTable\Filters\NumberRangeFilter;
 use JuniWalk\Utils\Arrays;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
-use Nette\Bridges\ApplicationLatte\DefaultTemplate;
+use Nette\Application\UI\Template;
 
 /**
  * @phpstan-import-type FilterStruct from Filter
@@ -345,15 +345,15 @@ trait Filters
 	}
 
 
-	protected function onRenderFilters(DefaultTemplate $template): void
+	protected function onRenderFilters(Template $template): void
 	{
 		if (!$this->filters) {
 			return;
 		}
 
-		$template->add('autoSubmit', $this->autoSubmit);
-		$template->add('isPinned', $this->isPinned);
-		$template->add('filters', $this->filters);
+		$template->autoSubmit = $this->autoSubmit;
+		$template->isPinned = $this->isPinned;
+		$template->filters = $this->filters;
 
 		$current = $this->getCurrentFilter();
 

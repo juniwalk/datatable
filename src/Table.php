@@ -14,7 +14,7 @@ use JuniWalk\Utils\Traits\Events;
 use JuniWalk\Utils\Traits\RedirectAjaxHandler;
 use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
-use Nette\Bridges\ApplicationLatte\DefaultTemplate;
+use Nette\Application\UI\Template;
 use Nette\ComponentModel\IContainer;
 use stdClass;
 use Stringable;
@@ -59,14 +59,13 @@ class Table extends Control implements EventHandler
 	 */
 	public function render(): void
 	{
-		/** @var DefaultTemplate */
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/templates/table.latte');
 
 		$this->trigger('render', $template);
 
-		$template->add('table', $this);
-		$template->add('rows', $this->getRows());
+		$template->rows = $this->getRows();
+		$template->table = $this;
 		$template->render();
 	}
 
@@ -81,7 +80,7 @@ class Table extends Control implements EventHandler
 		parent::validateParent($parent);
 
 		$this->watchAny('render,load,item');
-		$this->when('render', function(DefaultTemplate $template) {
+		$this->when('render', function(Template $template) {
 			$this->onRenderFilters($template);
 			$this->onRenderSorting($template);
 			$this->onRenderColumns($template);

@@ -188,12 +188,11 @@ trait Pagination
 		$pages->setItemsPerPage($limit);
 		$pages->setItemCount($count);
 
-		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/../templates/table-pages.latte');
-		$template->add('steps', $this->createSteps($pages));
-		$template->add('pages', $pages);
-		$template->add('page', $this->page);
+		$template->steps = $this->createSteps($pages);
+		$template->pages = $pages;
+		$template->page = $this->page;
 		$template->render();
 	}
 
@@ -222,14 +221,13 @@ trait Pagination
 			$offsetEnd = null;
 		}
 
-		/** @var \Nette\Bridges\ApplicationLatte\DefaultTemplate */
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/../templates/table-limiter.latte');
-		$template->add('offsetStart', $offsetStart + 1);
-		$template->add('offsetEnd', $offsetEnd ?: $count);
-		$template->add('limits', $this->limits);
-		$template->add('limit', $limit);
-		$template->add('count', $count);
+		$template->offsetStart = $offsetStart + 1;
+		$template->offsetEnd = $offsetEnd ?: $count;
+		$template->limits = $this->limits;
+		$template->limit = $limit;
+		$template->count = $count;
 		$template->render();
 	}
 

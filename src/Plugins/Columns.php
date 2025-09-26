@@ -23,7 +23,7 @@ use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Traits\LinkHandler;
 use JuniWalk\Utils\Enums\Casing;
 use JuniWalk\Utils\Strings;
-use Nette\Bridges\ApplicationLatte\DefaultTemplate;
+use Nette\Application\UI\Template;
 
 /**
  * @phpstan-import-type LinkArgs from LinkHandler
@@ -203,13 +203,13 @@ trait Columns
 	}
 
 
-	protected function onRenderColumns(DefaultTemplate $template): void
+	protected function onRenderColumns(Template $template): void
 	{
 		if ($actions = $this->getActions()) {
 			$this->addColumnAction('__actions', 'datatable.column.action', $actions);
 		}
 
-		$template->add('columns', $this->columns);
+		$template->columns = $this->columns;
 
 		if (!$this->isColumnsHideable) {
 			return;

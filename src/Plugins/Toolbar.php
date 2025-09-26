@@ -14,7 +14,7 @@ use JuniWalk\DataTable\Actions\CallbackAction;
 use JuniWalk\DataTable\Actions\DropdownAction;
 use JuniWalk\DataTable\Actions\LinkAction;
 use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
-use Nette\Bridges\ApplicationLatte\DefaultTemplate;
+use Nette\Application\UI\Template;
 
 trait Toolbar
 {
@@ -101,7 +101,7 @@ trait Toolbar
 	}
 
 
-	protected function onRenderToolbar(DefaultTemplate $template): void
+	protected function onRenderToolbar(Template $template): void
 	{
 		static $internal = [
 			'__filters' => null,
@@ -118,10 +118,10 @@ trait Toolbar
 			$toolbar[$action->getGroup()][$name] = $action;
 		}
 
-		$template->add('toolbar', [
+		$template->toolbar = [
 			// ? Render internal toolbar actions first (on the left)
 			... array_intersect_key($toolbar, $internal),
 			... array_diff_key($toolbar, $internal),
-		]);
+		];
 	}
 }
