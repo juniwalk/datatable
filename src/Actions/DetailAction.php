@@ -34,7 +34,7 @@ class DetailAction extends AbstractAction implements CallbackRenderable, Templat
 	{
 		$table = $this->getTable();
 		$table->setActiveDetail($this);
-		$table->redrawItem($id);
+		$table->setItemRedraw($id);
 
 		$table->redrawControl('rows');
 		$table->redrawControl('row-'.$id.'-detail');

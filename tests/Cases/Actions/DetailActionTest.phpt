@@ -37,7 +37,7 @@ class DetailActionTest extends AbstractActionCase
 
 		$table = $action->lookup(Table::class);
 
-		Assert::true($table->isItemInvalid(1));
+		Assert::true($table->isItemRedraw(1));
 		Assert::true($table->hasDetailAction());
 		Assert::same($action, $table->getActiveDetail());	
 

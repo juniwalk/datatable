@@ -16,21 +16,21 @@ use Nette\Application\UI\Presenter;
 
 trait Sources
 {
-	protected int|string|null $redrawItem = null;
+	protected int|string|null $itemRedraw = null;
 
 	protected Source $source;
 
 
-	public function redrawItem(int|string|null $id): static
+	public function setItemRedraw(int|string|null $id): static
 	{
-		$this->redrawItem = $id;
+		$this->itemRedraw = $id;
 		return $this;
 	}
 
 
-	public function isItemInvalid(int|string|null $id): bool
+	public function isItemRedraw(int|string $id): bool
 	{
-		return $this->redrawItem === $id;
+		return $this->itemRedraw === $id;
 	}
 
 
@@ -79,8 +79,8 @@ trait Sources
 	{
 		$source = $this->getSource();
 
-		$items = isset($this->redrawItem)
-			? $source->fetchItem($this->redrawItem)
+		$items = isset($this->itemRedraw)
+			? $source->fetchItem($this->itemRedraw)
 			: $source->fetchItems(
 				$this->getFilters(),
 				$this->getColumnsSorted(),
