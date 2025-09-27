@@ -42,9 +42,31 @@ class TestPresenter extends Presenter
 
 	protected function createComponentTable(): Table
 	{
+		return new Table;
+	}
+
+
+	protected function createComponentTableWithSource(): Table
+	{
 		$table = new Table;
 		$table->setSource(new ArraySource(ItemsData));
 
 		return $table;
+	}
+
+
+	protected function createComponentTableExtended(): Table
+	{
+		return new class extends Table {
+			protected function createModel(): mixed {
+				return ItemsData;
+			}
+
+			protected function createTable(): void {
+				$this->addColumnNumber('id', '#');
+				$this->addColumnText('name', 'Name');
+				$this->addColumnNumber('height', 'Height');
+			}
+		};
 	}
 }

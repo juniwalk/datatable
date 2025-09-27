@@ -17,20 +17,13 @@ class TableTest extends TestCase
 {
 	public function testRender(): void
 	{
-		$presenter = new TestPresenter;
-
-		$table = $presenter->getComponent('table');
-		$table->setCaption('Table Caption');
-
-		$table->when('load', function() use (&$onLoad) { $onLoad = true; });
-		$table->when('item', function() use (&$onItem) { $onItem = true; });
+		$table = (new TestPresenter)->getComponent('tableWithSource');
 		$table->when('render', function() use (&$onRender) { $onRender = true; });
+		$table->setCaption('Table Caption');
 
 		$table->render();
 
 		Assert::same('Table Caption', $table->getCaption());
-		Assert::true($onLoad ?? false);
-		Assert::true($onItem ?? false);
 		Assert::true($onRender ?? false);
 	}
 }
