@@ -18,7 +18,7 @@ use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
 trait Actions
 {
 	protected ?DetailAction $activeDetail = null;
-	protected bool $hasDetailAction;
+	protected ?bool $hasDetailAction = null;
 
 	/** @var array<string, Action> */
 	protected array $actions = [];
@@ -58,6 +58,10 @@ trait Actions
 		$this->addComponent($action, $name);
 		$this->actions[$name] = $action;
 
+		if ($action instanceof DetailAction) {
+			$this->hasDetailAction = null;
+		}
+
 		return $action;
 	}
 
@@ -85,10 +89,19 @@ trait Actions
 	}
 
 
+	/**
+	 * @throws ActionNotFoundException
+	 */
 	public function removeAction(string $name): void
 	{
-		if (!$action = $this->getAction($name)) {
-			return;
+		$action = $this->getAction($name);
+
+		if ($action instanceof DetailAction) {
+			$this->hasDetailAction = null;
+		}
+
+		if ($this->activeDetail === $action) {
+			$this->activeDetail = null;
 		}
 
 		$this->removeComponent($action);
