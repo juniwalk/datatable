@@ -83,14 +83,15 @@ trait Toolbar
 	}
 
 
+	/**
+	 * @throws ActionNotFoundException
+	 */
 	public function removeToolbarAction(string $name): void
 	{
-		if (!$action = $this->getToolbarAction($name)) {
-			return;
-		}
+		$action = $this->getToolbarAction($name);
 
 		$this->removeComponent($action);
-		unset($this->actions[$name]);
+		unset($this->toolbar[$name]);
 	}
 
 
