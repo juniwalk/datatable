@@ -76,6 +76,15 @@ final class InvalidStateException extends AbstractTableException
 	}
 
 
+	/**
+	 * @param class-string $parent
+	 */
+	public static function parentUninitialized(string $parent): static
+	{
+		return new static('Constructor of the parent '.$parent.' has to be called.');
+	}
+
+
 	public static function rowRequired(Component $component): static
 	{
 		return new static('Component "'.Format::className($component, Casing::Pascal).'#'.$component->getName().'" requires access to '.Row::class.' instance.');

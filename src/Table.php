@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable;
 
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Exceptions\SourceMissingException;
 use JuniWalk\DataTable\Traits\Translation;
 use JuniWalk\Utils\Interfaces\EventHandler;
@@ -32,7 +33,15 @@ class Table extends Control implements EventHandler
 	use Plugins\Sorting;
 	use Plugins\Pagination;
 
+	protected bool $isInitialized = false;
 	protected Stringable|string|null $caption = null;
+
+
+	public function __construct()
+	{
+		$this->watchAny('render,load,item');
+		$this->isInitialized = true;
+	}
 
 
 	public function setCaption(Stringable|string|null $caption): static
@@ -70,8 +79,15 @@ class Table extends Control implements EventHandler
 	}
 
 
+	/**
+	 * @throws InvalidStateException
+	 */
 	protected function validateParent(IContainer $parent): void
 	{
+		if (!$this->isInitialized) {
+			throw InvalidStateException::parentUninitialized(self::class);
+		}
+
 		$this->monitor(Presenter::class, function(Presenter $presenter) {
 			$this->validateSession($presenter);
 			$this->validateSources($presenter);
@@ -79,7 +95,6 @@ class Table extends Control implements EventHandler
 
 		parent::validateParent($parent);
 
-		$this->watchAny('render,load,item');
 		$this->when('render', function(Template $template) {
 			$this->onRenderFilters($template);
 			$this->onRenderSorting($template);

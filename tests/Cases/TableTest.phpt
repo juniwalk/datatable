@@ -9,6 +9,8 @@ namespace JuniWalk\Tests\Cases;
 
 require __DIR__ . '/../bootstrap.php';
 
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
+use JuniWalk\DataTable\Table;
 use JuniWalk\Tests\Files\TestPresenter;
 use Tester\Assert;
 use Tester\TestCase;
@@ -25,6 +27,20 @@ class TableTest extends TestCase
 
 		Assert::same('Table Caption', $table->getCaption());
 		Assert::true($onRender ?? false);
+	}
+
+
+	public function testInitialization(): void
+	{
+		$presenter = new TestPresenter;
+		$table = new class extends Table {
+			public function __construct() {}
+		};
+
+		Assert::exception(
+			fn() => $table->setParent($presenter),
+			InvalidStateException::class,
+		);
 	}
 }
 
