@@ -12,6 +12,7 @@ use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Exceptions\ColumnNotFoundException;
+use JuniWalk\DataTable\Exceptions\ColumnNotSortableException;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Template;
 
@@ -32,11 +33,12 @@ trait Sorting
 
 	/**
 	 * @throws ColumnNotFoundException
+	 * @throws ColumnNotSortableException
 	 */
 	public function handleSort(string $column): void
 	{
-		if (!$column || !$this->getColumn($column, false)) {
-			throw ColumnNotFoundException::fromName($column);
+		if (!$this->isSortable && !$this->getColumn($column)->isSortable()) {
+			throw ColumnNotSortableException::fromName($column);
 		}
 
 		$sort = $this->getCurrentSort();
@@ -115,17 +117,20 @@ trait Sorting
 	/**
 	 * @param  array<string, Sort|value-of<Sort>> $sortDefault
 	 * @throws ColumnNotFoundException
+	 * @throws ColumnNotSortableException
 	 */
 	public function setDefaultSort(array $sortDefault): static
 	{
 		$this->sortDefault = [];
 
-		foreach ($sortDefault as $column => $sort) {
-			if (!$column || !$this->getColumn($column, false)) {
-				throw ColumnNotFoundException::fromName($column);
+		foreach ($sortDefault as $name => $sort) {
+			$column = $this->getColumn($name);
+
+			if (!$this->isSortable && !$column->isSortable()) {
+				throw ColumnNotSortableException::fromName($name);
 			}
 
-			$this->sortDefault[$column] = Sort::make($sort, true);
+			$this->sortDefault[$name] = Sort::make($sort, true);
 		}
 
 		return $this;
