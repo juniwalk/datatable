@@ -69,8 +69,7 @@ class ToolbarPluginTest extends TestCase
 		$table->allowToolbarAction('button', false);
 
 		$template = (new TemplateFactory)->createTemplate();
-		$onRenderToolbar = Reflect::closure($table, 'onRenderToolbar');
-		$onRenderToolbar($template);
+		Reflect::closure($table, 'onRenderToolbar')($template);
 
 		$actions = $template->toolbar ?? null;
 

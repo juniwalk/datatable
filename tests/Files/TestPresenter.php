@@ -51,6 +51,9 @@ class TestPresenter extends Presenter
 		$table = new Table;
 		$table->setSource(new ArraySource(ItemsData));
 
+		$table->addColumnNumber('id', '#')->setSortable(true);
+		$table->addColumnText('name', 'Name');
+
 		return $table;
 	}
 
