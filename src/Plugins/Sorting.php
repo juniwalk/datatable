@@ -86,9 +86,10 @@ trait Sorting
 	}
 
 
-	public function setSortMultiple(bool $sortMultiple = true): void
+	public function setSortMultiple(bool $sortMultiple = true): static
 	{
 		$this->isSortMultiple = $sortMultiple;
+		return $this;
 	}
 
 
