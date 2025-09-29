@@ -158,6 +158,10 @@ trait Pagination
 
 	public function isLimitDefault(): bool
 	{
+		if ($this->limitDefault && $this->limit === null) {
+			return true;
+		}
+
 		return $this->limit === $this->limitDefault;
 	}
 
