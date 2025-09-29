@@ -193,10 +193,17 @@ trait Columns
 	}
 
 
-	public function isColumnHideable(Column $column): bool
+	/**
+	 * @throws ColumnNotFoundException
+	 */
+	public function isColumnHideable(Column|string $column): bool
 	{
 		if (!$this->isColumnsHideable) {
 			return false;
+		}
+
+		if (!$column instanceof Column) {
+			$column = $this->getColumn($column);
 		}
 
 		return $column instanceof Hideable;
