@@ -104,6 +104,7 @@ trait Pagination
 			throw InvalidStateException::limitsEmpty();
 		}
 
+		sort($limits, SORT_NUMERIC);
 		$this->limits = $limits;
 
 		if ($allowAll === true) {
