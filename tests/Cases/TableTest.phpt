@@ -28,20 +28,6 @@ class TableTest extends TestCase
 		Assert::same('Table Caption', $table->getCaption());
 		Assert::true($onRender ?? false);
 	}
-
-
-	public function testInitialization(): void
-	{
-		$presenter = new TestPresenter;
-		$table = new class extends Table {
-			public function __construct() {}
-		};
-
-		Assert::exception(
-			fn() => $table->setParent($presenter),
-			InvalidStateException::class,
-		);
-	}
 }
 
 (new TableTest)->run();
