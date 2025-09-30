@@ -10,6 +10,7 @@ namespace JuniWalk\Tests\Files;
 use Closure;
 use ReflectionClass;
 use ReflectionMethod;
+use ReflectionProperty;
 
 class Reflect
 {
@@ -18,36 +19,57 @@ class Reflect
 
 	/**
 	 * @template T of object
-	 * @param  T|class-string<T> $className
+	 * @param  T|class-string<T> $class
 	 * @return ReflectionClass<T>
 	 */
-	public static function class(object|string $className): ReflectionClass
+	public static function class(object|string $class): ReflectionClass
 	{
-		if (is_object($className)) {
-			$className = $className::class;
+		if (is_object($class)) {
+			$class = $class::class;
 		}
 
-		return new ReflectionClass($className);
+		return new ReflectionClass($class);
 	}
 
 
 	/**
-	 * @param  class-string $className
+	 * @param  class-string $class
 	 */
-	public static function method(object|string $className, string $methodName): ReflectionMethod
+	public static function method(object|string $class, string $name): ReflectionMethod
 	{
-		return static::class($className)->getMethod($methodName);
+		return static::class($class)->getMethod($name);
 	}
 
 
-	public static function closure(object $object, string $methodName): Closure
+	/**
+	 * @param  class-string $class
+	 */
+	public static function property(object|string $class, string $name): ReflectionProperty
 	{
-		$method = static::method($object, $methodName);
+		return static::class($class)->getProperty($name);
+	}
+
+
+	public static function closure(object $object, string $name): Closure
+	{
+		$method = static::method($object, $name);
 
 		if ($method->isStatic()) {
 			$object = null;
 		}
 
 		return $method->getClosure($object);
+	}
+
+
+	public static function setValue(object $object, string $name, mixed $value): void
+	{
+		$property = static::property($object, $name);
+
+		if ($property->isStatic()) {
+			$object = null;
+		}
+
+		$property->setValue($object, $value);
 	}
 }
