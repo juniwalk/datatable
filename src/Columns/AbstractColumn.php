@@ -36,6 +36,13 @@ abstract class AbstractColumn extends Control implements Column
 	}
 
 
+	public function setLabel(string $label): static
+	{
+		$this->label = $label;
+		return $this;
+	}
+
+
 	public function getLabel(): string
 	{
 		return $this->label;
@@ -106,9 +113,6 @@ abstract class AbstractColumn extends Control implements Column
 	 */
 	protected function validateParent(IContainer $parent): void
 	{
-		parent::validateParent($parent);
-
-		$this->monitor($this::class, fn() => $this->lookup(Table::class));
 		$this->monitor(Table::class, function(Table $table) {
 			$this->setTranslator($table->getTranslator());
 
@@ -117,5 +121,11 @@ abstract class AbstractColumn extends Control implements Column
 				$this->addAttribute('class', $this->align->class());
 			});
 		});
+
+		parent::validateParent($parent);
+
+		$this->onAnchor[] = function() {
+			$this->lookup(Table::class);
+		};
 	}
 }

@@ -13,6 +13,7 @@ use Nette\ComponentModel\IComponent;
 
 interface Column extends IComponent, Attributable
 {
+	public function setLabel(string $label): static;
 	public function getLabel(): string;
 
 	public function setField(?string $field): static;
