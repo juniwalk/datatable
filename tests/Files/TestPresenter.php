@@ -54,6 +54,8 @@ class TestPresenter extends Presenter
 		$table->addColumnNumber('id', '#')->setSortable(true);
 		$table->addColumnText('name', 'Name');
 
+		$table->addFilterText('name', 'Name');
+
 		return $table;
 	}
 
