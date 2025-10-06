@@ -120,7 +120,7 @@ trait Filters
 	}
 
 
-	public function getAutoSubmit(): bool
+	public function isAutoSubmit(): bool
 	{
 		return $this->autoSubmit;
 	}
