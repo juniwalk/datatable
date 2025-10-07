@@ -9,6 +9,8 @@ namespace JuniWalk\Tests\Cases;
 
 require __DIR__ . '/../bootstrap.php';
 
+use DateTime;
+use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use JuniWalk\DataTable\Row;
@@ -60,6 +62,8 @@ class RowTest extends TestCase
 				private int $id,
 				private string $name,
 				private float $height,
+				private Align $align,
+				private DateTime $birth,
 			) {
 			}
 
