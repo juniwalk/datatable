@@ -119,11 +119,14 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 
 	protected function validateParent(IContainer $parent): void
 	{
-		parent::validateParent($parent);
-
-		$this->monitor($this::class, fn() => $this->lookup(Table::class));
 		$this->monitor(Table::class, function(Table $table) {
 			$table->when('render', fn() => $this->createActions($table));
 		});
+
+		parent::validateParent($parent);
+
+		$this->onAnchor[] = function() {
+			$this->lookup(Table::class);
+		};
 	}
 }
