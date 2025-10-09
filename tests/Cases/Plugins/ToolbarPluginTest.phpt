@@ -11,7 +11,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 use JuniWalk\DataTable\Actions;
 use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
-use JuniWalk\Tests\Files\Reflect;
 use JuniWalk\Tests\Files\TemplateFactory;
 use JuniWalk\Tests\Files\TestPresenter;
 use Tester\Assert;
@@ -69,7 +68,7 @@ class ToolbarPluginTest extends TestCase
 		$table->allowToolbarAction('button', false);
 
 		$template = (new TemplateFactory)->createTemplate();
-		Reflect::closure($table, 'onRenderToolbar')($template);
+		Assert::with($table, fn() => $this->onRenderToolbar($template));
 
 		$actions = $template->toolbar ?? null;
 

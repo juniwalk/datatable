@@ -13,7 +13,6 @@ use JuniWalk\DataTable\Filters;
 use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
-use JuniWalk\Tests\Files\Reflect;
 use JuniWalk\Tests\Files\TemplateFactory;
 use JuniWalk\Tests\Files\TestPresenter;
 use Nette\Application\AbortException;
@@ -92,10 +91,12 @@ class FiltersPluginTest extends TestCase
 		Assert::true($table->isDefaultFilter());
 		Assert::same(['name' => 'John Doe'], $table->getCurrentFilter());
 
-		Reflect::closure($table, 'setOption')(Option::IsFiltered, true);
-		$table->filter = [];
+		Assert::with($table, function() {
+			$this->setOption(Option::IsFiltered, true);
+			$this->filter = [];
 
-		Assert::same([], $table->getCurrentFilter());
+			Assert::same([], $this->getCurrentFilter());
+		});
 	}
 
 
@@ -106,7 +107,7 @@ class FiltersPluginTest extends TestCase
 		$table->clearRememberedState();
 
 		$template = (new TemplateFactory)->createTemplate();
-		Reflect::closure($table, 'onRenderFilters')($template);
+		Assert::with($table, fn() => $this->onRenderFilters($template));
 
 		Assert::true($template->autoSubmit ?? null);
 		Assert::false($template->isPinned ?? null);
@@ -140,7 +141,7 @@ class FiltersPluginTest extends TestCase
 		Assert::type(Controls\TextInput::class, $form['text']);
 
 		// ? Set token from CSRF protection into value property of Control
-		Reflect::setValue($token, 'value', $token->getControl()->value);
+		Assert::with($token, fn() => $this->value = $this->getControl()->value);
 
 		$form->setValues(['text' => 'Jane Doe']);
 		$form->setSubmittedBy($form['__submit']);

@@ -10,7 +10,6 @@ namespace JuniWalk\Tests\Cases\Plugins;
 require __DIR__ . '/../../bootstrap.php';
 
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
-use JuniWalk\Tests\Files\Reflect;
 use JuniWalk\Tests\Files\TestPresenter;
 use Nette\Application\AbortException;
 use Nette\Utils\Paginator;
@@ -99,17 +98,18 @@ class PaginationPluginTest extends TestCase
 	public function testSteps(): void
 	{
 		$table = (new TestPresenter)->getComponent('table');
-		$createSteps = Reflect::closure($table, 'createSteps');
 
 		$pages = new Paginator;
-		$pages->setPage(1);
 		$pages->setItemsPerPage(5);
 		$pages->setItemCount(100);
+		$pages->setPage(1);
 
-		Assert::same(
-			[1, 2, 3, 4, null, 20],
-			$createSteps($pages, 5)
-		);
+		Assert::with($table, function() use ($pages) {
+			Assert::same(
+				[1, 2, 3, 4, null, 20],
+				$this->createSteps($pages, 5),
+			);
+		});
 	}
 }
 

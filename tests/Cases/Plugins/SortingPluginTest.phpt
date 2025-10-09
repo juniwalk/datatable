@@ -11,7 +11,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Exceptions\ColumnNotSortableException;
-use JuniWalk\Tests\Files\Reflect;
 use JuniWalk\Tests\Files\TemplateFactory;
 use JuniWalk\Tests\Files\TestPresenter;
 use Nette\Application\AbortException;
@@ -43,8 +42,11 @@ class SortingPluginTest extends TestCase
 			$table->getDefaultSort()
 		);
 
-		$columns = Reflect::closure($table, 'getColumnsSorted')();
-		Assert::same(['name', 'id'], array_keys($columns));
+		Assert::with($table, function() {
+			$columns = $this->getColumnsSorted();
+
+			Assert::same(['name', 'id'], array_keys($columns));
+		});
 	}
 
 
@@ -91,7 +93,7 @@ class SortingPluginTest extends TestCase
 		Assert::null($table->getColumn('id')->isSorted());
 
 		$template = (new TemplateFactory)->createTemplate();
-		Reflect::closure($table, 'onRenderSorting')($template);
+		Assert::with($table, fn() => $this->onRenderSorting($template));
 
 		Assert::true($table->getColumn('name')->isSortable());
 		Assert::same('asc', $table->getColumn('id')->isSorted()->value);

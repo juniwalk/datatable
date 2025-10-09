@@ -10,7 +10,6 @@ namespace JuniWalk\Tests\Cases\Plugins;
 require __DIR__ . '/../../bootstrap.php';
 
 use JuniWalk\DataTable\Enums\Option;
-use JuniWalk\Tests\Files\Reflect;
 use JuniWalk\Tests\Files\TestPresenter;
 use Tester\Assert;
 use Tester\TestCase;
@@ -21,20 +20,23 @@ class SessionPluginTest extends TestCase
 	{
 		$table = (new TestPresenter)->getComponent('table');
 
-		$setOption = Reflect::closure($table, 'setOption');
-		$getOption = Reflect::closure($table, 'getOption');
-
 		Assert::false($table->isRememberState());
-		Assert::null($getOption(Option::IsFiltered));
+		Assert::with($table, function() {
+			Assert::null($this->getOption(Option::IsFiltered));
+		});
 
 		$table->setRememberState(true);
 		Assert::true($table->isRememberState());
 
-		$setOption(Option::IsFiltered, true);
-		Assert::true($getOption(Option::IsFiltered));
+		Assert::with($table, function() {
+			$this->setOption(Option::IsFiltered, true);
+			Assert::true($this->getOption(Option::IsFiltered));
+		});
 
 		$table->clearRememberedState();
-		Assert::null($getOption(Option::IsFiltered));
+		Assert::with($table, function() {
+			Assert::null($this->getOption(Option::IsFiltered));
+		});
 	}
 }
 

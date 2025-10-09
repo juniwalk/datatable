@@ -11,7 +11,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 use JuniWalk\DataTable\Columns;
 use JuniWalk\DataTable\Exceptions\ColumnNotFoundException;
-use JuniWalk\Tests\Files\Reflect;
 use JuniWalk\Tests\Files\TemplateFactory;
 use JuniWalk\Tests\Files\TestPresenter;
 use Nette\Application\AbortException;
@@ -82,7 +81,7 @@ class ColumnsPluginTest extends TestCase
 		);
 
 		$template = (new TemplateFactory)->createTemplate();
-		Reflect::closure($table, 'onRenderColumns')($template);
+		Assert::with($table, fn() => $this->onRenderColumns($template));
 
 		Assert::false($table->getColumn('id')->isHidden());
 		Assert::false($table->getColumn('name')->isHidden());
@@ -109,7 +108,7 @@ class ColumnsPluginTest extends TestCase
 		);
 
 		$template = (new TemplateFactory)->createTemplate();
-		Reflect::closure($table, 'onRenderColumns')($template);
+		Assert::with($table, fn() => $this->onRenderColumns($template));
 
 		Assert::false($table->getColumn('id')->isHidden());
 		Assert::true($table->getColumn('name')->isHidden());
@@ -136,7 +135,7 @@ class ColumnsPluginTest extends TestCase
 		);
 
 		$template = (new TemplateFactory)->createTemplate();
-		Reflect::closure($table, 'onRenderColumns')($template);
+		Assert::with($table, fn() => $this->onRenderColumns($template));
 
 		Assert::false($table->getColumn('id')->isHidden());
 		Assert::false($table->getColumn('name')->isHidden());
@@ -155,7 +154,7 @@ class ColumnsPluginTest extends TestCase
 		);
 
 		$template = (new TemplateFactory)->createTemplate();
-		Reflect::closure($table, 'onRenderColumns')($template);
+		Assert::with($table, fn() => $this->onRenderColumns($template));
 
 		Assert::type('array', $template->columns ?? null);
 		Assert::noError(fn() => $table->getToolbarAction('__column_toggle'));
