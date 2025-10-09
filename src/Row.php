@@ -12,6 +12,7 @@ use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use JuniWalk\DataTable\Traits\Attributes;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Throwable;
 
 /**
  * @phpstan-import-type Item from Source
@@ -80,7 +81,12 @@ class Row
 			default => $column,
 		};
 
-		return $this->reader->getValue($this->item, $path);
+		try {
+			return $this->reader->getValue($this->item, $path);
+
+		} catch (Throwable) {
+			return null;
+		}
 	}
 
 
