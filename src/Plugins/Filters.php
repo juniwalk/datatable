@@ -23,6 +23,7 @@ use JuniWalk\DataTable\Filters\Interfaces\FilterList;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Filters\NumberRangeFilter;
+use JuniWalk\DataTable\Filters\SelectListFilter;
 use JuniWalk\Utils\Arrays;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
@@ -210,6 +211,17 @@ trait Filters
 	public function addFilterNumberRange(string $name, string $label, string|array $columns = []): NumberRangeFilter
 	{
 		return $this->addFilter($name, new NumberRangeFilter($label), $columns);
+	}
+
+
+	/**
+	 * @param  array<int|string, mixed> $items
+	 * @param  string|string[] $columns
+	 * @return SelectListFilter
+	 */
+	public function addFilterSelectList(string $name, string $label, array $items, string|array $columns = []): SelectListFilter
+	{
+		return $this->addFilter($name, new SelectListFilter($label), $columns)->setItems($items);
 	}
 
 
