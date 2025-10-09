@@ -64,7 +64,7 @@ trait Filters
 	}
 
 
-	public function handleClear(?string $column = null): void
+	public function handleClearFilter(?string $column = null): void
 	{
 		// ? Unpin if filters are reset to default state
 		$this->isPinned = $this->isPinned && $column;
@@ -395,10 +395,10 @@ trait Filters
 			->setAttribute('data-bs-target', '#'.$this->getSnippetId('filters'))
 			->setAttribute('data-bs-toggle', 'collapse');
 
-		$this->addToolbarLink('__filter_clear', '', '__filters')->setLink('clear!')
+		$this->addToolbarLink('__filter_clear', '', '__filters')->setLink('clearFilter!')
 			->setIcon('fa-times')->setClass('btn btn-sm btn-info ajax')
 			->setAttribute('data-bs-toggle', 'tooltip')
-			->setTitle('datatable.filter.cancel');
+			->setTitle('datatable.filter.clear');
 
 		$this->allowToolbarAction('__filter_clear', $this->shouldShowFilters());
 	}

@@ -22,6 +22,7 @@ class SortingPluginTest extends TestCase
 	public function testDefault(): void
 	{
 		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table->clearRememberedState();
 
 		Assert::count(0, $table->getDefaultSort());
 		Assert::false($table->isSortMultiple());
@@ -54,6 +55,7 @@ class SortingPluginTest extends TestCase
 	{
 		$table = (new TestPresenter)->getComponent('tableWithSource');
 		$table->setDefaultSort(['id' => 'asc']);
+		$table->clearRememberedState();
 
 		Assert::same([], $table->sort);
 		Assert::exception(
@@ -75,6 +77,7 @@ class SortingPluginTest extends TestCase
 	public function testHandler_NotSortable(): void
 	{
 		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table->clearRememberedState();
 
 		Assert::exception(
 			fn() => $table->handleSort('name'),
@@ -87,6 +90,7 @@ class SortingPluginTest extends TestCase
 	{
 		$table = (new TestPresenter)->getComponent('tableWithSource');
 		$table->setDefaultSort(['id' => 'asc']);
+		$table->clearRememberedState();
 		$table->setSortable(true);
 
 		Assert::null($table->getColumn('name')->isSortable());

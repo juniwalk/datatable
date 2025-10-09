@@ -223,7 +223,7 @@ trait Columns
 		}
 
 		$dropdown = $this->addToolbarDropdown('__column_toggle', '', '__columns')
-			->setIcon('fa-cog')->setClass('btn btn-sm btn-secondary');
+			->setIcon('fa-eye')->setClass('btn btn-sm btn-secondary');
 
 		$dropdown->addActionLink('__column_show_all', 'datatable.column.show-all')
 			->setIcon('fa-eye')->addClass('ajax')

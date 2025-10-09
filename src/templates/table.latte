@@ -41,7 +41,7 @@
 								{$column->getLabel()|translate}
 							</a>
 						</div>
-						<a n:if="$column->isFiltered()" n:href="clear! $name" class="text-danger ajax"><i class="fa-solid fa-filter-circle-xmark fa-fw"></i></a>
+						<a n:if="$column->isFiltered()" n:href="clearFilter! $name" class="text-danger ajax"><i class="fa-solid fa-filter-circle-xmark fa-fw"></i></a>
 						<a n:if="$table->isColumnHideable($column)" n:href="showToggle! $name" class="text-secondary ajax"><i class="fa-solid fa-eye-slash fa-fw"></i></a>
 					</div>
 				</th>
@@ -75,8 +75,8 @@
 				<td class="col-no-rows p-3 px-4" colspan="{sizeof($columns)}">
 					<em class="text-secondary">
 						{_datatable.table.empty}
-						<a n:href="clear!" class="text-danger text-nowrap ajax" n:if="$table->shouldShowFilters()">
-							<i class="fas fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.cancel|lower}
+						<a n:href="clearFilter!" class="text-danger text-nowrap ajax" n:if="$table->shouldShowFilters()">
+							<i class="fas fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.clear|lower}
 						</a>
 					</em>
 				</td>
@@ -97,11 +97,15 @@
 
 		<div class="d-flex gap-2">
 
-			<a n:href="clear!" class="btn btn-sm btn-danger text-nowrap ajax" n:if="$table->shouldShowFilters()">
-				<i class="fas fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.cancel}
-			</a>
-
 			{control $table:limiter}
+
+			<div class="btn-group dropup">
+				<button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-cog fas fa-fw"></i></button>
+				<div class="dropdown-menu dropdown-menu-end">
+					<a n:href="clearFilter!" class="dropdown-item ajax"><i class="fa-solid fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.clear}</a>
+					<a n:href="clearSort!" class="dropdown-item ajax"><i class="fa-solid fa-arrow-up-short-wide fa-fw"></i> {_datatable.sort.clear}</a>
+				</div>
+			</div>
 
 		</div>
 
@@ -121,8 +125,8 @@
 			<div n:class="form-group, $filter->getType()" n:snippet="filter-{$name}">
 				<div class="d-flex gap-2" n:snippet="filter-{$name}-clear">
 					<label n:name="$filter->firstInput($form)" class="form-label text-body">{$filter->getLabel()|translate}</label>
-					<a n:href="clear! $name" class="text-danger text-nowrap ajax ms-auto" n:if="$filter->isFiltered()">
-						<i class="fa-solid fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.cancel-short}
+					<a n:href="clearFilter! $name" class="text-danger text-nowrap ajax ms-auto" n:if="$filter->isFiltered()">
+						<i class="fa-solid fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.clear-short}
 					</a>
 				</div>
 				{include block 'filter-'.$filter->getType(), name: $filter->fieldName() |indent:5}

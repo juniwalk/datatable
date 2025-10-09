@@ -21,9 +21,12 @@ limit:
 	label: 'Limit'
 	none: 'Žádný'
 
+sort:
+	clear: 'Zrušit třídění'
+
 filter:
 	select-placeholder: 'Vše…'
 	button: 'Filtrovat'
 	pin: 'Připnutí filtrů k hlavičce'
-	cancel: 'Zrušit filtraci'
-	cancel-short: 'zrušit'
+	clear: 'Zrušit filtraci'
+	clear-short: 'zrušit'

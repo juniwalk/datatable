@@ -37,7 +37,7 @@ trait Sorting
 	 */
 	public function handleSort(string $column): void
 	{
-		if (!$this->isSortable && !$this->getColumn($column)->isSortable()) {
+		if (!($this->getColumn($column)->isSortable() ?? $this->isSortable)) {
 			throw ColumnNotSortableException::fromName($column);
 		}
 
@@ -48,25 +48,28 @@ trait Sorting
 			default		=> Sort::ASC,
 		};
 
-		$sortShouldReset = $this->isSortMultiple && sizeof($this->sortDefault) > 1;
-		$sortIsDefault = $this->isDefaultSort();
-
-		if ($sortIsDefault && !$sort[$column] && !$sortShouldReset) {
-			$sort[$column] = Sort::ASC;
-		}
-
 		if (!$this->isSortMultiple) {
 			$sort = [$column => $sort[$column]];
 		}
 
+		$this->setOption(Option::IsSorted, true);
 		$this->sort = $sort;	// @phpstan-ignore assign.propertyType (null is not accepted but it is filtered in setter)
 
-		if ($this->isDefaultSort()) {
-			$this->sort = [];
+		if ($this->rememberState) {
+			$this->setOption(Option::StateSorting, $this->sort ?: null);
 		}
 
+		$this->redrawControl('table');
+		$this->redirect('this');
+	}
+
+
+	public function handleClearSort(): void
+	{
+		$this->setOption(Option::IsSorted, false);
+		$this->sort = [];
+
 		if ($this->rememberState) {
-			$this->setOption(Option::IsSorted, !empty($this->sort));
 			$this->setOption(Option::StateSorting, $this->sort ?: null);
 		}
 
