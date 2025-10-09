@@ -246,8 +246,8 @@ class DoctrineSource extends AbstractSource
 
 		$query = $filter->getValue() ?? [];
 
-		foreach ($filter->getColumns() as $name => $column) {
-			$field = $this->checkAlias($column->getField() ?? $name);
+		foreach ($filter->getFields() as $field) {
+			$field = $this->checkAlias($field);
 			$param = $this->getPlaceholder();
 
 			$this->queryBuilder->andWhere("{$field} IN(:{$param})")
@@ -265,8 +265,8 @@ class DoctrineSource extends AbstractSource
 		$queryFrom = $filter->getValueFrom();
 		$queryTo = $filter->getValueTo();
 
-		foreach ($filter->getColumns() as $name => $column) {
-			$field = $this->checkAlias($column->getField() ?? $name);
+		foreach ($filter->getFields() as $field) {
+			$field = $this->checkAlias($field);
 			$param = $this->getPlaceholder();
 
 			if ($queryFrom) {
@@ -290,8 +290,8 @@ class DoctrineSource extends AbstractSource
 
 		$query = $filter->getValue();
 
-		foreach ($filter->getColumns() as $name => $column) {
-			$field = $this->checkAlias($column->getField() ?? $name);
+		foreach ($filter->getFields() as $field) {
+			$field = $this->checkAlias($field);
 			$param = $this->getPlaceholder();
 
 			switch (true) {

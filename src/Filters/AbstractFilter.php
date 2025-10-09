@@ -33,6 +33,7 @@ abstract class AbstractFilter extends Component implements Filter
 
 	protected ?Closure $condition = null;
 	protected bool $isFiltered = false;
+	protected ?string $field = null;
 
 	/** @var array<string, Column> */
 	protected array $columns;
@@ -59,6 +60,38 @@ abstract class AbstractFilter extends Component implements Filter
 	public function isFiltered(): bool
 	{
 		return $this->isFiltered;
+	}
+
+
+	/**
+	 * @return string[]
+	 */
+	public function getFields(): array
+	{
+		$fields = [];
+
+		foreach ($this->columns as $name => $column) {
+			$fields[$name] = $column->getField() ?? $name;
+		}
+
+		if ($this->field) {
+			$fields[$this->getName()] = $this->field;
+		}
+
+		return $fields;
+	}
+
+
+	public function setField(?string $field): static
+	{
+		$this->field = $field;
+		return $this;
+	}
+
+
+	public function getField(): ?string
+	{
+		return $this->field;
 	}
 
 

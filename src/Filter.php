@@ -24,6 +24,13 @@ interface Filter extends IComponent
 	public function isFiltered(): bool;
 
 	/**
+	 * @return string[]
+	 */
+	public function getFields(): array;
+	public function setField(?string $field): static;
+	public function getField(): ?string;
+
+	/**
 	 * @return array<string, Column>
 	 */
 	public function getColumns(): array;
