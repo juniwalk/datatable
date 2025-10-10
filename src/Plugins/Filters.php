@@ -416,7 +416,9 @@ trait Filters
 
 		$form->onSuccess[] = $this->handleFilter(...);
 		$form->onError[] = function($form) {
-			Arrays::map($form->getErrors(), fn($msg) => $this->flashMessage($msg, 'danger'));
+			Arrays::map($form->getErrors(), function($error) {
+				$this->getPresenterIfExists()?->flashMessage($error, 'danger');
+			});
 		};
 
 		return $form;

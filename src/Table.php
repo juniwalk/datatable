@@ -18,7 +18,6 @@ use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
 use Nette\Application\UI\Template;
 use Nette\ComponentModel\IContainer;
-use stdClass;
 use Stringable;
 
 class Table extends Control implements EventHandler, EventAutoWatch
@@ -47,12 +46,6 @@ class Table extends Control implements EventHandler, EventAutoWatch
 	public function getCaption(): Stringable|string|null
 	{
 		return $this->caption;
-	}
-
-
-	public function flashMessage(Stringable|stdClass|string $message, string $type = 'info'): stdClass
-	{
-		return $this->getPresenter()->flashMessage($message, $type);
 	}
 
 
