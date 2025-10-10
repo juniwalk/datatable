@@ -118,7 +118,6 @@ class FiltersPluginTest extends TestCase
 		Assert::same('John Doe', $table->getFilter('name')->getValue());
 		Assert::true($table->getColumn('name')->isFiltered());
 
-		Assert::noError(fn() => $table->getToolbarAction('__filter_pin'));
 		Assert::noError(fn() => $table->getToolbarAction('__filter_toggle'));
 		Assert::noError(fn() => $table->getToolbarAction('__filter_clear'));
 	}

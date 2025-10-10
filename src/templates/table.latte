@@ -106,6 +106,8 @@
 				<div class="dropdown-menu dropdown-menu-end">
 					<a n:href="clearFilter!" class="dropdown-item ajax"><i class="fa-solid fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.clear}</a>
 					<a n:href="clearSort!" class="dropdown-item ajax"><i class="fa-solid fa-arrow-up-short-wide fa-fw"></i> {_datatable.sort.clear}</a>
+					<div class="dropdown-divider"></div>
+					<a n:href="togglePin!" class="dropdown-item ajax"><i n:class="fa-solid, $isPinned ? fa-thumbtack-slash : fa-thumbtack, fa-fw"></i> {_datatable.filter.pin}</a>
 				</div>
 			</div>
 

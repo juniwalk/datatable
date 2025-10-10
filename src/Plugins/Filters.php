@@ -397,13 +397,6 @@ trait Filters
 
 		$this->getComponent('filterForm')->setDefaults($current, true);
 
-		$this->addToolbarLink('__filter_pin', '', '__filters')->setLink('togglePin!')
-			->setIcon($this->isPinned ? 'fa-thumbtack-slash' : 'fa-thumbtack')
-			->setClass('btn btn-sm btn-info ajax')
-			->addClass($this->isPinned ? 'active' : null)
-			->setAttribute('data-bs-toggle', 'tooltip')
-			->setTitle('datatable.filter.pin');
-
 		$this->addToolbarButton('__filter_toggle', 'datatable.filter.button', '__filters')
 			->setIcon('fa-filter')->setClass('btn btn-sm btn-info collapsed')
 			->setAttribute('data-bs-target', '#'.$this->getSnippetId('filters'))
