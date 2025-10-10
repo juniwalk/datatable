@@ -22,10 +22,13 @@ trait RendererTemplate
 	protected bool $strictRender = false;
 
 
+	/**
+	 * @throws InvalidStateException
+	 */
 	public function setTemplateFile(?string $templateFile, bool $strict = false): static
 	{
 		if ($templateFile && !file_exists($templateFile)) {
-			throw new \Exception;
+			throw InvalidStateException::customRendererMissing($this, 'template');
 		}
 
 		$this->strictRender = $strict;
