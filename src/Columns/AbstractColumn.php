@@ -89,13 +89,20 @@ abstract class AbstractColumn extends Control implements Column
 	 */
 	public function render(Row $row): void
 	{
-		$value = $this->formatValue($row);
+		try {
+			$value = $this->formatValue($row);
 
-		if ($this instanceof CallbackRenderable && $this->hasRenderer()) {
-			$value = $this->callbackRender($row, $value);
+		} catch (FieldInvalidException $e) {
 		}
 
-		echo $value;
+		if ($this instanceof CallbackRenderable && $this->hasRenderer()) {
+			$value = $this->callbackRender($row, $value ?? null);
+
+		} elseif (isset($e)) {
+			throw $e;
+		}
+
+		echo $value ?? '';
 	}
 
 
@@ -105,6 +112,9 @@ abstract class AbstractColumn extends Control implements Column
 	}
 
 
+	/**
+	 * @throws FieldInvalidException
+	 */
 	abstract protected function formatValue(Row $row): Html|string;
 
 
