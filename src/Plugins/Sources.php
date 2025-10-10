@@ -21,9 +21,20 @@ trait Sources
 	protected Source $source;
 
 
-	public function setItemRedraw(int|string|null $id): static
+	public function setItemRedraw(int|string|null $id, bool $detail = false): static
 	{
 		$this->itemRedraw = $id;
+		$snippetId = 'row-'.$id;
+
+		if ($detail === true) {
+			$snippetId .= '-detail';
+		}
+
+		if (!empty($id)) {
+			$this->redrawControl('rows');
+			$this->redrawControl($snippetId);
+		}
+
 		return $this;
 	}
 
