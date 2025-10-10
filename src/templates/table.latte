@@ -1,4 +1,4 @@
-<div n:snippet="wrapper" class="card card-outline card-secondary" n:attr="data-dt-allow-autosubmit: $autoSubmit">
+<div n:snippet="wrapper" class="card card-outline card-secondary" data-dt-sticky-header n:attr="data-dt-allow-autosubmit: $autoSubmit">
 
 	<div n:snippet="toolbar" class="card-header py-0">
 	<div class="d-flex flex-wrap justify-content-start align-items-center gap-2 py-2">
@@ -21,12 +21,12 @@
 		{include block filter-control-panel |indent:2}
 	</div>
 
-	<div n:snippet="table" class="card-body table-responsive-lg p-0">
+	<div n:snippet="table" class="card-body table-responsive p-0">
 	<table n:class="table, table-striped, table-sm, $rows ? table-hover">
 
 		<caption class="sr-only">{$table->getCaption()|translate|noescape}</caption>
 
-		<thead class="position-sticky top-0 z-1">
+		<thead class="sticky-top z-1">
 
 			<tr n:snippetArea="filtersPinned" n:if="!empty($filters) && $isPinned">
 				<td class="p-0 border-0" colspan="{sizeof($columns)}">

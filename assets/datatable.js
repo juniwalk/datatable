@@ -136,6 +136,34 @@ JuniWalk.DataTable.AutoSubmitExtension = class {
 	}
 }
 
+JuniWalk.DataTable = JuniWalk.DataTable || {};
+JuniWalk.DataTable.StickyHeader = class {
+	#selectorTable = '[data-dt-sticky-header]';
+	#selectorThead = 'thead.sticky-top';
+
+	initialize(naja) {
+		naja.snippetHandler.addEventListener('afterUpdate', (event) => this.#attach(event.detail.snippet));
+		document.querySelectorAll(this.#selectorTable).forEach((element) => this.#attach(element));
+	}
+
+	#attach(snippet) {
+		snippet.querySelectorAll(this.#selectorThead).forEach((element) => {
+			let container = element.closest('table');
+			this.#stick(element, container);
+
+			window.addEventListener('scroll', () => this.#stick(element, container));
+		});
+	}
+
+	#stick(element, container) {
+		let coord = container.getBoundingClientRect();
+		element.style.transform = coord.y < 0
+			? 'translate3d(0, ' + (-coord.y) + 'px, 0)'
+			: '';
+	}
+}
+
+naja.registerExtension(new JuniWalk.DataTable.StickyHeader);
 naja.registerExtension(new JuniWalk.DataTable.ConfirmExtension);
 naja.registerExtension(new JuniWalk.DataTable.AutoSubmitExtension);
 naja.registerExtension(new JuniWalk.DataTable.DetailActionExtension);
