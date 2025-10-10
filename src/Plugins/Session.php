@@ -32,6 +32,10 @@ trait Session
 			$params['limit'] ??= $this->getOption(Option::StateLimit, null);
 		}
 
+		if ($this->rememberState && $this->getOption(Option::IsPinned, false)) {
+			$params['isPinned'] ??= $this->getOption(Option::IsPinned, false);
+		}
+
 		if ($this->rememberState && $this->getOption(Option::IsSorted, false)) {
 			$params['sort'] ??= $this->getOption(Option::StateSorting, []);
 		}
