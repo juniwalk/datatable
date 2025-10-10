@@ -17,7 +17,9 @@
 	</div>
 	</div>
 
-	{include block filter-control-panel |indent:1}
+	<div n:snippetArea="filtersUnpinned" n:if="!empty($filters) && !$isPinned">
+		{include block filter-control-panel |indent:2}
+	</div>
 
 	<div n:snippet="table" class="card-body table-responsive-lg p-0">
 	<table n:class="table, table-striped, table-sm, $rows ? table-hover">
@@ -26,7 +28,7 @@
 
 		<thead class="position-sticky top-0 z-1">
 
-			<tr n:if="$isPinned && !empty($filters)">
+			<tr n:snippetArea="filtersPinned" n:if="!empty($filters) && $isPinned">
 				<td class="p-0 border-0" colspan="{sizeof($columns)}">
 					{include block filter-control-panel, isPinned: false |indent:5}
 				</td>
@@ -116,7 +118,7 @@
 
 
 {define #filter-control-panel}
-<div n:snippet="filters" n:class="collapse, $table->shouldShowFilters() ? show" n:if="!$isPinned && !empty($filters)">
+<div n:snippet="filters" n:class="collapse, $table->shouldShowFilters() ? show">
 <form n:name="filterForm" class="card-header bg-body-tertiary" autocomplete="off">
 
 	<div class="row g-3 row-cols-auto">

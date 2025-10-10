@@ -98,7 +98,7 @@ trait Filters
 
 		$this->filter = array_filter(
 			Arrays::map($this->filters, function($filter, string $name) {
-				$this->redrawControl('filter-'.$name.'-clear');
+				$this->setFilterRedraw($name);
 				return $filter->getValueFormatted();
 			})
 		);
@@ -108,9 +108,23 @@ trait Filters
 		}
 
 		$this->redrawControl('paginator');
-		$this->redrawControl('filters');
 		$this->redrawControl('table');
+		$this->setFilterRedraw();
 		$this->redirect('this');
+	}
+
+
+	public function setFilterRedraw(?string $name = null): static
+	{
+		$this->redrawControl('filtersUnpinned');
+		$this->redrawControl('filtersPinned');
+		$this->redrawControl('filters');
+
+		if (!empty($name)) {
+			$this->redrawControl('filter-'.$name.'-clear');
+		}
+
+		return $this;
 	}
 
 
