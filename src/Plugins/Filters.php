@@ -108,6 +108,7 @@ trait Filters
 		}
 
 		$this->redrawControl('paginator');
+		$this->redrawControl('toolbar');
 		$this->redrawControl('table');
 		$this->setFilterRedraw();
 		$this->redirect('this');
