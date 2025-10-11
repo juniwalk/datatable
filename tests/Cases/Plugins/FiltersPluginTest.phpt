@@ -112,7 +112,6 @@ class FiltersPluginTest extends TestCase
 		Assert::with($table, fn() => $this->onRenderFilters($template));
 
 		Assert::true($template->autoSubmit ?? null);
-		Assert::false($template->isPinned ?? null);
 		Assert::type('array', $template->filters ?? null);
 
 		Assert::same('John Doe', $table->getFilter('name')->getValue());

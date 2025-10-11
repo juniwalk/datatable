@@ -12,7 +12,6 @@ enum Option: string
 	case IsFiltered = 'isFiltered';
 	case IsSorted = 'isSorted';
 	case IsLimited = 'isLimited';
-	case IsPinned = 'isPinned';
 
 	case StateSorting = 'sortingState';
 	case StateFilters = 'filtersState';

@@ -38,9 +38,6 @@ trait Filters
 	#[Persistent]
 	public array $filter = [];
 
-	#[Persistent]
-	public bool $isPinned = false;
-
 	/** @var array<string, mixed> */
 	protected array $filterDefault = [];
 
@@ -51,24 +48,8 @@ trait Filters
 	protected array $filters = [];
 
 
-	public function handleTogglePin(): void
-	{
-		$this->isPinned = !$this->isPinned;
-
-		if ($this->rememberState) {
-			$this->setOption(Option::IsPinned, $this->isPinned);
-		}
-
-		$this->redrawControl();
-		$this->redirect('this');
-	}
-
-
 	public function handleClearFilter(?string $column = null): void
 	{
-		// ? Unpin if filters are reset to default state
-		$this->isPinned = $this->isPinned && $column;
-
 		foreach ($this->getFilters() as $name => $filter) {
 			if ($column && !$filter->hasColumn($column)) {
 				continue;
@@ -83,7 +64,6 @@ trait Filters
 
 		if ($this->rememberState) {
 			$this->setOption(Option::StateFilters, $this->filter ?: null);
-			$this->setOption(Option::IsPinned, $this->isPinned);
 		}
 
 		$this->redrawControl();
@@ -117,8 +97,6 @@ trait Filters
 
 	public function setFilterRedraw(?string $name = null): static
 	{
-		$this->redrawControl('filtersUnpinned');
-		$this->redrawControl('filtersPinned');
 		$this->redrawControl('filters');
 
 		if (!empty($name)) {
@@ -152,13 +130,6 @@ trait Filters
 	public function isFilterShown(): ?bool
 	{
 		return $this->isFilterShown;
-	}
-
-
-	public function isFilterPinned(): bool
-	{
-		/** @var bool */
-		return $this->getOption(Option::IsPinned, $this->isPinned);
 	}
 
 
@@ -379,7 +350,6 @@ trait Filters
 		}
 
 		$template->autoSubmit = $this->autoSubmit;
-		$template->isPinned = $this->isPinned;
 		$template->filters = $this->filters;
 
 		$current = $this->getCurrentFilter();
