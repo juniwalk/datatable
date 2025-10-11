@@ -34,6 +34,7 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 	protected Closure $optionFactory;
 
 	protected bool $isAjaxEnabled = false;
+	protected bool $isDisabled = false;
 
 	/** @var mixed[] */
 	protected array $items = [];
@@ -63,6 +64,13 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 	}
 
 
+	public function setDisabled(bool $disabled = true): static
+	{
+		$this->isDisabled = $disabled;
+		return $this;
+	}
+
+
 	public function render(Row $row): void
 	{
 		echo $this->formatValue($row);
@@ -76,6 +84,11 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 		}
 
 		$option = $this->createOption($item);
+
+		if ($this->isDisabled) {
+			return $option->createBadge();
+		}
+
 		$this->dropdown->setLabel($option->label)
 			->setIcon($option->icon)
 			->setAttribute('class', 'btn btn-xs')

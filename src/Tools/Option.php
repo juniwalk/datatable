@@ -10,6 +10,8 @@ namespace JuniWalk\DataTable\Tools;
 use BackedEnum;
 use JuniWalk\Utils\Enums\Interfaces\LabeledEnum;
 use JuniWalk\Utils\Enums\Color;
+use JuniWalk\Utils\Html as CustomHtml;
+use Nette\Utils\Html;
 
 readonly class Option
 {
@@ -29,5 +31,11 @@ readonly class Option
 		}
 
 		return new static($enum->value, $enum->label(), $enum->icon(), $enum->color());
+	}
+
+
+	public function createBadge(): Html
+	{
+		return CustomHtml::badge($this->label, $this->color ?? Color::Secondary, $this->icon);
 	}
 }

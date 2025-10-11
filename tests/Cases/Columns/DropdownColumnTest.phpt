@@ -44,6 +44,26 @@ class DropdownColumnTest extends AbstractColumnCase
 			Assert::same('div', $dropdown->getName());
 		});
 	}
+
+
+	public function testColumn_Disabled(): void
+	{
+		$column = $this->createColumn('align', 'Align');
+		$column->setOptionFactory(fn($case) => Option::fromEnum($case));
+		$column->setItems(Align::cases());
+		$column->setLink('this');
+
+		Assert::with($column, function() {
+			$this->createActions($this->getParent());
+			$this->setDisabled(true);
+
+			$row = new Row(ItemsData[0], 'id');
+			$html = $this->formatValue($row);
+
+			Assert::same(['badge' => true, 'text-bg-secondary' => true, 'badge-secondary' => true], $html->getClass());
+			Assert::same('span', $html->getName());
+		});
+	}
 }
 
 (new DropdownColumnTest)->run();
