@@ -276,9 +276,12 @@ trait Filters
 	}
 
 
+	/**
+	 * @throws FilterNotFoundException
+	 */
 	public function removeFilter(string $name): void
 	{
-		$this->getFilter($name, false)?->setParent(null);
+		$this->getFilter($name)->setParent(null);
 		unset($this->filters[$name]);
 	}
 

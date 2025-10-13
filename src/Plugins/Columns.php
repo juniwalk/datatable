@@ -173,9 +173,12 @@ trait Columns
 	}
 
 
+	/**
+	 * @throws ColumnNotFoundException
+	 */
 	public function removeColumn(string $name): void
 	{
-		$this->getColumn($name, false)?->setParent(null);
+		$this->getColumn($name)->setParent(null);
 		unset($this->columns[$name]);
 	}
 
