@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Plugins;
 
+use Closure;
 use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Hideable;
@@ -170,6 +171,17 @@ trait Columns
 	public function getColumns(): array
 	{
 		return $this->columns;
+	}
+
+
+	/**
+	 * ? Modification through callback to ignore PHPStan issues with different interfaces on Column
+	 * @throws ColumnNotFoundException
+	 */
+	public function modifyColumn(string $name, Closure $modify): static
+	{
+		$modify($this->getColumn($name));
+		return $this;
 	}
 
 
