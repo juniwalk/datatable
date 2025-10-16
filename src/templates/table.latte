@@ -26,7 +26,7 @@
 				<div n:class="form-group, $filter->getType()" n:snippet="filter-{$name}">
 					<div class="d-flex gap-2" n:snippet="filter-{$name}-clear">
 						<label n:name="$filter->firstInput($form)" class="form-label text-body">{$filter->getLabel()|translate}</label>
-						<a n:href="clearFilter! $name" class="text-danger text-nowrap ajax ms-auto" n:if="$filter->isFiltered()">
+						<a n:href="clearByFilter! $name" class="text-danger text-nowrap ajax ms-auto" n:if="$filter->isFiltered()">
 							<i class="fa-solid fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.clear-short}
 						</a>
 					</div>
@@ -62,7 +62,7 @@
 								{$column->getLabel()|translate}
 							</a>
 						</div>
-						<a n:if="$column->isFiltered()" n:href="clearFilter! $name" class="text-danger ajax"><i class="fa-solid fa-filter-circle-xmark fa-fw"></i></a>
+						<a n:if="$column->isFiltered()" n:href="clearByColumn! $name" class="text-danger ajax"><i class="fa-solid fa-filter-circle-xmark fa-fw"></i></a>
 						<a n:if="$table->isColumnHideable($column)" n:href="showToggle! $name" class="text-secondary ajax"><i class="fa-solid fa-eye-slash fa-fw"></i></a>
 					</div>
 				</th>

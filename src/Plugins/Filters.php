@@ -48,23 +48,38 @@ trait Filters
 	protected array $filters = [];
 
 
-	public function handleClearFilter(?string $column = null): void
+	public function handleClearByFilter(string $filterName): void
 	{
-		foreach ($this->getFilters() as $name => $filter) {
-			if ($column && !$filter->hasColumn($column)) {
+		$filter = $this->getFilter($filterName);
+		$this->clearFilterValue($filter);
+
+		$this->redrawControl();
+		$this->redirect('this');
+	}
+
+
+	public function handleClearByColumn(string $columnName): void
+	{
+		foreach ($this->getFilters() as $filter) {
+			if (!$filter->hasColumn($columnName)) {
 				continue;
 			}
 
-			unset($this->filter[$name]);
-			$filter->setValue(null);
+			$this->clearFilterValue($filter);
 		}
 
-		$this->setOption(Option::IsFiltered, $column <> null);
-		$this->getComponent('filterForm')->reset();
+		$this->redrawControl();
+		$this->redirect('this');
+	}
 
-		if ($this->rememberState) {
-			$this->setOption(Option::StateFilters, $this->filter ?: null);
+
+	public function handleClearFilter(): void
+	{
+		foreach ($this->getFilters() as $filter) {
+			$this->clearFilterValue($filter);
 		}
+
+		$this->setOption(Option::IsFiltered, false);
 
 		$this->redrawControl();
 		$this->redirect('this');
@@ -343,6 +358,27 @@ trait Filters
 			array_filter($filterActive),
 			fn($a, $b) => $a <=> $b,
 		);
+	}
+
+
+	/**
+	 * @param FilterStruct $filter
+	 */
+	protected function clearFilterValue(Filter $filter): void
+	{
+		// if (!$filter->isFiltered()) {
+		// 	throw FilterUnusedException::fromFilter($filter);
+		// }
+
+		unset($this->filter[$filter->getName()]);
+		$filter->setValue(null);
+
+		$this->setOption(Option::IsFiltered, true);
+		$this->getComponent('filterForm')->reset();
+
+		if ($this->rememberState) {
+			$this->setOption(Option::StateFilters, $this->filter ?: null);
+		}
 	}
 
 
