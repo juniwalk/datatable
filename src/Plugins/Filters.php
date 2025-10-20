@@ -384,12 +384,12 @@ trait Filters
 
 	protected function onRenderFilters(Template $template): void
 	{
+		$template->autoSubmit = $this->autoSubmit;
+		$template->filters = $this->filters;
+
 		if (!$this->filters) {
 			return;
 		}
-
-		$template->autoSubmit = $this->autoSubmit;
-		$template->filters = $this->filters;
 
 		$current = $this->getCurrentFilter();
 
