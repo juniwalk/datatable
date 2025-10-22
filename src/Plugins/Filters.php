@@ -92,10 +92,11 @@ trait Filters
 		$this->setPage(1);
 
 		$this->filter = array_filter(
-			Arrays::map($this->filters, function($filter, string $name) {
+			callback: fn($x) => $x !== '' && $x !== null,
+			array: Arrays::map($this->filters, function($filter, string $name) {
 				$this->setFilterRedraw($name);
 				return $filter->getValueFormatted();
-			})
+			}),
 		);
 
 		if ($this->rememberState) {
@@ -405,6 +406,7 @@ trait Filters
 			$column->detectFilteredStatus();
 		}
 
+		// ? Assign current filter values as defaults so they are kept on clear
 		$this->getComponent('filterForm')->setDefaults($current, true);
 
 		$this->addToolbarButton('__filter_toggle', 'datatable.filter.button', '__filters')
