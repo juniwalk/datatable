@@ -29,7 +29,7 @@ class SelectListFilter extends AbstractFilter implements FilterList
 	{
 		try {
 			$this->value = array_filter($value ?? [], fn($x) => isset($this->items[$x])) ?: null;
-			$this->isFiltered = !empty($this->value);
+			$this->isFiltered = $this->value !== null;
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, 'array<int|string>', $value, $e);

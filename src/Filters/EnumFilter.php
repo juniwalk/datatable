@@ -22,7 +22,7 @@ use Throwable;
 class EnumFilter extends AbstractFilter implements FilterSingle
 {
 	/** @var ?T */
-	protected ?BackedEnum $value;
+	protected ?BackedEnum $value = null;
 
 	protected string|bool $placeholder = true;
 
@@ -66,7 +66,7 @@ class EnumFilter extends AbstractFilter implements FilterSingle
 	{
 		try {
 			$this->value = FormatValue::enum($value, $this->enum);
-			$this->isFiltered = !empty($this->value);
+			$this->isFiltered = $this->value !== null;
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, $this->enum, $value, $e);

@@ -56,7 +56,7 @@ class EnumListFilter extends AbstractFilter implements FilterList
 			);
 
 			$this->value = $this->value ?: null;
-			$this->isFiltered = !empty($this->value);
+			$this->isFiltered = $this->value !== null;
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, $this->enum.'[]', $value, $e);

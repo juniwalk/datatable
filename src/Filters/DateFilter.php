@@ -16,7 +16,7 @@ use Throwable;
 
 class DateFilter extends AbstractFilter implements FilterSingle
 {
-	protected ?DateTimeImmutable $value;
+	protected ?DateTimeImmutable $value = null;
 
 
 	/**
@@ -26,7 +26,7 @@ class DateFilter extends AbstractFilter implements FilterSingle
 	{
 		try {
 			$this->value = FormatValue::dateTime($value);
-			$this->isFiltered = !empty($this->value);
+			$this->isFiltered = $this->value !== null;
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, DateTimeImmutable::class, $value, $e);

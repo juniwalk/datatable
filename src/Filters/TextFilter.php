@@ -15,7 +15,7 @@ use Throwable;
 
 class TextFilter extends AbstractFilter implements FilterSingle
 {
-	protected ?string $value;
+	protected ?string $value = null;
 
 
 	/**
@@ -24,8 +24,8 @@ class TextFilter extends AbstractFilter implements FilterSingle
 	public function setValue(mixed $value): static
 	{
 		try {
-			$this->value = FormatValue::string($value) ?: null;
-			$this->isFiltered = !empty($this->value);
+			$this->value = FormatValue::string($value);
+			$this->isFiltered = $this->value !== null;
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, 'string', $value, $e);
