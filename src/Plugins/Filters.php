@@ -394,8 +394,12 @@ trait Filters
 
 		$current = $this->getCurrentFilter();
 
-		foreach ($this->filters as $name => $filter) {
-			$filter->setValue($current[$name] ?? null);
+		foreach ($current as $name => $value) {
+			if (!isset($this->filters[$name])) {
+				continue;
+			}
+
+			$this->filters[$name]->setValue($value);
 		}
 
 		foreach ($this->getColumns() as $column) {
