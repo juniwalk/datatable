@@ -74,8 +74,10 @@ abstract class AbstractFilter extends Component implements Filter
 			$fields[$name] = $column->getField() ?? $name;
 		}
 
-		if ($this->field) {
-			$fields[$this->getName()] = $this->field;
+		$name = $this->getName();
+
+		if ($name && ($this->field || empty($fields))) {
+			$fields[$name] = $this->field ?? $name;
 		}
 
 		return $fields;
@@ -166,7 +168,9 @@ abstract class AbstractFilter extends Component implements Filter
 
 	public function fieldName(): string
 	{
-		return Format::camelCase(Strings::webalize($this->name));
+		$name = Format::kebabCase($this->name);
+		$name = Strings::webalize($name);
+		return Format::camelCase($name);
 	}
 
 
