@@ -216,6 +216,7 @@ class ArraySource extends AbstractSource
 				$filter instanceof Filters\DateFilter => Compare::date($value, $query),
 				$filter instanceof Filters\EnumFilter => Compare::enum($value, $query, $filter->getEnumType()),
 				$filter instanceof Filters\TextFilter => Compare::string($value, $query),
+				$filter instanceof Filters\SelectFilter => Compare::string($value, $query),
 
 				default => $value == $query,
 			};

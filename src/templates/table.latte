@@ -170,6 +170,12 @@
 </div>
 {/define}
 
+{define #filter-select, $name}
+<div class="input-group input-group-sm" style="min-width: 250px">
+	<select n:name="$name" class="form-select form-select-sm" data-dt-autosubmit="change"></select>
+</div>
+{/define}
+
 {define #filter-select-list, $name}
 <div class="input-group input-group-sm" style="min-width: 250px">
 	<select n:name="$name" class="form-select form-select-sm" multiple data-dt-autosubmit="change"></select>

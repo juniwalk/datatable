@@ -31,6 +31,7 @@ class FiltersPluginTest extends TestCase
 		$table->addFilterEnum('enum', 'Enum', Sort::class);
 		$table->addFilterEnumList('enumList', 'Enum List', Sort::class);
 		$table->addFilterNumberRange('numberRange', 'Number Range');
+		$table->addFilterSelect('select', 'Select', []);
 		$table->addFilterSelectList('selectList', 'Select List', []);
 		$table->addFilterText('text', 'Text');
 
@@ -39,6 +40,7 @@ class FiltersPluginTest extends TestCase
 		Assert::type(Filters\EnumFilter::class, $table->getFilter('enum'));
 		Assert::type(Filters\EnumListFilter::class, $table->getFilter('enumList'));
 		Assert::type(Filters\NumberRangeFilter::class, $table->getFilter('numberRange'));
+		Assert::type(Filters\SelectFilter::class, $table->getFilter('select'));
 		Assert::type(Filters\SelectListFilter::class, $table->getFilter('selectList'));
 		Assert::type(Filters\TextFilter::class, $table->getFilter('text'));
 

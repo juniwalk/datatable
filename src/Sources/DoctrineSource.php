@@ -301,6 +301,7 @@ class DoctrineSource extends AbstractSource
 						->setParameter($param.'E', $filter->getValueTo());
 				break;
 
+				case $filter instanceof Filters\SelectFilter:
 				case $filter instanceof Filters\EnumFilter:
 					$this->queryBuilder->andWhere("{$field} = :{$param}")
 						->setParameter($param, $query);
