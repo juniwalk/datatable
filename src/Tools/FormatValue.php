@@ -22,7 +22,13 @@ class FormatValue
 
 	public static function string(mixed $value): ?string
 	{
-		return Format::stringify($value);
+		$value = Format::stringify($value);
+
+		if ($value === '') {
+			$value = null;
+		}
+
+		return $value;
 	}
 
 

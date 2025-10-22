@@ -24,7 +24,8 @@ class FormatValueTest extends TestCase
 	public function testString(): void
 	{
 		Assert::type('string', FormatValue::string(1260));
-		Assert::type('string', FormatValue::string(null));
+		Assert::type('null', FormatValue::string(null));
+		Assert::type('null', FormatValue::string(''));
 	}
 
 
