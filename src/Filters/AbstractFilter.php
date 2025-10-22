@@ -16,9 +16,9 @@ use JuniWalk\DataTable\Filters\Interfaces\FilterList;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Table;
+use JuniWalk\DataTable\Tools\FormatName;
 use JuniWalk\DataTable\Traits;
 use JuniWalk\Utils\Format;
-use JuniWalk\Utils\Strings;
 use Nette\Application\UI\Component;
 use Nette\ComponentModel\IComponent;
 use Nette\ComponentModel\IContainer;
@@ -168,9 +168,7 @@ abstract class AbstractFilter extends Component implements Filter
 
 	public function fieldName(): string
 	{
-		$name = Format::kebabCase($this->name);
-		$name = Strings::webalize($name);
-		return Format::camelCase($name);
+		return FormatName::component($this->name);
 	}
 
 

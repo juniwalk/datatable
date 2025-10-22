@@ -14,6 +14,7 @@ use JuniWalk\DataTable\Actions\CallbackAction;
 use JuniWalk\DataTable\Actions\DropdownAction;
 use JuniWalk\DataTable\Actions\LinkAction;
 use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
+use JuniWalk\DataTable\Tools\FormatName;
 use Nette\Application\UI\Template;
 
 trait Toolbar
@@ -53,7 +54,7 @@ trait Toolbar
 	 */
 	public function addToolbarAction(string $name, Action $action): Action
 	{
-		$this->addComponent($action, $name);
+		$this->addComponent($action, FormatName::component($name));
 		$this->toolbar[$name] = $action;
 
 		return $action;

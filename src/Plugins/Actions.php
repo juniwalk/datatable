@@ -14,6 +14,7 @@ use JuniWalk\DataTable\Actions\DetailAction;
 use JuniWalk\DataTable\Actions\DropdownAction;
 use JuniWalk\DataTable\Actions\LinkAction;
 use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
+use JuniWalk\DataTable\Tools\FormatName;
 
 trait Actions
 {
@@ -55,7 +56,7 @@ trait Actions
 	 */
 	public function addAction(string $name, Action $action): Action
 	{
-		$this->addComponent($action, $name);
+		$this->addComponent($action, FormatName::component($name));
 		$this->actions[$name] = $action;
 
 		if ($action instanceof DetailAction) {
