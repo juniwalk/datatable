@@ -59,6 +59,7 @@ trait Sorting
 			$this->setOption(Option::StateSorting, $this->sort ?: null);
 		}
 
+		$this->redrawControl('paginator');
 		$this->redrawControl('table');
 		$this->redirect('this');
 	}
@@ -73,6 +74,7 @@ trait Sorting
 			$this->setOption(Option::StateSorting, $this->sort ?: null);
 		}
 
+		$this->redrawControl('paginator');
 		$this->redrawControl('table');
 		$this->redirect('this');
 	}
