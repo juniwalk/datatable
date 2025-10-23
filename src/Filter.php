@@ -23,10 +23,6 @@ interface Filter extends IComponent
 	public function getType(): string;
 	public function isFiltered(): bool;
 
-	/**
-	 * @return string[]
-	 */
-	public function getFields(): array;
 	public function setField(?string $field): static;
 	public function getField(): ?string;
 

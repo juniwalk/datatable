@@ -240,80 +240,75 @@ class DoctrineSource extends AbstractSource
 
 	protected function applyFilterList(Filter&FilterList $filter): void
 	{
-		if (!$filter->isFiltered()) {
+		$field = $filter->getField();
+
+		if (!$field || !$filter->isFiltered()) {
 			return;
 		}
 
 		$query = $filter->getValue() ?? [];
+		$field = $this->checkAlias($field);
+		$param = $this->getPlaceholder();
 
-		foreach ($filter->getFields() as $field) {
-			$field = $this->checkAlias($field);
-			$param = $this->getPlaceholder();
-
-			$this->queryBuilder->andWhere("{$field} IN(:{$param})")
-				->setParameter($param, $query);
-		}
+		$this->queryBuilder->andWhere("{$field} IN(:{$param})")
+			->setParameter($param, $query);
 	}
 
 
 	protected function applyFilterRange(Filter&FilterRange $filter): void
 	{
-		if (!$filter->isFiltered()) {
+		$field = $filter->getField();
+
+		if (!$field || !$filter->isFiltered()) {
 			return;
 		}
 
-		$queryFrom = $filter->getValueFrom();
-		$queryTo = $filter->getValueTo();
+		$field = $this->checkAlias($field);
+		$param = $this->getPlaceholder();
 
-		foreach ($filter->getFields() as $field) {
-			$field = $this->checkAlias($field);
-			$param = $this->getPlaceholder();
+		if ($queryFrom = $filter->getValueFrom()) {
+			$this->queryBuilder->andWhere("{$field} >= :{$param}S")
+				->setParameter($param.'S', $queryFrom);
+		}
 
-			if ($queryFrom) {
-				$this->queryBuilder->andWhere("{$field} >= :{$param}S")
-					->setParameter($param.'S', $queryFrom);
-			}
-
-			if ($queryTo) {
-				$this->queryBuilder->andWhere("{$field} < :{$param}E")
-					->setParameter($param.'E', $queryTo);
-			}
+		if ($queryTo = $filter->getValueTo()) {
+			$this->queryBuilder->andWhere("{$field} < :{$param}E")
+				->setParameter($param.'E', $queryTo);
 		}
 	}
 
 
 	protected function applyFilterSingle(Filter&FilterSingle $filter): void
 	{
-		if (!$filter->isFiltered()) {
+		$field = $filter->getField();
+
+		if (!$field || !$filter->isFiltered()) {
 			return;
 		}
 
 		$query = $filter->getValue();
+		$field = $this->checkAlias($field);
+		$param = $this->getPlaceholder();
 
-		foreach ($filter->getFields() as $field) {
-			$field = $this->checkAlias($field);
-			$param = $this->getPlaceholder();
+		switch (true) {
+			case $filter instanceof Filters\DateFilter:
+				$this->queryBuilder->andWhere("{$field} >= :{$param}S AND {$field} < :{$param}E")
+					->setParameter($param.'S', $filter->getValueFrom())
+					->setParameter($param.'E', $filter->getValueTo());
+			break;
 
-			switch (true) {
-				case $filter instanceof Filters\DateFilter:
-					$this->queryBuilder->andWhere("{$field} >= :{$param}S AND {$field} < :{$param}E")
-						->setParameter($param.'S', $filter->getValueFrom())
-						->setParameter($param.'E', $filter->getValueTo());
+			case $filter instanceof Filters\SelectFilter:
+			case $filter instanceof Filters\EnumFilter:
+				$this->queryBuilder->andWhere("{$field} = :{$param}")
+					->setParameter($param, $query);
+			break;
+
+			case $filter instanceof Filters\TextFilter:
+				$this->queryBuilder->andWhere("LOWER({$field}) LIKE LOWER(:{$param})")
+					->setParameter($param, '%'.FormatValue::string($query).'%');
 				break;
 
-				case $filter instanceof Filters\SelectFilter:
-				case $filter instanceof Filters\EnumFilter:
-					$this->queryBuilder->andWhere("{$field} = :{$param}")
-						->setParameter($param, $query);
-				break;
-
-				case $filter instanceof Filters\TextFilter:
-					$this->queryBuilder->andWhere("LOWER({$field}) LIKE LOWER(:{$param})")
-						->setParameter($param, '%'.FormatValue::string($query).'%');
-					break;
-
-				default: break;
-			}
+			default: break;
 		}
 	}
 }

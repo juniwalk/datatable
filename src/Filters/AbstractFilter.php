@@ -63,27 +63,6 @@ abstract class AbstractFilter extends Component implements Filter
 	}
 
 
-	/**
-	 * @return string[]
-	 */
-	public function getFields(): array
-	{
-		$fields = [];
-
-		foreach ($this->columns as $name => $column) {
-			$fields[$name] = $column->getField() ?? $name;
-		}
-
-		$name = $this->getName();
-
-		if ($name && ($this->field || empty($fields))) {
-			$fields[$name] = $this->field ?? $name;
-		}
-
-		return $fields;
-	}
-
-
 	public function setField(?string $field): static
 	{
 		$this->field = $field;
@@ -93,7 +72,7 @@ abstract class AbstractFilter extends Component implements Filter
 
 	public function getField(): ?string
 	{
-		return $this->field;
+		return $this->field ?? $this->getName();
 	}
 
 
