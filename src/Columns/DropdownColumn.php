@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Columns;
 
+use BackedEnum;
 use Closure;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Columns\Interfaces\Hideable;
@@ -135,11 +136,14 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 	 */
 	protected function createOption(mixed $item): Option
 	{
-		if (!isset($this->optionFactory)) {
+		if (!isset($this->optionFactory) && !$item instanceof BackedEnum) {
 			throw InvalidStateException::callbackMissing($this, 'optionFactory');
 		}
 
-		return call_user_func($this->optionFactory, $item);
+		return call_user_func(
+			$this->optionFactory ?? fn($x) => Option::fromEnum($x),
+			$item,
+		);
 	}
 
 
