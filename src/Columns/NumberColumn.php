@@ -27,13 +27,14 @@ class NumberColumn extends AbstractColumn implements Sortable, Filterable, Hidea
 	protected Align $align = Align::Right;
 
 	protected int $precision = 0;
+	protected ?string $decimals = '.';
+	protected ?string $separator = ' ';
 
-	protected ?string $separator = '.';
 
-
-	public function setFormat(int $precision = 0, ?string $separator = '.'): static
+	public function setFormat(int $precision = 0, ?string $decimals = '.', ?string $separator = ' '): static
 	{
 		$this->precision = $precision;
+		$this->decimals = $decimals;
 		$this->separator = $separator;
 		return $this;
 	}
@@ -42,6 +43,12 @@ class NumberColumn extends AbstractColumn implements Sortable, Filterable, Hidea
 	public function getPrecision(): int
 	{
 		return $this->precision;
+	}
+
+
+	public function getDecimals(): ?string
+	{
+		return $this->decimals;
 	}
 
 
@@ -64,6 +71,6 @@ class NumberColumn extends AbstractColumn implements Sortable, Filterable, Hidea
 			throw FieldInvalidException::fromColumn($this, $value, 'numeric');
 		}
 
-		return number_format((float) $value, $this->precision, $this->separator, ' ');
+		return number_format((float) $value, $this->precision, $this->decimals, $this->separator);
 	}
 }

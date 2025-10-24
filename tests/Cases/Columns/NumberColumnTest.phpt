@@ -23,14 +23,15 @@ class NumberColumnTest extends AbstractColumnCase
 	public function testColumn(): void
 	{
 		$column = $this->createColumn('height', 'Height');
-		$column->setFormat(0, ',');
+		$column->setFormat(2, ',', '.');
 
 		Assert::with($column, function() {
 			$row = new Row(ItemsData[0], 'id');
 
-			Assert::same('187', $this->formatValue($row));
-			Assert::same(',', $this->getSeparator());
-			Assert::same(0, $this->getPrecision());
+			Assert::same('186,50', $this->formatValue($row));
+			Assert::same(2, $this->getPrecision());
+			Assert::same(',', $this->getDecimals());
+			Assert::same('.', $this->getSeparator());
 		});
 	}
 }
