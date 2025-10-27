@@ -16,6 +16,7 @@ use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\DateRangeFilter;
+use JuniWalk\DataTable\Filters\DateTimeRangeFilter;
 use JuniWalk\DataTable\Filters\EnumFilter;
 use JuniWalk\DataTable\Filters\EnumListFilter;
 use JuniWalk\DataTable\Filters\TextFilter;
@@ -181,6 +182,15 @@ trait Filters
 	public function addFilterDateRange(string $name, string $label, string|array $columns = []): DateRangeFilter
 	{
 		return $this->addFilter($name, new DateRangeFilter($label), $columns);
+	}
+
+
+	/**
+	 * @param string|string[] $columns
+	 */
+	public function addFilterDateTimeRange(string $name, string $label, string|array $columns = []): DateTimeRangeFilter
+	{
+		return $this->addFilter($name, new DateTimeRangeFilter($label), $columns);
 	}
 
 

@@ -28,6 +28,7 @@ class FiltersPluginTest extends TestCase
 		$table = (new TestPresenter)->getComponent('table');
 		$table->addFilterDate('date', 'Date');
 		$table->addFilterDateRange('dateRange', 'Date Range');
+		$table->addFilterDateTimeRange('dateTimeRange', 'DateTime Range');
 		$table->addFilterEnum('enum', 'Enum', Sort::class);
 		$table->addFilterEnumList('enumList', 'Enum List', Sort::class);
 		$table->addFilterNumberRange('numberRange', 'Number Range');
@@ -37,6 +38,7 @@ class FiltersPluginTest extends TestCase
 
 		Assert::type(Filters\DateFilter::class, $table->getFilter('date'));
 		Assert::type(Filters\DateRangeFilter::class, $table->getFilter('dateRange'));
+		Assert::type(Filters\DateTimeRangeFilter::class, $table->getFilter('dateTimeRange'));
 		Assert::type(Filters\EnumFilter::class, $table->getFilter('enum'));
 		Assert::type(Filters\EnumListFilter::class, $table->getFilter('enumList'));
 		Assert::type(Filters\NumberRangeFilter::class, $table->getFilter('numberRange'));

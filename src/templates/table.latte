@@ -150,6 +150,14 @@
 </div>
 {/define}
 
+{define #filter-date-time-range, $name}
+<div class="input-group input-group-sm" style="min-width: 325px" n:formContainer="$name">
+	<input n:name="from" type="datetime-local" class="form-control form-control-sm" data-dt-autosubmit="change">
+	<span class="input-group-text">&ndash;</span>
+	<input n:name="to" type="datetime-local" class="form-control form-control-sm" data-dt-autosubmit="change">
+</div>
+{/define}
+
 {define #filter-enum, $name}
 <div class="input-group input-group-sm" style="min-width: 250px">
 	<select n:name="$name" class="form-select form-select-sm" data-dt-autosubmit="change"></select>
