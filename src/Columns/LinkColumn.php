@@ -27,10 +27,11 @@ class LinkColumn extends TextColumn
 	 */
 	protected function formatValue(Row $row): Html|string
 	{
-		$link = $this->createLink($this->dest, $this->createArgs($row));
-		$value = (string) parent::formatValue($row);
+		if (!$value = parent::formatValue($row)) {
+			return '';
+		}
 
-		return Html::el('a', $value)->setHref($link)
-			->addClass('fw-bold');
+		return Html::el('a')->setHtml($value)->addClass('fw-bold')
+			->setHref($this->createLink($this->dest, $this->createArgs($row)));
 	}
 }

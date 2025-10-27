@@ -20,27 +20,33 @@ class LinkColumnTest extends AbstractColumnCase
 	/** @var class-string<Column> */
 	protected string $className = Columns\LinkColumn::class;
 
-	protected const Link = '/index.php?table-link-name=John+Doe&table-link-id=1&action=default&presenter=Test';
+	protected const Link = '/index.php?table-name-align=left&table-name-id=1&action=default&presenter=Test';
 
 
 	public function testColumn(): void
 	{
-		$column = $this->createColumn('link', 'Link');
-		$column->setLink('this', ['name' => '@name']);
+		$column = $this->createColumn('name', 'Name');
+		$column->setLink('this', ['align' => '@align']);
 
 		$row = new Row(ItemsData[0], 'id');
 
 		Assert::with($column, function() use ($row) {
-			$html = $this->formatValue($row);
-			Assert::same(LinkColumnTest::Link, $html->getHref());
+			Assert::same(LinkColumnTest::Link, $this->formatValue($row)->getHref());
 		});
+
+		$output = Helpers::capture(function() use ($column, $row) {
+			$column->render($row);
+		});
+
+		$html = '<a class="fw-bold" href="'.str_replace('&', '&amp;', LinkColumnTest::Link).'">John Doe</a>';
+		Assert::same($html, $output);
 	}
 
 
 	public function testRender_Callback(): void
 	{
-		$column = $this->createColumn('link', 'Link');
-		$column->setLink('this', ['name' => '@name']);
+		$column = $this->createColumn('name', 'Name');
+		$column->setLink('this', ['align' => '@align']);
 
 		$row = new Row(ItemsData[0], 'id');
 
@@ -49,7 +55,7 @@ class LinkColumnTest extends AbstractColumnCase
 			$column->render($row);
 		});
 
-		$html = '<a href="'.str_replace('&', '&amp;', LinkColumnTest::Link).'" class="fw-bold">Jane Doe</a>';
+		$html = '<a class="fw-bold" href="'.str_replace('&', '&amp;', LinkColumnTest::Link).'">Jane Doe</a>';
 		Assert::same($html, $output);
 	}
 }
