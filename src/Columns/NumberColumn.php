@@ -18,7 +18,7 @@ use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Interfaces\CallbackRenderable;
 use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Traits\RendererCallback;
-use Nette\Utils\Html;
+use JuniWalk\Utils\Format;
 
 class NumberColumn extends AbstractColumn implements Sortable, Filterable, Hideable, CallbackRenderable
 {
@@ -26,51 +26,56 @@ class NumberColumn extends AbstractColumn implements Sortable, Filterable, Hidea
 
 	protected Align $align = Align::Right;
 
-	protected int $precision = 0;
-	protected ?string $decimals = '.';
-	protected ?string $separator = ' ';
+	protected int $decimals = 0;
+	protected ?string $decimalSeparator = '.';
+	protected ?string $thousandsSeparator = ' ';
 
 
-	public function setFormat(int $precision = 0, ?string $decimals = '.', ?string $separator = ' '): static
-	{
-		$this->precision = $precision;
+	public function setFormat(
+		int $decimals = 0,
+		?string $decimalSeparator = '.',
+		?string $thousandsSeparator = ' ',
+	): static {
 		$this->decimals = $decimals;
-		$this->separator = $separator;
+		$this->decimalSeparator = $decimalSeparator;
+		$this->thousandsSeparator = $thousandsSeparator;
 		return $this;
 	}
 
 
-	public function getPrecision(): int
-	{
-		return $this->precision;
-	}
-
-
-	public function getDecimals(): ?string
+	public function getDecimals(): int
 	{
 		return $this->decimals;
 	}
 
 
-	public function getSeparator(): ?string
+	public function getDecimalSeparator(): ?string
 	{
-		return $this->separator;
+		return $this->decimalSeparator;
+	}
+
+
+	public function getThousandsSeparator(): ?string
+	{
+		return $this->thousandsSeparator;
 	}
 
 
 	/**
 	 * @throws FieldInvalidException
 	 */
-	protected function formatValue(Row $row): Html|string
+	protected function formatValue(Row $row): string
 	{
 		if (!$value = $row->getValue($this)) {
 			return '';
 		}
 
+		$value = Format::numeric($value, strict: false);
+
 		if (!is_numeric($value)) {
 			throw FieldInvalidException::fromColumn($this, $value, 'numeric');
 		}
 
-		return number_format((float) $value, $this->precision, $this->decimals, $this->separator);
+		return number_format((float) $value, $this->decimals, $this->decimalSeparator, $this->thousandsSeparator);
 	}
 }

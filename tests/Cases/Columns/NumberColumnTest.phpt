@@ -29,9 +29,9 @@ class NumberColumnTest extends AbstractColumnCase
 			$row = new Row(ItemsData[0], 'id');
 
 			Assert::same('186,50', $this->formatValue($row));
-			Assert::same(2, $this->getPrecision());
-			Assert::same(',', $this->getDecimals());
-			Assert::same('.', $this->getSeparator());
+			Assert::same(2, $this->getDecimals());
+			Assert::same(',', $this->getDecimalSeparator());
+			Assert::same('.', $this->getThousandsSeparator());
 		});
 	}
 }
