@@ -47,12 +47,20 @@ class FiltersPluginTest extends TestCase
 		Assert::type(Filters\TextFilter::class, $table->getFilter('text'));
 
 		$table->removeFilter('numberRange');
-		$filters = $table->getFilters();
 
-		Assert::hasNotKey('numberRange', $filters);
+		Assert::hasNotKey('numberRange', $table->getFilters());
 		Assert::null($table->getFilter('numberRange', false));
 		Assert::exception(
 			fn() => $table->getFilter('numberRange'),
+			FilterNotFoundException::class,
+		);
+
+		$table->removeFilters();
+
+		Assert::same([], $table->getFilters());
+		Assert::null($table->getFilter('select', false));
+		Assert::exception(
+			fn() => $table->getFilter('select'),
 			FilterNotFoundException::class,
 		);
 	}

@@ -324,6 +324,14 @@ trait Filters
 	}
 
 
+	public function removeFilters(): void
+	{
+		foreach ($this->filters as $name => $filter) {
+			$this->removeFilter($name);
+		}
+	}
+
+
 	/**
 	 * @return array<string, mixed>
 	 */
