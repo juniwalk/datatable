@@ -28,10 +28,10 @@ trait Translation
 	}
 
 
-	protected function translate(Stringable|string $message, string ...$params): Stringable|string
+	protected function translate(Stringable|string|null $message, string ...$params): Stringable|string
 	{
-		if (!isset($this->translator)) {
-			return $message;
+		if (!$message || !isset($this->translator)) {
+			return $message ?? '';
 		}
 
 		if (is_string($message) && !preg_match('/^(([a-z0-9\_\-]+)\.)+(?2)$/i', $message)) {
