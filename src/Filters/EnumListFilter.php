@@ -21,6 +21,9 @@ use Throwable;
  */
 class EnumListFilter extends AbstractFilter implements FilterList
 {
+	/** @var array<int|string, T> */
+	protected array $items;
+
 	/** @var T[] */
 	protected ?array $value = null;
 
@@ -50,12 +53,15 @@ class EnumListFilter extends AbstractFilter implements FilterList
 	 */
 	public function setValue(?array $value): static
 	{
+		$items = $this->getItems();
+
 		try {
-			$this->value = array_filter(
-				array_map(fn($x) => FormatValue::enum($x, $this->enum), $value ?? [])
+			$value = array_filter(
+				array_map(fn($x) => FormatValue::enum($x, $this->enum), $value ?? []),
+				fn($x) => in_array($x, $items),
 			);
 
-			$this->value = $this->value ?: null;
+			$this->value = $value ?: null;
 			$this->isFiltered = $this->value !== null;
 
 		} catch (Throwable $e) {
@@ -89,13 +95,57 @@ class EnumListFilter extends AbstractFilter implements FilterList
 
 
 	/**
-	 * @return array<value-of<T>, Html>
+	 * @param  T[] $items
+	 * @throws FilterValueInvalidException
 	 */
-	public function getItems(): array	// @phpstan-ignore return.unresolvableType
+	public function setItems(array $items): static
+	{
+		$this->items = [];
+
+		foreach ($items as $item) {
+			if (!is_a($item, $this->enum)) {
+				throw FilterValueInvalidException::fromFilter($this, $this->enum, $item);
+			}
+
+			$this->items[$item->value] = $item;
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @return T[]
+	 */
+	public function getItems(): array
+	{
+		return $this->items ?? $this->enum::cases();
+	}
+
+
+	public function attachToForm(Form $form): void
+	{
+		$items = static::convert($this->getItems());
+
+		$form->addMultiSelect($this->fieldName(), $this->label, $items)
+			->setValue($this->value ?? null)
+			->checkDefaultValue(false);
+
+		$form->onSuccess[] = function($form, $data) {
+			$this->setValue((array) $data[$this->fieldName()]);
+		};
+	}
+
+
+	/**
+	 * @param  T[] $cases
+	 * @return array<int|string, Html>
+	 */
+	protected static function convert(array $cases): array
 	{
 		$items = [];
 
-		foreach ($this->enum::cases() as $case) {
+		foreach ($cases as $case) {
 			$option = Html::option($case->name, $case->value);
 
 			if ($case instanceof LabeledEnum) {
@@ -106,16 +156,5 @@ class EnumListFilter extends AbstractFilter implements FilterList
 		}
 
 		return $items;
-	}
-
-
-	public function attachToForm(Form $form): void
-	{
-		$form->addMultiSelect($this->fieldName(), $this->label, $this->getItems())
-			->setValue($this->value ?? null);
-
-		$form->onSuccess[] = function($form, $data) {
-			$this->setValue((array) $data[$this->fieldName()]);
-		};
 	}
 }

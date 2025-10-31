@@ -97,11 +97,10 @@ class SelectFilter extends AbstractFilter implements FilterSingle
 
 	public function attachToForm(Form $form): void
 	{
-		$placeholder = $this->placeholder;
-
-		if ($placeholder === true) {
-			$placeholder = 'datatable.filter.select-placeholder';
-		}
+		$placeholder = match ($this->placeholder) {
+			true => 'datatable.filter.select-placeholder',
+			default => $this->placeholder,
+		};
 
 		$form->addSelect($this->fieldName(), $this->label, $this->items)
 			->setValue($this->value ?? null)

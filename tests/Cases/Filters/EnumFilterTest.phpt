@@ -38,8 +38,26 @@ class EnumFilterTest extends AbstractFilterCase
 		Assert::same(Sort::ASC, $value);
 		Assert::type(Sort::class, $value);
 
-		Assert::hasKey(Sort::ASC->value, $filter->getItems());
+		Assert::contains(Sort::ASC, $filter->getItems());
 		Assert::same(Sort::class, $filter->getEnumType());
+	}
+
+
+	public function testFilter_Custom_Items(): void
+	{
+		$filter = $this->createFilter('order', 'Order', Filters\EnumFilter::class, ['enum' => Sort::class])->setItems([Sort::ASC]);
+		$filter->firstInput($this->form);
+
+		Assert::exception(
+			function() {
+				$this->form->setValues(['order' => Sort::DESC]);
+				$this->form->fireEvents();
+			},
+			FilterValueInvalidException::class,
+		);
+
+		Assert::null($filter->getValue());
+		Assert::notContains(Sort::DESC, $filter->getItems());
 	}
 }
 

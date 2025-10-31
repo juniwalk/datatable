@@ -14,6 +14,7 @@ use JuniWalk\DataTable\Tools\FormatValue;
 use JuniWalk\Utils\Enums\Interfaces\LabeledEnum;
 use JuniWalk\Utils\Html;
 use Nette\Forms\Form;
+use OutOfBoundsException;
 use Throwable;
 
 /**
@@ -21,10 +22,13 @@ use Throwable;
  */
 class EnumFilter extends AbstractFilter implements FilterSingle
 {
-	/** @var ?T */
-	protected ?BackedEnum $value = null;
-
 	protected string|bool $placeholder = true;
+
+	/** @var array<int|string, T> */
+	protected array $items;
+
+	/** @var ?T */
+	protected ?BackedEnum $value;
 
 
 	/**
@@ -64,8 +68,16 @@ class EnumFilter extends AbstractFilter implements FilterSingle
 	 */
 	public function setValue(mixed $value): static
 	{
+		$items = $this->getItems();
+
 		try {
-			$this->value = FormatValue::enum($value, $this->enum);
+			$value = FormatValue::enum($value, $this->enum);
+
+			if ($value && !in_array($value, $items)) {
+				throw new OutOfBoundsException('Value "'.$value->value.'" is not in items list.');
+			}
+
+			$this->value = $value ?: null;
 			$this->isFiltered = $this->value !== null;
 
 		} catch (Throwable $e) {
@@ -95,13 +107,62 @@ class EnumFilter extends AbstractFilter implements FilterSingle
 
 
 	/**
-	 * @return array<value-of<T>, Html>
+	 * @param  T[] $items
+	 * @throws FilterValueInvalidException
 	 */
-	public function getItems(): array	// @phpstan-ignore return.unresolvableType
+	public function setItems(array $items): static
+	{
+		$this->items = [];
+
+		foreach ($items as $item) {
+			if (!is_a($item, $this->enum)) {
+				throw FilterValueInvalidException::fromFilter($this, $this->enum, $item);
+			}
+
+			$this->items[$item->value] = $item;
+		}
+
+		return $this;
+	}
+
+
+	/**
+	 * @return T[]
+	 */
+	public function getItems(): array
+	{
+		return $this->items ?? $this->enum::cases();
+	}
+
+
+	public function attachToForm(Form $form): void
+	{
+		$items = static::convert($this->getItems());
+		$placeholder = match ($this->placeholder) {
+			true => 'datatable.filter.select-placeholder',
+			default => $this->placeholder,
+		};
+
+		$form->addSelect($this->fieldName(), $this->label, $items)
+			->setValue($this->value ?? null)
+			->checkDefaultValue(false)
+			->setPrompt($placeholder);
+
+		$form->onSuccess[] = function($form, $data) {
+			$this->setValue($data[$this->fieldName()] ?? null);
+		};
+	}
+
+
+	/**
+	 * @param  T[] $cases
+	 * @return array<int|string, Html>
+	 */
+	protected static function convert(array $cases): array
 	{
 		$items = [];
 
-		foreach ($this->enum::cases() as $case) {
+		foreach ($cases as $case) {
 			$option = Html::option($case->name, $case->value);
 
 			if ($case instanceof LabeledEnum) {
@@ -112,23 +173,5 @@ class EnumFilter extends AbstractFilter implements FilterSingle
 		}
 
 		return $items;
-	}
-
-
-	public function attachToForm(Form $form): void
-	{
-		$placeholder = $this->placeholder;
-
-		if ($placeholder === true) {
-			$placeholder = 'datatable.filter.select-placeholder';
-		}
-
-		$form->addSelect($this->fieldName(), $this->label, $this->getItems())
-			->setValue($this->value ?? null)
-			->setPrompt($placeholder);
-
-		$form->onSuccess[] = function($form, $data) {
-			$this->setValue($data[$this->fieldName()] ?? null);
-		};
 	}
 }

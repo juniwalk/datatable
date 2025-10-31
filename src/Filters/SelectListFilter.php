@@ -28,7 +28,9 @@ class SelectListFilter extends AbstractFilter implements FilterList
 	public function setValue(?array $value): static
 	{
 		try {
-			$this->value = array_filter($value ?? [], fn($x) => isset($this->items[$x])) ?: null;
+			$value = array_filter($value ?? [], fn($x) => isset($this->items[$x]));
+
+			$this->value = $value ?: null;
 			$this->isFiltered = $this->value !== null;
 
 		} catch (Throwable $e) {
