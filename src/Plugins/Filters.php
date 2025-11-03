@@ -153,7 +153,7 @@ trait Filters
 
 	public function isFiltered(): bool
 	{
-		return !empty($this->filter);
+		return $this->filter || $this->getOption(Option::IsFiltered);
 	}
 
 
@@ -337,7 +337,7 @@ trait Filters
 	 */
 	public function getCurrentFilter(): array
 	{
-		if ($this->filter || $this->getOption(Option::IsFiltered)) {
+		if ($this->isFiltered()) {
 			return $this->filter;
 		}
 
