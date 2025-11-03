@@ -163,7 +163,7 @@ trait Filters
 			return $this->isFilterShown;
 		}
 
-		return $this->isFiltered() && !$this->isDefaultFilter();
+		return $this->isFiltered() || !$this->isDefaultFilter();
 	}
 
 
@@ -379,8 +379,8 @@ trait Filters
 		$default = $this->getDefaultFilter();
 		$current = $this->getCurrentFilter();
 
-		return !array_diff_assoc($default, $current)
-			&& !array_diff_assoc($current, $default);
+		return !array_udiff_assoc($default, $current, fn($a, $b) => $a <=> $b)
+			&& !array_udiff_assoc($current, $default, fn($a, $b) => $a <=> $b);
 	}
 
 

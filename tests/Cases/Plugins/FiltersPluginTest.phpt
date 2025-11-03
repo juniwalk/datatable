@@ -89,7 +89,7 @@ class FiltersPluginTest extends TestCase
 		Assert::with($table, function() {
 			$this->getFilter('name')->setValue('Jane Doe');
 			$this->setOption(Option::IsFiltered, true);
-			$this->filter = ['name' => 'Jane Doe'];
+			$this->filter = [];
 
 			Assert::true($this->shouldShowFilters());
 		});
