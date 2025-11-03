@@ -163,7 +163,7 @@ trait Filters
 			return $this->isFilterShown;
 		}
 
-		return $this->isFiltered() || !$this->isDefaultFilter();
+		return $this->isFiltered() && !$this->isDefaultFilter();
 	}
 
 
@@ -376,19 +376,11 @@ trait Filters
 
 	public function isDefaultFilter(): bool
 	{
-		$filterActive = Arrays::map($this->filters, function($filter) {
-			if (!$filter->isFiltered()) {
-				return null;
-			}
+		$default = $this->getDefaultFilter();
+		$current = $this->getCurrentFilter();
 
-			return $filter->getValue();
-		});
-
-		return ! (bool) array_udiff_assoc(
-			$this->getDefaultFilter(),
-			array_filter($filterActive),
-			fn($a, $b) => $a <=> $b,
-		);
+		return !array_diff_assoc($default, $current)
+			&& !array_diff_assoc($current, $default);
 	}
 
 

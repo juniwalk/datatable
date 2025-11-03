@@ -76,16 +76,23 @@ class FiltersPluginTest extends TestCase
 		Assert::false($table->shouldShowFilters());
 
 		$table->setDefaultFilter(['name' => 'John Doe']);
-		Assert::true($table->shouldShowFilters());
-
-		$table->setAutoSubmit(false)->setFilterShown(false);
-		Assert::false($table->isFilterShown());
-		Assert::false($table->isAutoSubmit());
 		Assert::false($table->shouldShowFilters());
 
-		$table->setDefaultFilter([])->setFilterShown(null);
-		$table->filter = ['name' => 'John Doe'];
+		$table->setAutoSubmit(false);
+		$table->setFilterShown(true);
+		Assert::false($table->isAutoSubmit());
+		Assert::true($table->isFilterShown());
 		Assert::true($table->shouldShowFilters());
+
+		$table->setDefaultFilter([]);
+		$table->setFilterShown(null);
+		Assert::with($table, function() {
+			$this->getFilter('name')->setValue('Jane Doe');
+			$this->setOption(Option::IsFiltered, true);
+			$this->filter = ['name' => 'Jane Doe'];
+
+			Assert::true($this->shouldShowFilters());
+		});
 	}
 
 
@@ -95,15 +102,18 @@ class FiltersPluginTest extends TestCase
 		$table->setDefaultFilter(['name' => 'John Doe']);
 		$table->clearRememberedState();
 
+		Assert::true($table->isDefaultFilter());
+
+		$table->filter['name'] = 'John Doe';
+		Assert::true($table->isDefaultFilter());
+		Assert::same(['name' => 'John Doe'], $table->getCurrentFilter());
+
+		$table->filter['name'] = 'Jane Doe';
 		Assert::false($table->isDefaultFilter());
 		Assert::exception(
 			fn() => $table->setDefaultFilter(['unknown' => '']),
 			FilterNotFoundException::class,
 		);
-
-		$table->filter['name'] = 'John Doe';
-		Assert::true($table->isDefaultFilter());
-		Assert::same(['name' => 'John Doe'], $table->getCurrentFilter());
 
 		Assert::with($table, function() {
 			$this->setOption(Option::IsFiltered, true);
