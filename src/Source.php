@@ -32,5 +32,5 @@ interface Source
 	/**
 	 * @return Items
 	 */
-	public function fetchItem(int|string $id): array;
+	public function fetchItem(int|string ...$id): array;
 }

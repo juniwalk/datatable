@@ -80,14 +80,14 @@ class ArraySource extends AbstractSource
 	}
 
 
-	protected function filterOne(int|string $id): void
+	protected function filterById(int|string ...$id): void
 	{
 		$items = [];
 
 		foreach ($this->items as $key => $item) {
 			$row = new Row($item, $this->primaryKey);
 
-			if ($id <> $row->getId()) {
+			if (!in_array($row->getId(), $id)) {
 				continue;
 			}
 

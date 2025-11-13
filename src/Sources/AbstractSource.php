@@ -94,9 +94,9 @@ abstract class AbstractSource implements Source
 	/**
 	 * @return Items
 	 */
-	public function fetchItem(int|string $id): array
+	public function fetchItem(int|string ...$id): array
 	{
-		$this->filterOne($id);
+		$this->filterById(...$id);
 
 		return $this->fetchData();
 	}
@@ -106,7 +106,7 @@ abstract class AbstractSource implements Source
 	 * @param array<string, Filter> $filters
 	 */
 	abstract protected function filter(array $filters): void;
-	abstract protected function filterOne(int|string $id): void;
+	abstract protected function filterById(int|string ...$id): void;
 
 
 	/**

@@ -90,7 +90,7 @@ class DoctrineSource extends AbstractSource
 	}
 
 
-	protected function filterOne(int|string $id): void
+	protected function filterById(int|string ...$id): void
 	{
 		$this->queryBuilder->setParameters(new ArrayCollection);
 		$this->queryBuilder->resetDQLPart('where');
@@ -99,7 +99,7 @@ class DoctrineSource extends AbstractSource
 		$field = $this->getPrimaryField();
 		$param = $this->getPlaceholder();
 
-		$this->queryBuilder->andWhere("{$field} = :{$param}")
+		$this->queryBuilder->andWhere("{$field} IN(:{$param})")
 			->setParameter($param, $id);
 	}
 
