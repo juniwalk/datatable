@@ -10,7 +10,6 @@ namespace JuniWalk\DataTable\Sources;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Source;
-use JuniWalk\DataTable\Table;
 
 /**
  * @phpstan-import-type Items from Source
