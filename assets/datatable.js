@@ -74,13 +74,13 @@ JuniWalk.DataTable.DetailActionExtension = class {
 
 		let content = snippet.querySelector('.collapse');
 
-		if (this.#activeAction === content.dataset.dtAction) {
+		if (this.#activeAction === content?.dataset.dtAction) {
 			let collapse = bootstrap.Collapse.getOrCreateInstance(content);
 			collapse.show();
-		}
 
-		this.#isDetailButton = false;
-		this.#activeAction = null;
+			this.#isDetailButton = false;
+			this.#activeAction = null;
+		}
 	}
 }
 
