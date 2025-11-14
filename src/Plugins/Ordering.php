@@ -26,7 +26,7 @@ trait Ordering
 		$delta = array_map('intval', $delta);
 		$delta = array_filter($delta);
 
-		if (!$column = $this->findColumnOrder()) {
+		if (!$column = $this->findOrderColumn()) {
 			throw ColumnNotFoundException::fromClass(OrderColumn::class);
 		}
 
@@ -51,34 +51,6 @@ trait Ordering
 	}
 
 
-	/**
-	 * @throws ColumnAmbiguityException
-	 */
-	public function addColumnOrder(string $name, string $label): OrderColumn
-	{
-		if ($column = $this->findColumnOrder()) {
-			throw ColumnAmbiguityException::fromColumn($column, $name);
-		}
-
-		return $this->addColumn($name, new OrderColumn($label));
-	}
-
-
-	/**
-	 * @throws ColumnAmbiguityException
-	 */
-	public function findColumnOrder(): ?OrderColumn
-	{
-		$columns = array_filter($this->columns, fn($x) => $x instanceof OrderColumn);
-
-		if (sizeof($columns) > 1) {
-			throw ColumnAmbiguityException::fromColumns($columns);
-		}
-
-		return array_values($columns)[0] ?? null;
-	}
-
-
 	public function addOrderCallback(callable $callback): static
 	{
 		$this->when('order', $callback);
@@ -86,9 +58,18 @@ trait Ordering
 	}
 
 
+	/**
+	 * @throws ColumnAmbiguityException
+	 */
+	protected function findOrderColumn(): ?OrderColumn
+	{
+		return $this->getColumnByType(OrderColumn::class, false);
+	}
+
+
 	protected function onRenderOrdering(Template $template): void
 	{
-		if (!$column = $this->findColumnOrder()) {
+		if (!$column = $this->findOrderColumn()) {
 			return;
 		}
 

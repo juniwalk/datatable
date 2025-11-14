@@ -10,6 +10,7 @@ namespace JuniWalk\DataTable\Plugins;
 use Closure;
 use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Column;
+use JuniWalk\DataTable\Columns\Interfaces\Exclusive;
 use JuniWalk\DataTable\Columns\Interfaces\Hideable;
 use JuniWalk\DataTable\Columns\ActionColumn;
 use JuniWalk\DataTable\Columns\DateColumn;
@@ -17,8 +18,10 @@ use JuniWalk\DataTable\Columns\DropdownColumn;
 use JuniWalk\DataTable\Columns\EnumColumn;
 use JuniWalk\DataTable\Columns\LinkColumn;
 use JuniWalk\DataTable\Columns\NumberColumn;
+use JuniWalk\DataTable\Columns\OrderColumn;
 use JuniWalk\DataTable\Columns\TextColumn;
 use JuniWalk\DataTable\Enums\Option;
+use JuniWalk\DataTable\Exceptions\ColumnAmbiguityException;
 use JuniWalk\DataTable\Exceptions\ColumnNotFoundException;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Traits\LinkHandler;
@@ -128,6 +131,12 @@ trait Columns
 	}
 
 
+	public function addColumnOrder(string $name, string $label): OrderColumn
+	{
+		return $this->addColumn($name, new OrderColumn($label));
+	}
+
+
 	/**
 	 * @param array<string, Action> $actions
 	 */
@@ -141,9 +150,14 @@ trait Columns
 	 * @template T of Column
 	 * @param  T $column
 	 * @return T
+	 * @throws ColumnAmbiguityException
 	 */
 	public function addColumn(string $name, Column $column): Column
 	{
+		if ($column instanceof Exclusive && $related = $this->getColumnByType($column::class, false)) {
+			throw ColumnAmbiguityException::fromColumn($related, $name);
+		}
+
 		$column->setParent($this, $name);
 
 		$this->columns[$name] = $column;
@@ -162,6 +176,29 @@ trait Columns
 		}
 
 		return $this->columns[$name] ?? null;
+	}
+
+
+	/**
+	 * @template T of Column
+	 * @param  class-string<T> $class
+	 * @return ($require is true ? T : ?T)
+	 * @throws ColumnAmbiguityException
+	 * @throws ColumnNotFoundException
+	 */
+	public function getColumnByType(string $class, bool $require = true): ?Column
+	{
+		$columns = array_filter($this->columns, fn($x) => is_a($x, $class));
+
+		if ($require && empty($columns)) {
+			throw ColumnNotFoundException::fromClass($class);
+		}
+
+		if (sizeof($columns) > 1) {
+			throw ColumnAmbiguityException::fromColumns($columns);
+		}
+
+		return array_values($columns)[0] ?? null;
 	}
 
 
