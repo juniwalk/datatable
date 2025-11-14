@@ -72,7 +72,7 @@
 
 		<tbody n:snippetArea="rows" n:inner-foreach="$rows as $row">
 
-			<tr n:attr="$row->getAttributes()" n:inner-foreach="$columns as $column" n:snippet="row-{$row->getId()}">
+			<tr n:attr="$row->getAttributes()" n:inner-foreach="$columns as $column" n:snippet="row-{$row->getId()}" data-id="{$row->getId()}">
 				<td n:attr="$column->getAttributes()" n:if="!$column->isHidden()">{control $column, $row}</td>
 			</tr>
 
