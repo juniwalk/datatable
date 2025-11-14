@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Columns;
 
+use JuniWalk\DataTable\Columns\Interfaces\Exclusive;
 use JuniWalk\DataTable\Columns\Interfaces\Hideable;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Columns\Traits\Hiding;
@@ -17,7 +18,7 @@ use JuniWalk\DataTable\Row;
 use JuniWalk\Utils\Format;
 use Nette\Utils\Html;
 
-class OrderColumn extends AbstractColumn implements Sortable, Hideable
+class OrderColumn extends AbstractColumn implements Exclusive, Sortable, Hideable
 {
 	use Sorting, Hiding;
 

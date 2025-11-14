@@ -8,11 +8,12 @@
 namespace JuniWalk\DataTable\Columns;
 
 use JuniWalk\DataTable\Action;
+use JuniWalk\DataTable\Columns\Interfaces\Exclusive;
 use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Row;
 use Nette\Utils\Html;
 
-class ActionColumn extends AbstractColumn
+class ActionColumn extends AbstractColumn implements Exclusive
 {
 	protected Align $align = Align::Right;
 
