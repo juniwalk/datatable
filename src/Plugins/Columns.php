@@ -231,6 +231,7 @@ trait Columns
 			$this->addColumnAction('__actions', 'datatable.column.action', $actions);
 		}
 
+		$template->attributes['data-dt-sticky-header'] = true;
 		$template->columns = $this->columns;
 
 		if (!$this->isColumnsHideable) {

@@ -57,6 +57,10 @@ class Table extends Control implements EventHandler, EventAutoWatch
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/templates/table.latte');
 
+		$template->attributes = [
+			'data-dt-table' => $this->getName(),
+		];
+
 		$this->trigger('render', $template);
 
 		$template->rows = $this->getRows();
