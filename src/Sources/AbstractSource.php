@@ -18,8 +18,8 @@ abstract class AbstractSource implements Source
 {
 	protected string $primaryKey;
 
-	protected int $count;
-	protected int $countOnPage;
+	protected ?int $countOnPage;
+	protected ?int $count;
 
 	protected bool $isIndeterminate = false;
 

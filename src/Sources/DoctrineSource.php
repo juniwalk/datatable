@@ -28,6 +28,7 @@ use Stringable;
  */
 class DoctrineSource extends AbstractSource
 {
+	protected readonly QueryBuilder $copy;
 	protected int $placeholder;
 
 	/** @var array<string, mixed> */
@@ -39,6 +40,16 @@ class DoctrineSource extends AbstractSource
 		protected string $primaryKey = 'id',
 	) {
 		$this->placeholder = sizeof($queryBuilder->getParameters());
+		$this->copy = clone $queryBuilder;
+	}
+
+
+	public function clear(): void
+	{
+		$this->placeholder = sizeof($this->copy->getParameters());
+		$this->queryBuilder = clone $this->copy;
+		$this->countOnPage = null;
+		$this->count = null;
 	}
 
 

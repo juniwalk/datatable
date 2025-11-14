@@ -16,8 +16,8 @@ interface Source
 	public function setPrimaryKey(string $primaryKey): static;
 	public function getPrimaryKey(): string;
 
-	public function getCount(): ?int;
 	public function getCountOnPage(): int;
+	public function getCount(): ?int;
 
 	public function setIndeterminate(bool $isIndeterminate = true): static;
 	public function isIndeterminate(): bool;
@@ -33,4 +33,6 @@ interface Source
 	 * @return Items
 	 */
 	public function fetchItem(int|string ...$id): array;
+
+	public function clear(): void;
 }

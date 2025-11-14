@@ -28,6 +28,10 @@ use JuniWalk\Utils\Format;
  */
 class ArraySource extends AbstractSource
 {
+	/** @var Items */
+	protected readonly array $copy;
+
+
 	/**
 	 * @param Items $items
 	 */
@@ -36,6 +40,15 @@ class ArraySource extends AbstractSource
 		protected string $primaryKey = 'id',
 	) {
 		$this->count = sizeof($items);
+		$this->copy = $items;
+	}
+
+
+	public function clear(): void
+	{
+		$this->count = sizeof($this->copy);
+		$this->items = $this->copy;
+		$this->countOnPage = null;
 	}
 
 
