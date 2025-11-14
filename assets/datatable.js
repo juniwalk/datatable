@@ -163,7 +163,81 @@ JuniWalk.DataTable.StickyHeader = class {
 	}
 }
 
+/**
+ * @see https://github.com/SortableJS/Sortable
+ */
+JuniWalk.DataTable = JuniWalk.DataTable || {};
+JuniWalk.DataTable.OrderingExtension = class {
+	#selectorTable = '[data-dt-allow-ordering] tbody';
+	#order = [];
+
+	initialize(naja) {
+		if (typeof Sortable !== 'function') {
+			console.log('Missing SortableJS component');
+			return;
+		}
+
+		naja.snippetHandler.addEventListener('afterUpdate', (event) => this.#attach(event.detail.snippet));
+		this.#attach(document);
+	}
+
+	#attach(snippet) {
+		snippet.querySelectorAll(this.#selectorTable)
+			.forEach((element) => {
+				let sortable = Sortable.create(element, {
+					handle: '[data-dt-sort]',
+					draggable: 'tr[data-id]',
+					ghostClass: 'table-info',
+					direction: 'vertical',
+					animation: 150,
+
+					onStart: (event) => this.#beforeOrder(event, sortable),
+					onSort: (event) => this.#afterOrder(event, sortable),
+				});
+			});
+	}
+
+	#beforeOrder(event, sortable) {
+		let table = event.from.closest('[data-dt-table]');
+		table.querySelectorAll('.collapse.show').forEach((element) => {
+			bootstrap.Collapse.getOrCreateInstance(element).hide();
+		});
+
+		this.#order = sortable.toArray();
+	}
+
+	#afterOrder(event, sortable) {
+		let table = event.from.closest('[data-dt-table]');
+		let order = sortable.toArray();
+		let delta = {};
+
+		this.#order.forEach((id, index) => {
+			let value = order.indexOf(id) - index;
+
+			if (value === 0) {
+				return;
+			}
+
+			delta[id] = value;
+		});
+
+		if (!Object.keys(delta).length) {
+			return;
+		}
+
+		this.#submit(table, delta);
+	}
+
+	#submit(table, delta) {
+		let url = table.dataset.dtAllowOrdering;
+		let name = table.dataset.dtTable;
+
+		naja.makeRequest('GET', url, {[name+'-delta']: delta});
+	}
+}
+
 naja.registerExtension(new JuniWalk.DataTable.StickyHeader);
 naja.registerExtension(new JuniWalk.DataTable.ConfirmExtension);
+naja.registerExtension(new JuniWalk.DataTable.OrderingExtension);
 naja.registerExtension(new JuniWalk.DataTable.AutoSubmitExtension);
 naja.registerExtension(new JuniWalk.DataTable.DetailActionExtension);

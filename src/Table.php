@@ -31,6 +31,7 @@ class Table extends Control implements EventHandler, EventAutoWatch
 	use Plugins\Actions;
 	use Plugins\Toolbar;
 	use Plugins\Sorting;
+	use Plugins\Ordering;
 	use Plugins\Pagination;
 
 	protected Stringable|string|null $caption = null;
@@ -81,12 +82,13 @@ class Table extends Control implements EventHandler, EventAutoWatch
 
 		parent::validateParent($parent);
 
-		$this->watchAny('render,load,item');
+		$this->watchAny('render,load,item,order');
 		$this->when('render', function(Template $template) {
 			$this->onRenderFilters($template);
 			$this->onRenderSorting($template);
 			$this->onRenderColumns($template);
 			$this->onRenderToolbar($template);
+			$this->onRenderOrdering($template);
 		});
 	}
 }
