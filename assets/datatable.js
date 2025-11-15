@@ -211,6 +211,12 @@ JuniWalk.DataTable.OrderingExtension = class {
 		let delta = {};
 
 		this.#order.forEach((id, index) => {
+			// ? Workaround for issue #2456 in SortableJS/Sortable
+			// ? @see https://github.com/SortableJS/Sortable/issues/2456
+			if (order[index] === undefined) {
+				return;
+			}
+
 			let value = order.indexOf(id) - index;
 
 			if (value === 0) {
