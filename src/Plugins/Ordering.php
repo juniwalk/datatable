@@ -21,7 +21,7 @@ trait Ordering
 	 * @throws ColumnNotFoundException
 	 * @throws ColumnSortRequiredException
 	 */
-	public function handleOrderDelta(array $delta): void
+	public function handleOrdering(array $delta): void
 	{
 		$delta = array_map('intval', $delta);
 		$delta = array_filter($delta);
@@ -73,9 +73,11 @@ trait Ordering
 			return;
 		}
 
-		$template->attributes['data-dt-allow-ordering'] = $this->link('orderDelta!');
+		$template->attributes['data-dt-allow-ordering'] = true;
+		$template->signalOrdering = $this->link('ordering!');
 
 		if (!in_array($column, $this->getColumnsSorted())) {
+			$template->signalOrdering = false;
 			$column->setDisabled(true);
 		}
 	}

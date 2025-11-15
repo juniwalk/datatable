@@ -62,4 +62,3 @@ class OrderColumn extends AbstractColumn implements Exclusive, Sortable, Hideabl
 		};
 	}
 }
-

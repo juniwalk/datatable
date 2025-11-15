@@ -207,7 +207,6 @@ JuniWalk.DataTable.OrderingExtension = class {
 	}
 
 	#afterOrder(event, sortable) {
-		let table = event.from.closest('[data-dt-table]');
 		let order = sortable.toArray();
 		let delta = {};
 
@@ -225,12 +224,12 @@ JuniWalk.DataTable.OrderingExtension = class {
 			return;
 		}
 
-		this.#submit(table, delta);
+		this.#submit(event, delta);
 	}
 
-	#submit(table, delta) {
-		let url = table.dataset.dtAllowOrdering;
-		let name = table.dataset.dtTable;
+	#submit(event, delta) {
+		let name = event.from.closest('[data-dt-table]').dataset.dtTable;
+		let url = event.from.dataset.dtSignalOrdering;
 
 		naja.makeRequest('GET', url, {[name+'-delta']: delta});
 	}

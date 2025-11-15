@@ -70,7 +70,7 @@
 
 		</thead>
 
-		<tbody n:snippetArea="rows" n:inner-foreach="$rows as $row">
+		<tbody n:snippetArea="rows" n:inner-foreach="$rows as $row" n:attr="data-dt-signal-ordering: $signalOrdering ?? false">
 
 			<tr n:attr="$row->getAttributes()" n:inner-foreach="$columns as $column" n:snippet="row-{$row->getId()}" data-id="{$row->getId()}">
 				<td n:attr="$column->getAttributes()" n:if="!$column->isHidden()">{control $column, $row}</td>
