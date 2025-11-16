@@ -27,6 +27,7 @@ class ColumnsPluginTest extends TestCase
 		$table->addColumnEnum('enum', 'Enum');
 		$table->addColumnNumber('number', 'Number');
 		$table->addColumnDate('date', 'Date');
+		$table->addColumnOrder('order', 'Order');
 		$table->addColumnDropdown('dropdown', 'Dropdown', [
 			'active' => 'Active',
 			'inactive' => 'InActive',
@@ -38,6 +39,7 @@ class ColumnsPluginTest extends TestCase
 		Assert::type(Columns\NumberColumn::class, $table->getColumn('number'));
 		Assert::type(Columns\DateColumn::class, $table->getColumn('date'));
 		Assert::type(Columns\DropdownColumn::class, $table->getColumn('dropdown'));
+		Assert::type(Columns\OrderColumn::class, $table->getColumn('order'));
 
 		$table->removeColumn('dropdown');
 		$columns = $table->getColumns();

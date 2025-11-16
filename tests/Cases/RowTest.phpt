@@ -64,6 +64,7 @@ class RowTest extends TestCase
 				private float $height,
 				private Align $align,
 				private DateTime $birth,
+				private int $order,
 			) {
 			}
 
