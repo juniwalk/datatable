@@ -95,17 +95,23 @@ class ArraySource extends AbstractSource
 
 	protected function filterById(int|string ...$id): void
 	{
+		$query = array_fill_keys($id, true);
 		$items = [];
 
 		foreach ($this->items as $key => $item) {
 			$row = new Row($item, $this->primaryKey);
+			$id = $row->getId();
 
-			if (!in_array($row->getId(), $id)) {
+			if (!isset($query[$id])) {
 				continue;
 			}
 
 			$items[$key] = $item;
-			break;
+			unset($query[$id]);
+
+			if (empty($query)) {
+				break;
+			}
 		}
 
 		$this->items = $items;
