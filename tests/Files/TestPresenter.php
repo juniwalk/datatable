@@ -51,8 +51,9 @@ class TestPresenter extends Presenter
 		$table = new Table;
 		$table->setSource(new ArraySource(ItemsData));
 
-		$table->addColumnNumber('id', '#')->setSortable(true);
+		$table->addColumnOrder('order', 'Order')->setSortable(true);
 		$table->addColumnText('name', 'Name');
+		$table->addColumnNumber('id', '#')->setSortable(true);
 
 		$table->addFilterText('name', 'Name');
 
@@ -68,9 +69,10 @@ class TestPresenter extends Presenter
 			}
 
 			protected function createTable(): void {
-				$this->addColumnNumber('id', '#');
+				$this->addColumnOrder('order', 'Order');
 				$this->addColumnText('name', 'Name');
 				$this->addColumnNumber('height', 'Height');
+				$this->addColumnNumber('id', '#');
 			}
 		};
 	}

@@ -10,10 +10,10 @@ namespace JuniWalk\Tests\Cases\Filters;
 require __DIR__ . '/../../bootstrap.php';
 
 use JuniWalk\DataTable\Columns;
+use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Row;
 use JuniWalk\Tests\Files\AbstractColumnCase;
-use Nette\Utils\Helpers;
 use Tester\Assert;
 
 class OrderColumnTest extends AbstractColumnCase
@@ -25,8 +25,12 @@ class OrderColumnTest extends AbstractColumnCase
 	public function testColumn(): void
 	{
 		$column = $this->createColumn('order', 'Order');
+		$column->setSortable(true);
+		$column->setSorted(Sort::ASC);
+
 		$row = new Row(ItemsData[0], 'id');
 
+		Assert::true($column->isAllowed());
 		Assert::false($column->isDisabled());
 		Assert::with($column, function() use ($row) {
 			$btn = $this->formatValue($row);
