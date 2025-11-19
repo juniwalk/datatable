@@ -39,6 +39,12 @@ class OrderColumn extends AbstractColumn implements Exclusive, Sortable, Hideabl
 	}
 
 
+	public function isAllowed(): bool
+	{
+		return $this->isSortable && $this->sort && !$this->isDisabled;
+	}
+
+
 	/**
 	 * @throws FieldInvalidException
 	 */
@@ -56,8 +62,8 @@ class OrderColumn extends AbstractColumn implements Exclusive, Sortable, Hideabl
 			->addHtml(Html::el('i class="fa-solid fa-arrows-up-down fa-fw"'))
 			->addText(' ')->addHtml(Html::el('strong', $value));
 
-		return match ($this->isDisabled) {
-			true	=> $html->addClass('disabled'),
+		return match ($this->isAllowed()) {
+			false	=> $html->addClass('disabled'),
 			default	=> $html->data('dt-sort', true),
 		};
 	}
