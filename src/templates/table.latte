@@ -51,6 +51,10 @@
 
 		<caption class="sr-only">{$table->getCaption()|translate|noescape}</caption>
 
+		<colgroup n:inner-foreach="$columns as $column">
+			<col n:if="!$column->isHidden()" id="{$column->getUniqueId()|webalize}" class="column-{$column->getType()}">
+		</colgroup>
+
 		<thead class="sticky-top z-1">
 
 			<tr class="align-middle">
