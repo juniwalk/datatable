@@ -15,6 +15,7 @@ use JuniWalk\DataTable\Interfaces\CallbackRenderable;
 use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Table;
 use JuniWalk\DataTable\Traits;
+use JuniWalk\Utils\Format;
 use Nette\Application\UI\Control;
 use Nette\ComponentModel\IContainer;
 use Nette\Utils\Html;
@@ -33,6 +34,12 @@ abstract class AbstractColumn extends Control implements Column
 	public function __construct(
 		protected string $label,
 	) {
+	}
+
+
+	public function getType(): string
+	{
+		return Format::className($this, suffix: 'Column');
 	}
 
 
