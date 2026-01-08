@@ -13,17 +13,17 @@ use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Row;
 use JuniWalk\Utils\Enums\Casing;
 use JuniWalk\Utils\Format;
-use Nette\ComponentModel\Component;
+use Nette\ComponentModel\IComponent;
 
 final class InvalidStateException extends AbstractTableException
 {
-	public static function callbackMissing(Component $component, string $property): static
+	public static function callbackMissing(IComponent $component, string $property): static
 	{
 		return new static('Missing callback "'.$property.'" for '.Format::className($component, Casing::Pascal).'#'.$component->getName());
 	}
 
 
-	public static function customRendererMissing(Component $component, string $type): static
+	public static function customRendererMissing(IComponent $component, string $type): static
 	{
 		return new static('Custom render '.$type.' for "'.Format::className($component, Casing::Pascal).'#'.$component->getName().'" is not set.');
 	}
@@ -85,8 +85,14 @@ final class InvalidStateException extends AbstractTableException
 	}
 
 
-	public static function rowRequired(Component $component): static
+	public static function rowRequired(IComponent $component): static
 	{
 		return new static('Component "'.Format::className($component, Casing::Pascal).'#'.$component->getName().'" requires access to '.Row::class.' instance.');
+	}
+
+
+	public static function notAttached(IComponent $component): static
+	{
+		return new static('Component "'.Format::className($component, Casing::Pascal).'#'.$component->getName().'" is not attached to component.');
 	}
 }

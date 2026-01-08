@@ -8,7 +8,7 @@
 namespace JuniWalk\DataTable\Columns\Traits;
 
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
-use JuniWalk\DataTable\Exceptions\FilterInvalidException;
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Filter;
 
 /**
@@ -31,12 +31,12 @@ trait Filters
 
 
 	/**
-	 * @throws FilterInvalidException
+	 * @throws InvalidStateException
 	 */
 	public function addFilter(Filter $filter): static
 	{
 		if (!$filterName = $filter->getName()) {
-			throw FilterInvalidException::notAttached($filter);
+			throw InvalidStateException::notAttached($filter);
 		}
 
 		if ($filter->isFiltered()) {

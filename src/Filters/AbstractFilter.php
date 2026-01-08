@@ -11,6 +11,7 @@ use Closure;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Exceptions\FilterInvalidException;
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\Interfaces\FilterList;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
@@ -76,6 +77,9 @@ abstract class AbstractFilter extends Component implements Filter
 	}
 
 
+	/**
+	 * @throws InvalidStateException
+	 */
 	public function setColumns(Column ...$columns): static
 	{
 		$this->columns = [];
@@ -85,7 +89,11 @@ abstract class AbstractFilter extends Component implements Filter
 				continue;
 			}
 
-			$this->columns[$column->getName()] = $column->addFilter($this);
+			if (!$columnName = $column->getName()) {
+				throw InvalidStateException::notAttached($column);
+			}
+
+			$this->columns[$columnName] = $column->addFilter($this);
 		}
 
 		return $this;
