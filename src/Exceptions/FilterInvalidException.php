@@ -23,6 +23,12 @@ final class FilterInvalidException extends AbstractTableException
 	}
 
 
+	public static function notAttached(Filter $filter): static
+	{
+		return static::fromFilter($filter, 'not attached to component');
+	}
+
+
 	protected static function fromFilter(Filter $filter, string $message): static
 	{
 		return new static('Filter "'.$filter->getName().'" of type "'.$filter::class.'" '.$message.'.');
