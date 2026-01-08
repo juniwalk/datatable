@@ -23,25 +23,25 @@ trait Toolbar
 	protected array $toolbar = [];
 
 
-	public function addToolbarLink(string $name, string $label, ?string $group = null): LinkAction
+	public function addToolbarLink(string $name, string $label, string $group = ''): LinkAction
 	{
 		return $this->addToolbarAction($name, new LinkAction($label, $group));
 	}
 
 
-	public function addToolbarButton(string $name, string $label, ?string $group = null): ButtonAction
+	public function addToolbarButton(string $name, string $label, string $group = ''): ButtonAction
 	{
 		return $this->addToolbarAction($name, new ButtonAction($label, $group));
 	}
 
 
-	public function addToolbarDropdown(string $name, string $label, ?string $group = null): DropdownAction
+	public function addToolbarDropdown(string $name, string $label, string $group = ''): DropdownAction
 	{
 		return $this->addToolbarAction($name, new DropdownAction($label, $group));
 	}
 
 
-	public function addToolbarCallback(string $name, string $label, ?string $group = null): CallbackAction
+	public function addToolbarCallback(string $name, string $label, string $group = ''): CallbackAction
 	{
 		return $this->addToolbarAction($name, new CallbackAction($label, $group));
 	}

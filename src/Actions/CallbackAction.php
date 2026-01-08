@@ -21,7 +21,7 @@ class CallbackAction extends AbstractAction implements EventHandler
 
 	public function __construct(
 		protected string $label,
-		protected ?string $group = null,
+		protected string $group = '',
 	) {
 		$this->watch('click');
 	}

@@ -16,7 +16,7 @@ final class DividerAction extends AbstractAction
 
 	public function __construct(
 		protected string $label = '',
-		protected ?string $group = null,
+		protected string $group = '',
 	) {
 	}
 

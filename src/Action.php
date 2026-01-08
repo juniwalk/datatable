@@ -18,8 +18,8 @@ interface Action extends IComponent, Attributable
 	public function setLabel(string $label): static;
 	public function getLabel(): string;
 
-	public function setGroup(?string $group): static;
-	public function getGroup(): ?string;
+	public function setGroup(string $group): static;
+	public function getGroup(): string;
 
 	public function setAllowCondition(Closure|bool $condition): static;
 	public function isAllowed(?Row $row = null): bool;

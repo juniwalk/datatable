@@ -30,7 +30,7 @@ abstract class AbstractAction extends Control implements Action
 
 	public function __construct(
 		protected string $label,
-		protected ?string $group = null,
+		protected string $group = '',
 	) {
 	}
 
@@ -48,14 +48,14 @@ abstract class AbstractAction extends Control implements Action
 	}
 
 
-	public function setGroup(?string $group): static
+	public function setGroup(string $group): static
 	{
 		$this->group = $group;
 		return $this;
 	}
 
 
-	public function getGroup(): ?string
+	public function getGroup(): string
 	{
 		return $this->group;
 	}
