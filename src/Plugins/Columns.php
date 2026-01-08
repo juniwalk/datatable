@@ -69,17 +69,20 @@ trait Columns
 	public function handleShowToggle(string $column): void
 	{
 		$column = $this->getColumn($column);
-		$name = $column->getName();
 
 		if (!$column instanceof Hideable) {
 			throw InvalidStateException::columnNotHideable($column);
 		}
 
+		if (!$columnName = $column->getName()) {
+			throw InvalidStateException::notAttached($column);
+		}
+
 		/** @var array<string, bool> */
 		$columnsHidden = $this->getOption(Option::StateColumns, []);
-		$isHidden = $columnsHidden[$name] ?? $column->isDefaultHide();
+		$isHidden = $columnsHidden[$columnName] ?? $column->isDefaultHide();
 
-		$columnsHidden[$name] = !$isHidden;
+		$columnsHidden[$columnName] = !$isHidden;
 
 		$this->setOption(Option::StateColumns, $columnsHidden);
 

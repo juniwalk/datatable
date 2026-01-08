@@ -12,6 +12,7 @@ use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Exceptions\ColumnAmbiguityException;
 use JuniWalk\DataTable\Exceptions\ColumnNotFoundException;
 use JuniWalk\DataTable\Exceptions\ColumnSortRequiredException;
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use Nette\Application\UI\Template;
 
 trait Ordering
@@ -20,6 +21,7 @@ trait Ordering
 	 * @param  int[] $delta
 	 * @throws ColumnNotFoundException
 	 * @throws ColumnSortRequiredException
+	 * @throws InvalidStateException
 	 */
 	public function handleOrdering(array $delta): void
 	{
@@ -30,9 +32,13 @@ trait Ordering
 			throw ColumnNotFoundException::fromClass(OrderColumn::class);
 		}
 
+		if (!$columnName = $column->getName()) {
+			throw InvalidStateException::notAttached($column);
+		}
+
 		$sort = $this->getCurrentSort();
 
-		if (sizeof($sort) > 1 || !$sortBy = $sort[$column->getName()] ?? null) {
+		if (sizeof($sort) > 1 || !$sortBy = $sort[$columnName] ?? null) {
 			throw ColumnSortRequiredException::fromColumn($column, true);
 		}
 

@@ -13,6 +13,7 @@ use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\DataTable\Exceptions\FilterInvalidException;
 use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\DateRangeFilter;
@@ -385,7 +386,8 @@ trait Filters
 
 
 	/**
-	 * @param FilterStruct $filter
+	 * @param  FilterStruct $filter
+	 * @throws InvalidStateException
 	 */
 	protected function clearFilterValue(Filter $filter): void
 	{
@@ -393,7 +395,11 @@ trait Filters
 		// 	throw FilterUnusedException::fromFilter($filter);
 		// }
 
-		unset($this->filter[$filter->getName()]);
+		if (!$filterName = $filter->getName()) {
+			throw InvalidStateException::notAttached($filter);
+		}
+
+		unset($this->filter[$filterName]);
 		$filter->setValue(null);
 
 		$this->setOption(Option::IsFiltered, true);
