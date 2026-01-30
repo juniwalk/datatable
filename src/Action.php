@@ -21,6 +21,9 @@ interface Action extends IComponent, Attributable
 	public function setGroup(string $group): static;
 	public function getGroup(): string;
 
+	public function setTargetNewTab(bool $targetNewTab = true): static;
+	public function isTargetNewTab(): bool;
+
 	public function setAllowCondition(Closure|bool $condition): static;
 	public function isAllowed(?Row $row = null): bool;
 

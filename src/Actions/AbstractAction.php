@@ -13,7 +13,6 @@ use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Table;
 use JuniWalk\DataTable\Traits;
 use Nette\Application\UI\Control;
-use Nette\Application\UI\Component;
 use Nette\ComponentModel\IContainer;
 use Nette\Utils\Html;
 
@@ -25,6 +24,7 @@ abstract class AbstractAction extends Control implements Action
 	use Traits\Icons;
 
 	protected Closure|bool $allowCondition;
+	protected bool $targetNewTab = false;
 	protected string $tag = 'span';
 
 
@@ -61,6 +61,19 @@ abstract class AbstractAction extends Control implements Action
 	}
 
 
+	public function setTargetNewTab(bool $targetNewTab = true): static
+	{
+		$this->targetNewTab = $targetNewTab;
+		return $this;
+	}
+
+
+	public function isTargetNewTab(): bool
+	{
+		return $this->targetNewTab;
+	}
+
+
 	public function setAllowCondition(Closure|bool $condition): static
 	{
 		$this->allowCondition = $condition;
@@ -91,6 +104,10 @@ abstract class AbstractAction extends Control implements Action
 	public function createButton(?Row $row): Html
 	{
 		$button = Html::el($this->tag, $this->attributes);
+
+		if ($this->targetNewTab && $this->tag === 'a') {
+			$button->setAttribute('target', '_blank');
+		}
 
 		if ($confirm = $this->createConfirm($row)) {
 			$button->setAttribute(static::ConfirmAttribute, $confirm);
