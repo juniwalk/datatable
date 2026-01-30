@@ -33,6 +33,7 @@ trait Pagination
 	/** @var int[] */
 	protected array $limits = [10, 20, 50];
 	protected ?int $limitDefault = null;
+	protected bool $hasPagination = true;
 
 
 	public function handlePage(int $page): void
@@ -68,6 +69,19 @@ trait Pagination
 
 		$this->redrawControl();
 		$this->redirect('this');
+	}
+
+
+	public function setPagination(bool $pagination): static
+	{
+		$this->hasPagination = $pagination;
+		return $this;
+	}
+
+
+	public function hasPagination(): bool
+	{
+		return $this->hasPagination;
 	}
 
 
@@ -126,6 +140,10 @@ trait Pagination
 
 	public function getCurrentLimit(): int
 	{
+		if (!$this->hasPagination) {
+			return 0;
+		}
+
 		$limitDefault = $this->limitDefault ?? $this->limits[0];
 
 		if ($this->limit || $this->getOption(Option::IsLimited)) {
