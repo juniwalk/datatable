@@ -115,23 +115,11 @@
 	<div class="d-flex flex-wrap justify-content-start gap-2 py-1">
 
 		<div class="flex-fill">
-
 			{control $table:pages}
-
 		</div>
 
 		<div class="d-flex gap-2">
-
 			{control $table:limiter}
-
-			<div class="btn-group dropup">
-				<button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown"><i class="fa-cog fas fa-fw"></i></button>
-				<div class="dropdown-menu dropdown-menu-end">
-					<a n:href="clearFilter!" class="dropdown-item ajax"><i class="fa-solid fa-filter-circle-xmark fa-fw"></i> {_datatable.filter.clear}</a>
-					<a n:href="clearSort!" class="dropdown-item ajax"><i class="fa-solid fa-arrow-up-short-wide fa-fw"></i> {_datatable.sort.clear}</a>
-				</div>
-			</div>
-
 		</div>
 
 	</div>

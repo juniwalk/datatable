@@ -7,6 +7,8 @@
 
 namespace JuniWalk\DataTable;
 
+use JuniWalk\DataTable\Actions\DropdownAction;
+use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Exceptions\SourceMissingException;
 use JuniWalk\DataTable\Traits\Translation;
@@ -62,6 +64,7 @@ class Table extends Control implements EventHandler, EventAutoWatch
 			'data-dt-table' => $this->getName(),
 		];
 
+		$this->addSettingsAction();
 		$this->trigger('render', $template);
 
 		$template->rows = $this->getRows();
@@ -90,5 +93,43 @@ class Table extends Control implements EventHandler, EventAutoWatch
 			$this->onRenderToolbar($template);
 			$this->onRenderOrdering($template);
 		});
+	}
+
+
+	protected function getSettingsAction(): DropdownAction
+	{
+		try {
+			/** @var DropdownAction */
+			return $this->getToolbarAction('__settings');
+
+		} catch (ActionNotFoundException) {
+		}
+
+		return $this->addSettingsAction();
+	}
+
+
+	protected function addSettingsAction(): DropdownAction
+	{
+		$settings = $this->addToolbarDropdown('__settings', '', '__settings')
+			->setIcon('fa-cog')->setClass('btn btn-sm btn-outline-secondary');
+
+		$filters = $settings->addActionLink('__filter_clear', 'datatable.filter.clear-custom')
+			->setIcon('fa-filter-circle-xmark')->addClass('ajax')
+			->setLink('clearFilter!');
+
+		if ($this->isDefaultFilter()) {
+			$filters->addClass('disabled');
+		}
+
+		$sorting = $settings->addActionLink('__sort_clear', 'datatable.sort.clear-custom')
+			->setIcon('fa-arrow-up-short-wide')->addClass('ajax')
+			->setLink('clearSort!');
+
+		if ($this->isDefaultSort()) {
+			$sorting->addClass('disabled');
+		}
+
+		return $settings;
 	}
 }
