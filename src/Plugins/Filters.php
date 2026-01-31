@@ -13,6 +13,7 @@ use JuniWalk\DataTable\Columns\Interfaces\Filterable;
 use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\DataTable\Exceptions\FilterInvalidException;
 use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
+use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
@@ -359,6 +360,7 @@ trait Filters
 				throw FilterNotFoundException::fromName($name);
 			}
 
+			$this->filters[$name]->checkValue($value);
 			$this->filterDefault[$name] = $value;
 		}
 
@@ -428,7 +430,11 @@ trait Filters
 				continue;
 			}
 
-			$this->filters[$name]->setValue($value);
+			try {
+				$this->filters[$name]->setValue($value);
+
+			} catch (FilterValueInvalidException) {
+			}
 		}
 
 		foreach ($this->getColumns() as $column) {
