@@ -8,7 +8,6 @@
 namespace JuniWalk\DataTable;
 
 use JuniWalk\DataTable\Actions\DropdownAction;
-use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Exceptions\SourceMissingException;
 use JuniWalk\DataTable\Traits\Translation;
@@ -64,7 +63,7 @@ class Table extends Control implements EventHandler, EventAutoWatch
 			'data-dt-table' => $this->getName(),
 		];
 
-		$this->addSettingsAction();
+		$this->getSettingsAction();
 		$this->trigger('render', $template);
 
 		$template->rows = $this->getRows();
@@ -98,14 +97,9 @@ class Table extends Control implements EventHandler, EventAutoWatch
 
 	protected function getSettingsAction(): DropdownAction
 	{
-		try {
-			/** @var DropdownAction */
-			return $this->getToolbarAction('__settings');
-
-		} catch (ActionNotFoundException) {
-		}
-
-		return $this->addSettingsAction();
+		/** @var DropdownAction */
+		return $this->getToolbarAction('__settings', false)
+			?? $this->addSettingsAction();
 	}
 
 
