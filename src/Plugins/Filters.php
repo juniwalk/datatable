@@ -46,6 +46,7 @@ trait Filters
 	protected array $filterDefault = [];
 
 	protected bool $autoSubmit = true;
+	protected bool $isFiltering = true;
 	protected ?bool $isFilterShown = null;
 
 	/** @var array<string, FilterStruct> */
@@ -137,6 +138,19 @@ trait Filters
 	public function isAutoSubmit(): bool
 	{
 		return $this->autoSubmit;
+	}
+
+
+	public function setFiltering(bool $filtering = true): static
+	{
+		$this->isFiltering = $filtering;
+		return $this;
+	}
+
+
+	public function isFiltering(): bool
+	{
+		return $this->isFiltering;
 	}
 
 
@@ -393,9 +407,9 @@ trait Filters
 	 */
 	protected function clearFilterValue(Filter $filter): void
 	{
-		// if (!$filter->isFiltered()) {
-		// 	throw FilterUnusedException::fromFilter($filter);
-		// }
+		if (!$this->isFiltering || !$filter->isFiltered()) {
+			throw InvalidStateException::filterNotUsed($filter);
+		}
 
 		if (!$filterName = $filter->getName()) {
 			throw InvalidStateException::notAttached($filter);
@@ -417,6 +431,7 @@ trait Filters
 	{
 		$template->attributes['data-dt-allow-autosubmit'] = $this->autoSubmit;
 		$template->autoSubmit = $this->autoSubmit;
+		$template->filtering = $this->isFiltering;
 		$template->filters = $this->filters;
 
 		if (!$this->filters) {
@@ -435,6 +450,11 @@ trait Filters
 
 			} catch (FilterValueInvalidException) {
 			}
+		}
+
+		// ? End after applying filter values here if filters are globally disabled
+		if (!$this->isFiltering) {
+			return;
 		}
 
 		foreach ($this->getColumns() as $column) {

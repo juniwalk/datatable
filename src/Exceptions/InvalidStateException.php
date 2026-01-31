@@ -56,6 +56,12 @@ final class InvalidStateException extends AbstractTableException
 	}
 
 
+	public static function filterNotUsed(Filter $filter): static
+	{
+		return new static('Filter "'.$filter->getName().'" is not being used.');
+	}
+
+
 	/**
 	 * @param class-string $parent
 	 * @param object $child
