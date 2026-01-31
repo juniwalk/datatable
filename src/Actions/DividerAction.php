@@ -23,8 +23,13 @@ final class DividerAction extends AbstractAction
 
 	public function createButton(?Row $row): Html
 	{
+		$parent = $this->getParent() ?? $this;
+
 		return Html::el($this->tag, [
-			'class' => 'dropdown-divider',
+			'class' => match ($parent::class) {
+				DropdownAction::class => 'dropdown-divider',
+				default => 'vr h-100 mx-lg-2',
+			},
 		]);
 	}
 }

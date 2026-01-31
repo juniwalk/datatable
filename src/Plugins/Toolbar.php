@@ -11,6 +11,7 @@ use Closure;
 use JuniWalk\DataTable\Action;
 use JuniWalk\DataTable\Actions\ButtonAction;
 use JuniWalk\DataTable\Actions\CallbackAction;
+use JuniWalk\DataTable\Actions\DividerAction;
 use JuniWalk\DataTable\Actions\DropdownAction;
 use JuniWalk\DataTable\Actions\LinkAction;
 use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
@@ -44,6 +45,14 @@ trait Toolbar
 	public function addToolbarCallback(string $name, string $label, string $group = ''): CallbackAction
 	{
 		return $this->addToolbarAction($name, new CallbackAction($label, $group));
+	}
+
+
+	public function addToolbarDivider(): static
+	{
+		$count = sizeof(array_filter($this->toolbar, fn($x) => $x instanceof DividerAction));
+		$this->addToolbarAction('divider'.$count, new DividerAction(group: 'divider'.$count));
+		return $this;
 	}
 
 
