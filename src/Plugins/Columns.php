@@ -278,18 +278,18 @@ trait Columns
 			return;
 		}
 
-		$dropdown = $this->addToolbarDropdown('__column_toggle', '', '__columns')
-			->setIcon('fa-eye')->setClass('btn btn-sm btn-secondary');
+		$settings = $this->getSettingsAction();
+		$settings->addDivider();
 
-		$dropdown->addActionLink('__column_show_all', 'datatable.column.show-all')
+		$settings->addActionLink('__column_show_all', 'datatable.column.show-all')
 			->setIcon('fa-eye')->addClass('ajax')
 			->setLink('showAll!');
 
-		$dropdown->addActionLink('__column_show_default', 'datatable.column.show-default')
+		$settings->addActionLink('__column_show_default', 'datatable.column.show-default')
 			->setIcon('fa-redo')->addClass('ajax')
 			->setLink('showDefault!');
 
-		$dropdown->addDivider();
+		$settings->addDivider();
 
 		/** @var array<string, bool> */
 		$columnsHidden = $this->getOption(Option::StateColumns, []);
@@ -300,7 +300,7 @@ trait Columns
 			}
 
 			$actionName = '__column_toggle_'.Casing::Camel->format(Strings::webalize($name));
-			$action = $dropdown->addActionLink($actionName, $column->getLabel())
+			$action = $settings->addActionLink($actionName, $column->getLabel())
 				->setIcon('fa-square-check')->addClass('ajax')
 				->setLink('showToggle!', ['column' => $name]);
 

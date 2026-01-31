@@ -159,7 +159,7 @@ class ColumnsPluginTest extends TestCase
 		Assert::with($table, fn() => $this->onRenderColumns($template));
 
 		Assert::type('array', $template->columns ?? null);
-		Assert::noError(fn() => $table->getToolbarAction('__column_toggle'));
+		Assert::noError(fn() => $table->getToolbarAction('__settings'));
 	}
 }
 
