@@ -60,6 +60,7 @@ trait Sorting
 		}
 
 		$this->redrawControl('paginator');
+		$this->redrawControl('toolbar');
 		$this->redrawControl('table');
 		$this->redirect('this');
 	}
