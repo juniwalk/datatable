@@ -105,9 +105,11 @@ trait Toolbar
 
 	protected function onRenderToolbar(Template $template): void
 	{
-		static $internal = [
+		static $left = [
 			'__filters' => null,
-			'__columns' => null,
+		];
+		static $right = [
+			'__settings' => null,
 		];
 
 		$toolbar = [];
@@ -121,9 +123,10 @@ trait Toolbar
 		}
 
 		$template->toolbar = [
-			// ? Render internal toolbar actions first (on the left)
-			... array_intersect_key($toolbar, $internal),
-			... array_diff_key($toolbar, $internal),
+			// ? Render internal toolbar actions where desired (left or right)
+			... array_intersect_key($toolbar, $left),		// ? Actions on left
+			... array_diff_key($toolbar, $left, $right),	// ? Custom actions
+			... array_intersect_key($toolbar, $right),		// ? Actions on right
 		];
 	}
 }
