@@ -23,10 +23,12 @@ limit:
 
 sort:
 	clear: 'Zrušit třídění'
+	clear-custom: 'Zrušit vlastní třídění'
 
 filter:
 	select-placeholder: 'Vše…'
 	button: 'Filtrovat'
 	pin: 'Připnutí filtrů k hlavičce'
 	clear: 'Zrušit filtraci'
+	clear-custom: 'Zrušit vlastní filtraci'
 	clear-short: 'zrušit'
