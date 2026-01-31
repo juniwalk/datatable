@@ -33,6 +33,7 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 	protected Align $align = Align::Right;
 	protected DropdownAction $dropdown;
 	protected Closure $optionFactory;
+	protected Closure $actionCallback;
 
 	protected bool $isAjaxEnabled = false;
 	protected bool $isDisabled = false;
@@ -54,6 +55,13 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 	public function setOptionFactory(Closure $optionFactory): static
 	{
 		$this->optionFactory = $optionFactory;
+		return $this;
+	}
+
+
+	public function setActionCallback(Closure $actionCallback): static
+	{
+		$this->actionCallback = $actionCallback;
 		return $this;
 	}
 
@@ -121,6 +129,12 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 				->setLink($this->dest ?? $this->name.'!', $arguments)
 				// ->addAttribute('class', $option->color?->for('text'))
 				->setIcon($option->icon);
+
+			if ($this->actionCallback ?? false) {
+				$action->setAllowCondition(function($item) use ($option) {
+					return call_user_func($this->actionCallback, $option, $item);
+				});
+			}
 
 			if ($this->isAjaxEnabled) {
 				$action->addAttribute('class', 'ajax');
