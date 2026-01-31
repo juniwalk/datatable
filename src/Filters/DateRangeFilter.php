@@ -22,26 +22,44 @@ class DateRangeFilter extends AbstractFilter implements FilterRange
 
 
 	/**
-	 * @param  array{from: mixed, to: mixed} $value
+	 * @param  array{from?: mixed, to?: mixed} $value
+	 * @return array{from: ?DateTimeImmutable, to: ?DateTimeImmutable}
 	 * @throws FilterValueInvalidException
 	 */
-	public function setValue(?array $value): static
+	public function checkValue(?array $value): array
 	{
+		$result = ['from' => null, 'to' => null];
+
 		try {
-			$this->valueFrom = FormatValue::dateTime($value['from'] ?? null);
+			$result['from'] = FormatValue::dateTime($value['from'] ?? null);
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, DateTimeImmutable::class, $value['from'] ?? null, $e);
 		}
 
 		try {
-			$this->valueTo = FormatValue::dateTime($value['to'] ?? null);
+			$result['to'] = FormatValue::dateTime($value['to'] ?? null);
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, DateTimeImmutable::class, $value['to'] ?? null, $e);
 		}
 
+		return $result;
+	}
+
+
+	/**
+	 * @param  array{from?: mixed, to?: mixed} $value
+	 * @throws FilterValueInvalidException
+	 */
+	public function setValue(?array $value): static
+	{
+		$value = $this->checkValue($value);
+
+		$this->valueFrom = $value['from'];
+		$this->valueTo = $value['to'];
 		$this->isFiltered = !empty($this->valueFrom) || !empty($this->valueTo);
+
 		return $this;
 	}
 
@@ -58,19 +76,13 @@ class DateRangeFilter extends AbstractFilter implements FilterRange
 	}
 
 
-	/**
-	 * @return ?DateTimeImmutable
-	 */
-	public function getValueFrom(): mixed
+	public function getValueFrom(): ?DateTimeImmutable
 	{
 		return $this->valueFrom?->modify('midnight');
 	}
 
 
-	/**
-	 * @return ?DateTimeImmutable
-	 */
-	public function getValueTo(): mixed
+	public function getValueTo(): ?DateTimeImmutable
 	{
 		return $this->valueTo?->modify('midnight');
 	}

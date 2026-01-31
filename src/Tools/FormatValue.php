@@ -11,8 +11,10 @@ use BackedEnum;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use DateTimeInterface;
+use InvalidArgumentException;
 use JuniWalk\Utils\Enums\Interfaces\LabeledEnum;
 use JuniWalk\Utils\Format;
+use OutOfBoundsException;
 use ValueError;
 
 class FormatValue
@@ -35,6 +37,25 @@ class FormatValue
 	public static function number(mixed $value, ?int $precision = null): int|float|null
 	{
 		return Format::numeric($value, $precision);
+	}
+
+
+	/**
+	 * @param  array<int|string, mixed> $values
+	 * @throws InvalidArgumentException
+	 * @throws OutOfBoundsException
+	 */
+	public static function index(mixed $value, array $values): int|string|null
+	{
+		if (!is_null($value) && !(is_int($value) || is_string($value))) {
+			throw new InvalidArgumentException('Value of type "'.gettype($value).'" cannot be array index.');
+		}
+
+		if (!is_null($value) && !isset($values[$value])) {
+			throw new OutOfBoundsException('Index "'.$value.'" is not in values list.');
+		}
+
+		return $value;
 	}
 
 

@@ -22,51 +22,48 @@ class DateFilter extends AbstractFilter implements FilterSingle
 	/**
 	 * @throws FilterValueInvalidException
 	 */
-	public function setValue(mixed $value): static
+	public function checkValue(mixed $value): ?DateTimeImmutable
 	{
 		try {
-			$this->value = FormatValue::dateTime($value);
-			$this->isFiltered = $this->value !== null;
+			return FormatValue::dateTime($value);
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, DateTimeImmutable::class, $value, $e);
 		}
+	}
+
+
+	/**
+	 * @throws FilterValueInvalidException
+	 */
+	public function setValue(mixed $value): static
+	{
+		$this->value = $this->checkValue($value);
+		$this->isFiltered = $this->value !== null;
 
 		return $this;
 	}
 
 
-	/**
-	 * @return ?DateTimeImmutable
-	 */
-	public function getValue(): mixed
+	public function getValue(): ?DateTimeImmutable
 	{
 		return $this->value ?? null;
 	}
 
 
-	/**
-	 * @return ?DateTimeImmutable
-	 */
-	public function getValueFrom(): mixed
+	public function getValueFrom(): ?DateTimeImmutable
 	{
 		return $this->value?->modify('midnight');
 	}
 
 
-	/**
-	 * @return ?DateTimeImmutable
-	 */
-	public function getValueTo(): mixed
+	public function getValueTo(): ?DateTimeImmutable
 	{
 		return $this->value?->modify('midnight')?->modify('+1 day');
 	}
 
 
-	/**
-	 * @return string|null
-	 */
-	public function getValueFormatted(): mixed
+	public function getValueFormatted(): ?string
 	{
 		return $this->value?->format('Y-m-d');
 	}

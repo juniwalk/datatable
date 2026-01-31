@@ -10,17 +10,23 @@ namespace JuniWalk\DataTable\Filters\Interfaces;
 interface FilterList
 {
 	/**
-	 * @param null|mixed[] $value
+	 * @param  mixed[] $value
+	 * @return mixed[]
+	 */
+	public function checkValue(?array $value): ?array;
+
+	/**
+	 * @param mixed[] $value
 	 */
 	public function setValue(?array $value): static;
 
 	/**
-	 * @return null|mixed[]
+	 * @return mixed[]
 	 */
 	public function getValue(): ?array;
 
 	/**
-	 * @return null|scalar[]
+	 * @return scalar[]
 	 */
 	public function getValueFormatted(): ?array;
 }

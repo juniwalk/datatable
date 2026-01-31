@@ -48,25 +48,36 @@ class EnumListFilter extends AbstractFilter implements FilterList
 
 
 	/**
-	 * @param  null|array<int|string|T> $value
+	 * @param  array<int|string|T> $value
+	 * @return T[]
 	 * @throws FilterValueInvalidException
 	 */
-	public function setValue(?array $value): static
+	public function checkValue(?array $value): ?array
 	{
 		$items = $this->getItems();
 
 		try {
-			$value = array_filter(
+			$result = array_filter(
 				array_map(fn($x) => FormatValue::enum($x, $this->enum), $value ?? []),
 				fn($x) => in_array($x, $items),
 			);
 
-			$this->value = $value ?: null;
-			$this->isFiltered = $this->value !== null;
+			return $result ?: null;
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, $this->enum.'[]', $value, $e);
 		}
+	}
+
+
+	/**
+	 * @param  array<int|string|T> $value
+	 * @throws FilterValueInvalidException
+	 */
+	public function setValue(?array $value): static
+	{
+		$this->value = $this->checkValue($value);
+		$this->isFiltered = $this->value !== null;
 
 		return $this;
 	}

@@ -11,7 +11,6 @@ use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Forms\Form;
-use OutOfBoundsException;
 use Throwable;
 
 class SelectFilter extends AbstractFilter implements FilterSingle
@@ -19,7 +18,7 @@ class SelectFilter extends AbstractFilter implements FilterSingle
 	/** @var array<int|string, mixed> */
 	protected array $items = [];
 
-	protected ?string $value = null;
+	protected int|string|null $value = null;
 	protected string|bool $placeholder = true;
 
 
@@ -37,40 +36,39 @@ class SelectFilter extends AbstractFilter implements FilterSingle
 
 
 	/**
+	 * @throws FilterValueInvalidException
+	 */
+	public function checkValue(mixed $value): int|string|null
+	{
+		try {
+			return FormatValue::index($value, $this->items);
+
+		} catch (Throwable $e) {
+			throw FilterValueInvalidException::fromFilter($this, 'int|string', $value, $e);
+		}
+	}
+
+
+	/**
 	 * @param  int|string|null $value
 	 * @throws FilterValueInvalidException
 	 */
 	public function setValue(mixed $value): static
 	{
-		try {
-			if ($value && !isset($this->items[$value])) {
-				throw new OutOfBoundsException('Value "'.$value.'" is not in items list.');
-			}
-
-			$this->value = FormatValue::string($value);
-			$this->isFiltered = $this->value !== null;
-
-		} catch (Throwable $e) {
-			throw FilterValueInvalidException::fromFilter($this, 'int|string', $value, $e);
-		}
+		$this->value = $this->checkValue($value);
+		$this->isFiltered = $this->value !== null;
 
 		return $this;
 	}
 
 
-	/**
-	 * @return ?string
-	 */
-	public function getValue(): mixed
+	public function getValue(): int|string|null
 	{
 		return $this->value ?? null;
 	}
 
 
-	/**
-	 * @return ?string
-	 */
-	public function getValueFormatted(): mixed
+	public function getValueFormatted(): int|string|null
 	{
 		return $this->value ?? null;
 	}

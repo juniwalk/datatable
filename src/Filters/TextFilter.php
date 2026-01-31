@@ -21,33 +21,36 @@ class TextFilter extends AbstractFilter implements FilterSingle
 	/**
 	 * @throws FilterValueInvalidException
 	 */
-	public function setValue(mixed $value): static
+	public function checkValue(mixed $value): ?string
 	{
 		try {
-			$this->value = FormatValue::string($value);
-			$this->isFiltered = $this->value !== null;
+			return FormatValue::string($value);
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, 'string', $value, $e);
 		}
+	}
+
+
+	/**
+	 * @throws FilterValueInvalidException
+	 */
+	public function setValue(mixed $value): static
+	{
+		$this->value = $this->checkValue($value);
+		$this->isFiltered = $this->value !== null;
 
 		return $this;
 	}
 
 
-	/**
-	 * @return ?string
-	 */
-	public function getValue(): mixed
+	public function getValue(): ?string
 	{
 		return $this->value ?? null;
 	}
 
 
-	/**
-	 * @return string|null
-	 */
-	public function getValueFormatted(): mixed
+	public function getValueFormatted(): ?string
 	{
 		return $this->value ?? null;
 	}

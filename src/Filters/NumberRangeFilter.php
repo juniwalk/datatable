@@ -30,26 +30,44 @@ class NumberRangeFilter extends AbstractFilter implements FilterRange
 
 
 	/**
-	 * @param  array{from: mixed, to: mixed} $value
+	 * @param  array{from?: mixed, to?: mixed} $value
+	 * @return array{from: int|float|null, to: int|float|null}
 	 * @throws FilterValueInvalidException
 	 */
-	public function setValue(?array $value): static
+	public function checkValue(?array $value): array
 	{
+		$result = ['from' => null, 'to' => null];
+
 		try {
-			$this->valueFrom = FormatValue::number($value['from'] ?? null, $this->precission);
+			$result['from'] = FormatValue::number($value['from'] ?? null, $this->precission);
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, 'int|float', $value['from'] ?? null, $e);
 		}
 
 		try {
-			$this->valueTo = FormatValue::number($value['to'] ?? null, $this->precission);
+			$result['to'] = FormatValue::number($value['to'] ?? null, $this->precission);
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, 'int|float', $value['to'] ?? null, $e);
 		}
 
+		return $result;
+	}
+
+
+	/**
+	 * @param  array{from?: mixed, to?: mixed} $value
+	 * @throws FilterValueInvalidException
+	 */
+	public function setValue(?array $value): static
+	{
+		$value = $this->checkValue($value);
+
+		$this->valueFrom = $value['from'];
+		$this->valueTo = $value['to'];
 		$this->isFiltered = !empty($this->valueFrom) || !empty($this->valueTo);
+
 		return $this;
 	}
 
@@ -66,19 +84,13 @@ class NumberRangeFilter extends AbstractFilter implements FilterRange
 	}
 
 
-	/**
-	 * @return int|float|null
-	 */
-	public function getValueFrom(): mixed
+	public function getValueFrom(): int|float|null
 	{
 		return $this->valueFrom;
 	}
 
 
-	/**
-	 * @return int|float|null
-	 */
-	public function getValueTo(): mixed
+	public function getValueTo(): int|float|null
 	{
 		return $this->valueTo;
 	}
@@ -95,8 +107,8 @@ class NumberRangeFilter extends AbstractFilter implements FilterRange
 		}
 
 		return [
-			'from' => FormatValue::string($this->valueFrom) ?: null,
-			'to' => FormatValue::string($this->valueTo) ?: null,
+			'from' => FormatValue::string($this->valueFrom),
+			'to' => FormatValue::string($this->valueTo),
 		];
 	}
 

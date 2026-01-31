@@ -9,6 +9,7 @@ namespace JuniWalk\DataTable\Filters;
 
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filters\Interfaces\FilterList;
+use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Forms\Form;
 use Throwable;
 
@@ -22,20 +23,33 @@ class SelectListFilter extends AbstractFilter implements FilterList
 
 
 	/**
-	 * @param  null|array<int|string> $value
+	 * @param  mixed[] $value
+	 * @return array<int|string>
 	 * @throws FilterValueInvalidException
 	 */
-	public function setValue(?array $value): static
+	public function checkValue(?array $value): ?array
 	{
 		try {
-			$value = array_filter($value ?? [], fn($x) => isset($this->items[$x]));
+			$result = array_filter(
+				array_map(fn($x) => FormatValue::index($x, $this->items), $value ?? []),
+			);
 
-			$this->value = $value ?: null;
-			$this->isFiltered = $this->value !== null;
+			return $result ?: null;
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, 'array<int|string>', $value, $e);
 		}
+	}
+
+
+	/**
+	 * @param  mixed[] $value
+	 * @throws FilterValueInvalidException
+	 */
+	public function setValue(?array $value): static
+	{
+		$this->value = $this->checkValue($value);
+		$this->isFiltered = $this->value !== null;
 
 		return $this;
 	}

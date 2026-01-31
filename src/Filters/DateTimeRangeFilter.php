@@ -12,19 +12,13 @@ use Nette\Forms\Form;
 
 class DateTimeRangeFilter extends DateRangeFilter
 {
-	/**
-	 * @return ?DateTimeImmutable
-	 */
-	public function getValueFrom(): mixed
+	public function getValueFrom(): ?DateTimeImmutable
 	{
 		return $this->valueFrom;
 	}
 
 
-	/**
-	 * @return ?DateTimeImmutable
-	 */
-	public function getValueTo(): mixed
+	public function getValueTo(): ?DateTimeImmutable
 	{
 		return $this->valueTo;
 	}

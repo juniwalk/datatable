@@ -64,25 +64,33 @@ class EnumFilter extends AbstractFilter implements FilterSingle
 
 
 	/**
+	 * @return ?T
 	 * @throws FilterValueInvalidException
 	 */
-	public function setValue(mixed $value): static
+	public function checkValue(mixed $value): ?BackedEnum
 	{
-		$items = $this->getItems();
-
 		try {
-			$value = FormatValue::enum($value, $this->enum);
+			$result = FormatValue::enum($value, $this->enum);
 
-			if ($value && !in_array($value, $items)) {
-				throw new OutOfBoundsException('Value "'.$value->value.'" is not in items list.');
+			if ($result && !in_array($result, $this->getItems())) {
+				throw new OutOfBoundsException('Value "'.$result->value.'" is not in items list.');
 			}
 
-			$this->value = $value ?: null;
-			$this->isFiltered = $this->value !== null;
+			return $result;
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, $this->enum, $value, $e);
 		}
+	}
+
+
+	/**
+	 * @throws FilterValueInvalidException
+	 */
+	public function setValue(mixed $value): static
+	{
+		$this->value = $this->checkValue($value);
+		$this->isFiltered = $this->value !== null;
 
 		return $this;
 	}
@@ -91,16 +99,13 @@ class EnumFilter extends AbstractFilter implements FilterSingle
 	/**
 	 * @return ?T
 	 */
-	public function getValue(): mixed
+	public function getValue(): ?BackedEnum
 	{
 		return $this->value ?? null;
 	}
 
 
-	/**
-	 * @return string|int|null
-	 */
-	public function getValueFormatted(): mixed
+	public function getValueFormatted(): int|string|null
 	{
 		return $this->value?->value;
 	}

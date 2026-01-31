@@ -10,17 +10,23 @@ namespace JuniWalk\DataTable\Filters\Interfaces;
 interface FilterRange
 {
 	/**
-	 * @param null|array{from: mixed, to: mixed} $value
+	 * @param  array{from?: mixed, to?: mixed} $value
+	 * @return array{from: mixed, to: mixed}
+	 */
+	public function checkValue(?array $value): array;
+
+	/**
+	 * @param array{from?: mixed, to?: mixed} $value
 	 */
 	public function setValue(?array $value): static;
 
 	/**
-	 * @return null|array{from: mixed, to: mixed}
+	 * @return array{from: mixed, to: mixed}
 	 */
 	public function getValue(): ?array;
 
 	/**
-	 * @return null|array{from: scalar, to: scalar}
+	 * @return array{from: scalar, to: scalar}
 	 */
 	public function getValueFormatted(): ?array;
 
