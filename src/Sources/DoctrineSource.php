@@ -9,9 +9,11 @@ namespace JuniWalk\DataTable\Sources;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query;
+use Doctrine\ORM\Query\Expr\OrderBy;
 use Doctrine\ORM\QueryBuilder;
 use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
+use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use JuniWalk\DataTable\Exceptions\FilterInvalidException;
 use JuniWalk\DataTable\Filter;
@@ -21,7 +23,6 @@ use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Source;
 use JuniWalk\DataTable\Tools\FormatValue;
-use Stringable;
 
 /**
  * @phpstan-import-type Items from Source
@@ -165,7 +166,7 @@ class DoctrineSource extends AbstractSource
 		$alias = $qb->getRootAliases()[0];
 
 		foreach ($this->getOrderByFields() as $field) {
-			if (str_starts_with($field, $alias.'.')) {
+			if (str_contains($field, $alias.'.')) {
 				continue;
 			}
 
@@ -209,22 +210,31 @@ class DoctrineSource extends AbstractSource
 
 	/**
 	 * @return string[]
+	 * @throws FieldInvalidException
 	 */
 	protected function getOrderByFields(): array
 	{
-		/** @var Stringable[] */
+		/** @var OrderBy[] */
 		$fields = $this->queryBuilder->getDQLPart('orderBy');
 
 		if (empty($fields)) {
 			return [];
 		}
 
-		$fields = explode(', ', implode(', ', $fields));
-		$fields = array_map(array: $fields, callback: function($field): ?string {
-			return preg_replace('/\s(asc|desc)$/i', '', $field);
-		});
+		return array_map(array: $fields, callback: function($field): string {
+			$field = (string) $field;
 
-		return array_filter($fields);
+			// ! This seems like insufficient way of detecting multiple columns
+			if (substr_count('.', $field) > 1) {
+				throw new FieldInvalidException('Multiple orderBy columns in single statement.');
+			}
+
+			if (!$field = preg_replace('/\s(asc|desc)/i', '', $field)) {
+				throw new FieldInvalidException('Failed to remove asc|desc from orderBy fields.');
+			}
+
+			return $field;
+		});
 	}
 
 
@@ -233,6 +243,12 @@ class DoctrineSource extends AbstractSource
 	 */
 	protected function checkAlias(string $field): string
 	{
+		// ? Search for field name inside SQL function call
+		if (preg_match('/(\w+)\.(\w+)/i', $field, $match)) {
+			$sql = str_replace($match[0], '%s', $field);
+			[$match, $alias, $field] = $match;
+		}
+
 		if (str_contains($field, '.')) {
 			[$alias, $field] = explode('.', $field, 2);
 		}
@@ -240,12 +256,12 @@ class DoctrineSource extends AbstractSource
 		$aliases = $this->queryBuilder->getAllAliases();
 		$alias ??= $aliases[0] ?? null;
 
-		// ? InArray search is case sensitive - might cause issues
+		// ! InArray search is case sensitive - might cause issues
 		if (!$field || !$alias || !in_array($alias, $aliases)) {
 			throw FieldNotFoundException::fromName($field);
 		}
 
-		return $alias.'.'.$field;
+		return sprintf($sql ?? '%s', $alias.'.'.$field);
 	}
 
 
