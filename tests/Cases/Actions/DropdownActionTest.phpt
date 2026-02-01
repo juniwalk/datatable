@@ -40,11 +40,13 @@ class DropdownActionTest extends AbstractActionCase
 	public function testRender(): void
 	{
 		$action = $this->createAction('btn', 'Button');
+		$action->setTargetNewTab(true);
 
 		$html = $action->createButton(null);
 
 		Assert::type(Html::class, $html);
 		Assert::same('btn-group dropdown', $html->getClass());
+		Assert::null($html->getAttribute('target'));
 		Assert::same('div', $html->getName());
 
 		[$button, $dropdown] = $html->getChildren();

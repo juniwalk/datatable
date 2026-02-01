@@ -25,11 +25,13 @@ class DividerActionTest extends AbstractActionCase
 	public function testRender_Parent_None(): void
 	{
 		$action = $this->createAction('btn', 'Button');
+		$action->setTargetNewTab(true);
 
 		$html = $action->createButton(null);
 
 		Assert::type(Html::class, $html);
 		Assert::same('vr h-100 mx-lg-2', $html->getClass());
+		Assert::null($html->getAttribute('target'));
 		Assert::same('div', $html->getName());
 	}
 

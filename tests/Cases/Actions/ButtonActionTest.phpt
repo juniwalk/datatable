@@ -24,10 +24,12 @@ class ButtonActionTest extends AbstractActionCase
 	public function testRender(): void
 	{
 		$action = $this->createAction('btn', 'Button');
+		$action->setTargetNewTab(true);
 
 		$html = $action->createButton(null);
 
 		Assert::type(Html::class, $html);
+		Assert::null($html->getAttribute('target'));
 		Assert::same('button', $html->getName());
 	}
 }

@@ -24,12 +24,14 @@ class LinkActionTest extends AbstractActionCase
 	public function testRender(): void
 	{
 		$action = $this->createAction('link', 'link');
+		$action->setTargetNewTab(true);
 		$action->setLink('this');
 
 		$link = '/index.php?action=default&presenter=Test';
 		$html = $action->createButton(null);
 
 		Assert::type(Html::class, $html);
+		Assert::same('_blank', $html->getAttribute('target'));
 		Assert::same('a', $html->getName());
 		Assert::same($link, $html->getHref());
 	}

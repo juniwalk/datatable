@@ -45,6 +45,8 @@ class DetailAction extends AbstractAction implements CallbackRenderable, Templat
 	 */
 	public function createButton(?Row $row): Html
 	{
+		$this->targetNewTab = false;
+
 		if (is_null($row)) {
 			throw InvalidStateException::rowRequired($this);
 		}

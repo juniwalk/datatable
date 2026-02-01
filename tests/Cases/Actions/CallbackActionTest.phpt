@@ -42,6 +42,7 @@ class CallbackActionTest extends AbstractActionCase
 	public function testRender(): void
 	{
 		$action = $this->createAction('btn', 'Button');
+		$action->setTargetNewTab(true);
 
 		$link = '/index.php?action=default&do=table-btn-action&presenter=Test';
 		$html = $action->createButton(null);
@@ -49,6 +50,7 @@ class CallbackActionTest extends AbstractActionCase
 		Assert::type(Html::class, $html);
 		Assert::same('a', $html->getName());
 		Assert::same($link, $html->getHref());
+		Assert::same('_blank', $html->getAttribute('target'));
 	}
 }
 
