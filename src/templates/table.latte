@@ -17,7 +17,7 @@
 	</div>
 	</div>
 
-	<div n:snippet="filters" n:class="collapse, $table->shouldShowFilters() ? show" n:if="!$filtering && !empty($filters)">
+	<div n:snippet="filters" n:class="collapse, $table->shouldShowFilters() ? show" n:if="$filtering && !empty($filters)">
 	<form n:name="filterForm" class="card-header bg-body-tertiary" autocomplete="off">
 
 		<div class="row g-3 row-cols-auto">
