@@ -13,6 +13,7 @@ use JuniWalk\DataTable\Filters;
 use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
+use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\Tests\Files\TestPresenter;
 use Nette\Application\AbortException;
 use Nette\Http\Helpers;
@@ -109,10 +110,6 @@ class FiltersPluginTest extends TestCase
 
 		$table->filter['name'] = 'Jane Doe';
 		Assert::false($table->isDefaultFilter());
-		Assert::exception(
-			fn() => $table->setDefaultFilter(['unknown' => '']),
-			FilterNotFoundException::class,
-		);
 
 		Assert::with($table, function() {
 			$this->setOption(Option::IsFiltered, true);
@@ -120,6 +117,36 @@ class FiltersPluginTest extends TestCase
 
 			Assert::same([], $this->getCurrentFilter());
 		});
+	}
+
+
+	/**
+	 * ? Test that setDefaultFilter throws exception on invalid values
+	 */
+	public function testFilters_Default_Undefined(): void
+	{
+		$table = (new TestPresenter)->getComponent('tableTest');
+		$table->clearRememberedState();
+
+		Assert::exception(
+			fn() => $table->setDefaultFilter(['unknown' => '']),
+			FilterNotFoundException::class,
+		);
+	}
+
+
+	/**
+	 * ? Test that setDefaultFilter throws exception on invalid values
+	 */
+	public function testFilters_Default_Invalid(): void
+	{
+		$table = (new TestPresenter)->getComponent('tableTest');
+		$table->clearRememberedState();
+
+		Assert::exception(
+			fn() => $table->setDefaultFilter(['align' => ['top']]),
+			FilterValueInvalidException::class,
+		);
 	}
 
 
@@ -142,6 +169,20 @@ class FiltersPluginTest extends TestCase
 
 		Assert::noError(fn() => $table->getToolbarAction('__filter_toggle'));
 		Assert::noError(fn() => $table->getToolbarAction('__filter_clear'));
+	}
+
+
+	public function testFilters_Render_Invalid(): void
+	{
+		$table = (new TestPresenter)->getComponent('tableTest');
+		$table->clearRememberedState();
+
+		Assert::with($table, function() {
+			$template = $this->createTemplate();
+			$this->filter['align'] = 'top';
+
+			Assert::noError(fn() => $this->onRenderFilters($template));
+		});
 	}
 
 

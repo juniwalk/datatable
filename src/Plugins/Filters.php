@@ -32,6 +32,7 @@ use JuniWalk\Utils\Arrays;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
 use Nette\Application\UI\Template;
+use TypeError;
 
 /**
  * @phpstan-import-type FilterStruct from Filter
@@ -448,7 +449,7 @@ trait Filters
 			try {
 				$this->filters[$name]->setValue($value);
 
-			} catch (FilterValueInvalidException) {
+			} catch (FilterValueInvalidException|TypeError) {
 			}
 		}
 
