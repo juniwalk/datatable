@@ -25,7 +25,6 @@ class DropdownColumnTest extends AbstractColumnCase
 	public function testColumn(): void
 	{
 		$column = $this->createColumn('align', 'Align');
-		$column->setOptionFactory(fn($case) => Option::fromEnum($case));
 		$column->setItems(Align::cases());
 		$column->setLink('this');
 
@@ -49,7 +48,6 @@ class DropdownColumnTest extends AbstractColumnCase
 	public function testColumn_Disabled(): void
 	{
 		$column = $this->createColumn('align', 'Align');
-		$column->setOptionFactory(fn($case) => Option::fromEnum($case));
 		$column->setItems(Align::cases());
 		$column->setLink('this');
 
@@ -62,6 +60,40 @@ class DropdownColumnTest extends AbstractColumnCase
 
 			Assert::same(['badge' => true, 'text-bg-secondary' => true, 'badge-secondary' => true], $html->getClass());
 			Assert::same('span', $html->getName());
+		});
+	}
+
+
+	public function testColumn_Callback(): void
+	{
+		$column = $this->createColumn('align', 'Align');
+		$column->setItems(Align::cases());
+		$column->setLink('this');
+
+		$column->setActionCallback(function(Option $opt, $row) {
+			return $opt->value !== Align::Right->value;
+		});
+
+		Assert::with($column, function() {
+			$this->createActions($this->getParent());
+
+			$row = new Row(ItemsData[0], 'id');
+			$html = $this->formatValue($row);
+
+			$btn = $html->getChildren()[0];
+
+			Assert::same(['btn btn-xs btn-secondary' => true, 'dropdown-toggle' => true], $btn->getClass());
+			Assert::same('button', $btn->getName());
+
+			$actions = $html->getChildren()[1]->getChildren();
+
+			foreach ($actions as $link) {
+				if ($link->getText() !== Align::Right->value) {
+					continue;
+				}
+
+				Assert::hasKey('disabled', $link->getClass());
+			}
 		});
 	}
 }
