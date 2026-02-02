@@ -19,7 +19,7 @@ class SourcesPluginTest extends TestCase
 {
 	public function testEvents(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->addLoadCallback(function() use (&$onLoad) { $onLoad = true; });
 		$table->addItemCallback(function() use (&$onItem) { $onItem = true; });
 
@@ -42,7 +42,7 @@ class SourcesPluginTest extends TestCase
 
 	public function testExtended(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableExtended');
+		$table = (new TestPresenter)->getComponent('tableTest');
 
 		Assert::type(ArraySource::class, $table->getSource());
 		Assert::hasKey('name', $table->getColumns());

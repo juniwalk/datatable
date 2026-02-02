@@ -11,7 +11,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 use JuniWalk\DataTable\Columns;
 use JuniWalk\DataTable\Exceptions\ColumnNotFoundException;
-use JuniWalk\Tests\Files\TemplateFactory;
 use JuniWalk\Tests\Files\TestPresenter;
 use Nette\Application\AbortException;
 use Tester\Assert;
@@ -55,7 +54,7 @@ class ColumnsPluginTest extends TestCase
 
 	public function testColumns_Hideable(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		Assert::false($table->isColumnsHideable());
 
 		$table->setColumnsHideable(true);
@@ -66,7 +65,7 @@ class ColumnsPluginTest extends TestCase
 
 	public function testColumns_Hideable_ShowToggle(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->getColumn('name')->setDefaultHide(true);
 		$table->setColumnsHideable(true);
 
@@ -82,17 +81,19 @@ class ColumnsPluginTest extends TestCase
 			AbortException::class,
 		);
 
-		$template = (new TemplateFactory)->createTemplate();
-		Assert::with($table, fn() => $this->onRenderColumns($template));
+		Assert::with($table, function() {
+			$template = $this->createTemplate();
+			$this->onRenderColumns($template);
 
-		Assert::false($table->getColumn('id')->isHidden());
-		Assert::false($table->getColumn('name')->isHidden());
+			Assert::false($this->getColumn('id')->isHidden());
+			Assert::false($this->getColumn('name')->isHidden());
+		});
 	}
 
 
 	public function testColumns_Hideable_ShowDefault(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->getColumn('name')->setDefaultHide(true);
 		$table->setColumnsHideable(true);
 
@@ -109,17 +110,19 @@ class ColumnsPluginTest extends TestCase
 			AbortException::class,
 		);
 
-		$template = (new TemplateFactory)->createTemplate();
-		Assert::with($table, fn() => $this->onRenderColumns($template));
+		Assert::with($table, function() {
+			$template = $this->createTemplate();
+			$this->onRenderColumns($template);
 
-		Assert::false($table->getColumn('id')->isHidden());
-		Assert::true($table->getColumn('name')->isHidden());
+			Assert::false($this->getColumn('id')->isHidden());
+			Assert::true($this->getColumn('name')->isHidden());
+		});
 	}
 
 
 	public function testColumns_Hideable_ShowAll(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->getColumn('name')->setDefaultHide(true);
 		$table->setColumnsHideable(true);
 
@@ -136,17 +139,19 @@ class ColumnsPluginTest extends TestCase
 			AbortException::class,
 		);
 
-		$template = (new TemplateFactory)->createTemplate();
-		Assert::with($table, fn() => $this->onRenderColumns($template));
+		Assert::with($table, function() {
+			$template = $this->createTemplate();
+			$this->onRenderColumns($template);
 
-		Assert::false($table->getColumn('id')->isHidden());
-		Assert::false($table->getColumn('name')->isHidden());
+			Assert::false($this->getColumn('id')->isHidden());
+			Assert::false($this->getColumn('name')->isHidden());
+		});
 	}
 
 
 	public function testColumns_Render(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->getColumn('name')->setDefaultHide(true);
 		$table->setColumnsHideable(true);
 
@@ -155,11 +160,13 @@ class ColumnsPluginTest extends TestCase
 			AbortException::class,
 		);
 
-		$template = (new TemplateFactory)->createTemplate();
-		Assert::with($table, fn() => $this->onRenderColumns($template));
+		Assert::with($table, function() {
+			$template = $this->createTemplate();
+			$this->onRenderColumns($template);
 
-		Assert::type('array', $template->columns ?? null);
-		Assert::noError(fn() => $table->getToolbarAction('__settings'));
+			Assert::type('array', $template->columns ?? null);
+			Assert::noError(fn() => $this->getToolbarAction('__settings'));
+		});
 	}
 }
 

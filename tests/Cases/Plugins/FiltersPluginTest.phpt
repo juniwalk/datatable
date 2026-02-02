@@ -13,7 +13,6 @@ use JuniWalk\DataTable\Filters;
 use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
-use JuniWalk\Tests\Files\TemplateFactory;
 use JuniWalk\Tests\Files\TestPresenter;
 use Nette\Application\AbortException;
 use Nette\Http\Helpers;
@@ -68,7 +67,7 @@ class FiltersPluginTest extends TestCase
 
 	public function testFilters_Showing(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->clearRememberedState();
 
 		Assert::null($table->isFilterShown());
@@ -98,7 +97,7 @@ class FiltersPluginTest extends TestCase
 
 	public function testFilters_Default(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->setDefaultFilter(['name' => 'John Doe']);
 		$table->clearRememberedState();
 
@@ -126,15 +125,17 @@ class FiltersPluginTest extends TestCase
 
 	public function testFilters_Render(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->setDefaultFilter(['name' => 'John Doe']);
 		$table->clearRememberedState();
 
-		$template = (new TemplateFactory)->createTemplate();
-		Assert::with($table, fn() => $this->onRenderFilters($template));
+		Assert::with($table, function() {
+			$template = $this->createTemplate();
+			$this->onRenderFilters($template);
 
-		Assert::true($template->autoSubmit ?? null);
-		Assert::type('array', $template->filters ?? null);
+			Assert::true($template->autoSubmit ?? null);
+			Assert::type('array', $template->filters ?? null);
+		});
 
 		Assert::same('John Doe', $table->getFilter('name')->getValue());
 		Assert::true($table->getColumn('name')->isFiltered());

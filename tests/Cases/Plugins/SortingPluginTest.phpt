@@ -11,7 +11,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 use JuniWalk\DataTable\Enums\Sort;
 use JuniWalk\DataTable\Exceptions\ColumnNotSortableException;
-use JuniWalk\Tests\Files\TemplateFactory;
 use JuniWalk\Tests\Files\TestPresenter;
 use Nette\Application\AbortException;
 use Tester\Assert;
@@ -21,7 +20,7 @@ class SortingPluginTest extends TestCase
 {
 	public function testDefault(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->clearRememberedState();
 
 		Assert::count(0, $table->getDefaultSort());
@@ -53,7 +52,7 @@ class SortingPluginTest extends TestCase
 
 	public function testHandler(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->setDefaultSort(['id' => 'asc']);
 		$table->clearRememberedState();
 
@@ -76,7 +75,7 @@ class SortingPluginTest extends TestCase
 
 	public function testHandler_NotSortable(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->clearRememberedState();
 
 		Assert::exception(
@@ -88,7 +87,7 @@ class SortingPluginTest extends TestCase
 
 	public function testRender(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->setDefaultSort(['id' => 'asc']);
 		$table->clearRememberedState();
 		$table->setSortable(true);
@@ -96,11 +95,13 @@ class SortingPluginTest extends TestCase
 		Assert::null($table->getColumn('name')->isSortable());
 		Assert::null($table->getColumn('id')->isSorted());
 
-		$template = (new TemplateFactory)->createTemplate();
-		Assert::with($table, fn() => $this->onRenderSorting($template));
+		Assert::with($table, function() {
+			$template = $this->createTemplate();
+			$this->onRenderSorting($template);
 
-		Assert::true($table->getColumn('name')->isSortable());
-		Assert::same('asc', $table->getColumn('id')->isSorted()->value);
+			Assert::true($this->getColumn('name')->isSortable());
+			Assert::same('asc', $this->getColumn('id')->isSorted()->value);
+		});
 	}
 }
 

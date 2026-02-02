@@ -83,14 +83,14 @@ class PaginationPluginTest extends TestCase
 
 	// public function testRender_Pages(): void
 	// {
-	// 	$table = (new TestPresenter)->getComponent('tableWithSource');
+	// 	$table = (new TestPresenter)->getComponent('tableTest');
 	// 	$table->renderPages();
 	// }
 
 
 	// public function testRender_Limiter(): void
 	// {
-	// 	$table = (new TestPresenter)->getComponent('tableWithSource');
+	// 	$table = (new TestPresenter)->getComponent('tableTest');
 	// 	$table->renderLimiter();
 	// }
 

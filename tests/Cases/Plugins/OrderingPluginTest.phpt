@@ -11,7 +11,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 use JuniWalk\DataTable\Exceptions\ColumnNotFoundException;
 use JuniWalk\DataTable\Exceptions\ColumnSortRequiredException;
-use JuniWalk\Tests\Files\TemplateFactory;
 use JuniWalk\Tests\Files\TestPresenter;
 use Nette\Application\AbortException;
 use Tester\Assert;
@@ -28,7 +27,7 @@ class OrderingPluginTest extends TestCase
 
 	public function testHandler(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->addOrderCallback(function(array $items, array $delta) {
 			Assert::same(array_keys($delta), array_column($items, 'id'));
 			Assert::same(actual: $delta, expected: [
@@ -78,12 +77,12 @@ class OrderingPluginTest extends TestCase
 
 	public function testRender(): void
 	{
-		$table = (new TestPresenter)->getComponent('tableWithSource');
+		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->setDefaultSort(['order' => 'asc']);
 		$table->clearRememberedState();
 
 		Assert::with($table, function() {
-			$template = (new TemplateFactory)->createTemplate();
+			$template = $this->createTemplate();
 			$this->onRenderOrdering($template);
 
 			Assert::true($template->attributes['data-dt-allow-ordering'] ?? null);
@@ -99,7 +98,7 @@ class OrderingPluginTest extends TestCase
 		$table->clearRememberedState();
 
 		Assert::with($table, function() {
-			$template = (new TemplateFactory)->createTemplate();
+			$template = $this->createTemplate();
 			$this->onRenderOrdering($template);
 
 			Assert::null($template->attributes['data-dt-allow-ordering'] ?? null);

@@ -11,7 +11,6 @@ require __DIR__ . '/../../bootstrap.php';
 
 use JuniWalk\DataTable\Actions;
 use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
-use JuniWalk\Tests\Files\TemplateFactory;
 use JuniWalk\Tests\Files\TestPresenter;
 use Tester\Assert;
 use Tester\TestCase;
@@ -67,19 +66,21 @@ class ToolbarPluginTest extends TestCase
 
 		$table->allowToolbarAction('button', false);
 
-		$template = (new TemplateFactory)->createTemplate();
-		Assert::with($table, fn() => $this->onRenderToolbar($template));
+		Assert::with($table, function() {
+			$template = $this->createTemplate();
+			$this->onRenderToolbar($template);
 
-		$actions = $template->toolbar ?? null;
+			$actions = $template->toolbar ?? null;
 
-		Assert::type('array', $actions);
-		Assert::count(3, $actions);
+			Assert::type('array', $actions);
+			Assert::count(3, $actions);
 
-		Assert::same(['grpA', 'grpB', 'grpC'], array_keys($actions));
-		Assert::hasNotKey('button', $actions['grpA']);
-		Assert::hasKey('link', $actions['grpA']);
-		Assert::hasKey('dropdown', $actions['grpB']);
-		Assert::hasKey('callback', $actions['grpC']);
+			Assert::same(['grpA', 'grpB', 'grpC'], array_keys($actions));
+			Assert::hasNotKey('button', $actions['grpA']);
+			Assert::hasKey('link', $actions['grpA']);
+			Assert::hasKey('dropdown', $actions['grpB']);
+			Assert::hasKey('callback', $actions['grpC']);
+		});
 	}
 }
 
