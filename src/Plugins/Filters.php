@@ -408,7 +408,7 @@ trait Filters
 	 */
 	protected function clearFilterValue(Filter $filter): void
 	{
-		if (!$this->isFiltering || !$filter->isFiltered()) {
+		if (!$this->isFiltering /*|| !$filter->isFiltered()*/) {
 			throw InvalidStateException::filterNotUsed($filter);
 		}
 
