@@ -98,9 +98,11 @@ class SelectListFilter extends AbstractFilter implements FilterList
 
 	public function attachToForm(Form $form): void
 	{
-		$form->addMultiSelect($this->fieldName(), $this->label, $this->items)
+		$input = $form->addMultiSelect($this->fieldName(), $this->label, $this->items)
 			->setValue($this->value ?? null)
 			->checkDefaultValue(false);
+
+		$this->applyAttributes($input);
 
 		$form->onSuccess[] = function($form, $data) {
 			$this->setValue((array) $data[$this->fieldName()]);

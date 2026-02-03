@@ -23,6 +23,7 @@ use JuniWalk\Utils\Format;
 use Nette\Application\UI\Component;
 use Nette\ComponentModel\IComponent;
 use Nette\ComponentModel\IContainer;
+use Nette\Forms\Controls\BaseControl;
 use Nette\Forms\Form;
 
 /**
@@ -30,6 +31,7 @@ use Nette\Forms\Form;
  */
 abstract class AbstractFilter extends Component implements Filter
 {
+	use Traits\Attributes;
 	use Traits\Translation;
 
 	protected ?Closure $condition = null;
@@ -156,6 +158,16 @@ abstract class AbstractFilter extends Component implements Filter
 	public function fieldName(): string
 	{
 		return FormatName::component($this->name);
+	}
+
+
+	protected function applyAttributes(BaseControl ...$inputs): true
+	{
+		return array_walk($inputs, function($input) {
+			foreach ($this->attributes as $key => $value) {
+				$input->setHtmlAttribute($key, $value);
+			}
+		});
 	}
 
 

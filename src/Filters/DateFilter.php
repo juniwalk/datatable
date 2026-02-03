@@ -71,8 +71,10 @@ class DateFilter extends AbstractFilter implements FilterSingle
 
 	public function attachToForm(Form $form): void
 	{
-		$form->addDate($this->fieldName(), $this->label)
+		$input = $form->addDate($this->fieldName(), $this->label)
 			->setValue($this->value ?? null);
+
+		$this->applyAttributes($input);
 
 		$form->onSuccess[] = function($form, $data) {
 			$this->setValue($data[$this->fieldName()] ?? null);

@@ -44,8 +44,10 @@ class DateTimeRangeFilter extends DateRangeFilter
 	public function attachToForm(Form $form): void
 	{
 		$range = $form->addContainer($this->fieldName());
-		$range->addDateTime('from', $this->label)->setValue($this->valueFrom);
-		$range->addDateTime('to', $this->label)->setValue($this->valueTo);
+		$inputFrom = $range->addDateTime('from', $this->label)->setValue($this->valueFrom);
+		$inputTo = $range->addDateTime('to', $this->label)->setValue($this->valueTo);
+
+		$this->applyAttributes($inputFrom, $inputTo);
 
 		$form->onSuccess[] = function($form, $data) {
 			$this->setValue([

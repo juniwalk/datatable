@@ -116,10 +116,10 @@ class NumberRangeFilter extends AbstractFilter implements FilterRange
 	public function attachToForm(Form $form): void
 	{
 		$range = $form->addContainer($this->fieldName());
-		$range->addFloat('from', $this->label)
-			->setValue($this->valueFrom ?? null);
-		$range->addFloat('to', $this->label)
-			->setValue($this->valueTo ?? null);
+		$inputFrom = $range->addFloat('from', $this->label)->setValue($this->valueFrom ?? null);
+		$inputTo = $range->addFloat('to', $this->label)->setValue($this->valueTo ?? null);
+
+		$this->applyAttributes($inputFrom, $inputTo);
 
 		$form->onSuccess[] = function($form, $data) {
 			$this->setValue([

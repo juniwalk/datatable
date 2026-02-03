@@ -100,10 +100,12 @@ class SelectFilter extends AbstractFilter implements FilterSingle
 			default => $this->placeholder,
 		};
 
-		$form->addSelect($this->fieldName(), $this->label, $this->items)
+		$input = $form->addSelect($this->fieldName(), $this->label, $this->items)
 			->setValue($this->value ?? null)
 			->checkDefaultValue(false)
 			->setPrompt($placeholder);
+
+		$this->applyAttributes($input);
 
 		$form->onSuccess[] = function($form, $data) {
 			$this->setValue($data[$this->fieldName()]);

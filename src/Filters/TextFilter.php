@@ -58,8 +58,10 @@ class TextFilter extends AbstractFilter implements FilterSingle
 
 	public function attachToForm(Form $form): void
 	{
-		$form->addText($this->fieldName(), $this->label)->setNullable(true)
+		$input = $form->addText($this->fieldName(), $this->label)->setNullable(true)
 			->setValue($this->value ?? null);
+
+		$this->applyAttributes($input);
 
 		$form->onSuccess[] = function($form, $data) {
 			$this->setValue($data[$this->fieldName()] ?? null);

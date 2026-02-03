@@ -138,9 +138,11 @@ class EnumListFilter extends AbstractFilter implements FilterList
 	{
 		$items = static::convert($this->getItems());
 
-		$form->addMultiSelect($this->fieldName(), $this->label, $items)
+		$input = $form->addMultiSelect($this->fieldName(), $this->label, $items)
 			->setValue($this->value ?? null)
 			->checkDefaultValue(false);
+
+		$this->applyAttributes($input);
 
 		$form->onSuccess[] = function($form, $data) {
 			$this->setValue((array) $data[$this->fieldName()]);

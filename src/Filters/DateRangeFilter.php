@@ -108,8 +108,10 @@ class DateRangeFilter extends AbstractFilter implements FilterRange
 	public function attachToForm(Form $form): void
 	{
 		$range = $form->addContainer($this->fieldName());
-		$range->addDate('from', $this->label)->setValue($this->valueFrom);
-		$range->addDate('to', $this->label)->setValue($this->valueTo);
+		$inputFrom = $range->addDate('from', $this->label)->setValue($this->valueFrom);
+		$inputTo = $range->addDate('to', $this->label)->setValue($this->valueTo);
+
+		$this->applyAttributes($inputFrom, $inputTo);
 
 		$form->onSuccess[] = function($form, $data) {
 			$this->setValue([

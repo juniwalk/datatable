@@ -148,10 +148,12 @@ class EnumFilter extends AbstractFilter implements FilterSingle
 			default => $this->placeholder,
 		};
 
-		$form->addSelect($this->fieldName(), $this->label, $items)
+		$input = $form->addSelect($this->fieldName(), $this->label, $items)
 			->setValue($this->value ?? null)
 			->checkDefaultValue(false)
 			->setPrompt($placeholder);
+
+		$this->applyAttributes($input);
 
 		$form->onSuccess[] = function($form, $data) {
 			$this->setValue($data[$this->fieldName()] ?? null);
