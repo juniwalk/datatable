@@ -161,16 +161,18 @@ class DoctrineSource extends AbstractSource
 	protected function getQuery(): Query
 	{
 		$qb = clone $this->queryBuilder;
-		$qb->addGroupBy($this->getPrimaryField());
 
-		$alias = $qb->getRootAliases()[0];
+		if ($qb->getDQLPart('join')) {
+			$qb->addGroupBy($this->getPrimaryField());
+			$alias = $qb->getRootAliases()[0];
 
-		foreach ($this->getOrderByFields() as $field) {
-			if (str_contains($field, $alias.'.')) {
-				continue;
+			foreach ($this->getOrderByFields() as $field) {
+				if (str_contains($field, $alias.'.')) {
+					continue;
+				}
+
+				$qb->addGroupBy($field);
 			}
-
-			$qb->addGroupBy($field);
 		}
 
 		$query = $qb->getQuery();
