@@ -55,6 +55,10 @@ class FormatValue
 			throw new OutOfBoundsException('Index "'.$value.'" is not in values list.');
 		}
 
+		if ($value === '') {
+			return null;
+		}
+
 		return $value;
 	}
 
