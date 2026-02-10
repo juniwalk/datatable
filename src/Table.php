@@ -11,6 +11,7 @@ use JuniWalk\DataTable\Actions\DropdownAction;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Exceptions\SourceMissingException;
 use JuniWalk\DataTable\Traits\Translation;
+use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Interfaces\EventAutoWatch;
 use JuniWalk\Utils\Interfaces\EventHandler;
 use JuniWalk\Utils\Traits\Events;
@@ -19,6 +20,7 @@ use Nette\Application\UI\Control;
 use Nette\Application\UI\Presenter;
 use Nette\Application\UI\Template;
 use Nette\ComponentModel\IContainer;
+use stdClass;
 use Stringable;
 
 class Table extends Control implements EventHandler, EventAutoWatch
@@ -48,6 +50,18 @@ class Table extends Control implements EventHandler, EventAutoWatch
 	public function getCaption(): Stringable|string|null
 	{
 		return $this->caption;
+	}
+
+
+	public function flashMessage(
+		Stringable|stdClass|string $message,
+		Color|string $type = Color::Secondary,
+	): stdClass {
+		if ($type instanceof Color) {
+			$type = $type->value;
+		}
+
+		return $this->getPresenter()->flashMessage($message, $type);
 	}
 
 
