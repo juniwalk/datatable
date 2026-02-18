@@ -22,12 +22,12 @@ limit:
 	none: 'Aucun'
 
 sort:
-	clear: 'Tri clair'
-	clear-custom: 'Effacer le tri personnalisé'
+	clear: 'Annuler le classement'
+	clear-custom: 'Effacer le classement personnalisé'
 
 filter:
 	select-placeholder: 'Tout…'
-	button: 'Filtre'
+	button: 'Filtrer'
 	pin: "Filtres à broches sur l'en-tête"
 	clear: 'Filtre clair'
 	clear-custom: 'Effacer le filtre personnalisé'
