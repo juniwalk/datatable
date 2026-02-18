@@ -1,0 +1,34 @@
+
+#
+# @copyright Martin Procházka (c) 2026
+# @license   MIT License
+#
+
+table:
+	empty: 'Aucun résultat trouvé.'
+
+column:
+	show-default: 'Afficher les colonnes par défaut'
+	show-all: 'Afficher toutes les colonnes'
+	action: 'Action'
+
+page:
+	prev: 'Précédent'
+	next: 'Suivant'
+
+limit:
+	rows: 'Entrées: %from% - %to% sur %count%'
+	label: 'Limite'
+	none: 'Aucun'
+
+sort:
+	clear: 'Tri clair'
+	clear-custom: 'Effacer le tri personnalisé'
+
+filter:
+	select-placeholder: 'Tout…'
+	button: 'Filtre'
+	pin: "Filtres à broches sur l'en-tête"
+	clear: 'Filtre clair'
+	clear-custom: 'Effacer le filtre personnalisé'
+	clear-short: 'clair'
