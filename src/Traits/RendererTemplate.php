@@ -18,8 +18,25 @@ use Throwable;
  */
 trait RendererTemplate
 {
+	/** @var array<string, mixed> */
+	protected ?array $templateParams = null;
 	protected ?string $templateFile = null;
 	protected bool $strictRender = false;
+
+
+	/**
+	 * @param  array<string, mixed> $params
+	 * @throws InvalidStateException
+	 */
+	public function setTemplateParams(?array $params): static
+	{
+		if (isset($params['item'])) {
+			throw InvalidStateException::customParamReserved($this, 'item');
+		}
+
+		$this->templateParams = $params;
+		return $this;
+	}
 
 
 	/**
@@ -71,7 +88,10 @@ trait RendererTemplate
 
 		$template = $this->getTemplate();
 		$template->setFile($this->templateFile);
-		$template->item = $row->getItem();
+
+		$params = array_merge($params, $this->templateParams ?? [], [
+			'item' => $row->getItem(),
+		]);
 
 		return Output::captureTemplate($template, $params);
 	}

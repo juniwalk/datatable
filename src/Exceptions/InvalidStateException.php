@@ -29,6 +29,12 @@ final class InvalidStateException extends AbstractTableException
 	}
 
 
+	public static function customParamReserved(IComponent $component, string $param): static
+	{
+		return new static('Parameter "'.$param.'" in custom renderer for "'.Format::className($component, Casing::Pascal).'#'.$component->getName().'" is reserved.');
+	}
+
+
 	/**
 	 * @param int[] $limits
 	 */
