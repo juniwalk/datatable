@@ -10,6 +10,7 @@ namespace JuniWalk\DataTable;
 use JuniWalk\DataTable\Exceptions\FieldInvalidException;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use JuniWalk\DataTable\Traits\Attributes;
+use Stringable;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Throwable;
@@ -98,6 +99,10 @@ class Row
 	{
 		if (!$id = $this->getValue($primaryKey)) {
 			throw FieldNotFoundException::fromName($primaryKey);
+		}
+
+		if ($id instanceof Stringable) {
+			$id = (string) $id;
 		}
 
 		if (!is_string($id) && !is_int($id)) {
