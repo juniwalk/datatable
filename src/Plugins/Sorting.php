@@ -123,17 +123,14 @@ trait Sorting
 	/**
 	 * @param  array<string, Sort|value-of<Sort>> $sortDefault
 	 * @throws ColumnNotFoundException
-	 * @throws ColumnNotSortableException
 	 */
 	public function setDefaultSort(array $sortDefault): static
 	{
 		$this->sortDefault = [];
 
 		foreach ($sortDefault as $name => $sort) {
-			$column = $this->getColumn($name);
-
-			if (!$this->isSortable && !$column->isSortable()) {
-				throw ColumnNotSortableException::fromName($name);
+			if (!$this->getColumn($name, false)) {
+				throw ColumnNotFoundException::fromName($name);
 			}
 
 			$this->sortDefault[$name] = Sort::make($sort, true);

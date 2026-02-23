@@ -27,9 +27,10 @@ class SortingPluginTest extends TestCase
 		Assert::false($table->isSortMultiple());
 		Assert::false($table->isSortable());
 
-		Assert::exception(
+		Assert::noError(
+		// Assert::exception(
 			fn() => $table->setDefaultSort(['name' => 'asc']),
-			ColumnNotSortableException::class,
+			// ColumnNotSortableException::class,
 		);
 
 		$table->setSortable()->setSortMultiple();
