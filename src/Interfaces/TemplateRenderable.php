@@ -11,7 +11,7 @@ use JuniWalk\DataTable\Row;
 
 interface TemplateRenderable
 {
-	public function setTemplateFile(?string $templateFile, bool $strict = false): static;
+	public function setTemplateFile(?string $templateFile): static;
 	public function getTemplateFile(): ?string;
 	public function hasTemplateFile(): bool;
 

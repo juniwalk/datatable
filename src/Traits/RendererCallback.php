@@ -13,7 +13,6 @@ use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Interfaces\CallbackRenderable;
 use JuniWalk\DataTable\Row;
 use Nette\Utils\Html;
-use Throwable;
 
 /**
  * @phpstan-require-implements CallbackRenderable
@@ -21,12 +20,10 @@ use Throwable;
 trait RendererCallback
 {
 	protected ?Closure $renderer = null;
-	protected bool $strictRender = true;
 
 
-	public function setRenderer(?Closure $renderer, bool $strict = true): static
+	public function setRenderer(?Closure $renderer): static
 	{
-		$this->strictRender = $strict;
 		$this->renderer = $renderer;
 		return $this;
 	}
@@ -49,11 +46,7 @@ trait RendererCallback
 		try {
 			echo $this->callbackRender($row, ...$params);
 
-		} catch (InvalidStateException $e) {
-		}
-
-		if ($this->strictRender && isset($e)) {
-			throw $e;
+		} catch (InvalidStateException) {
 		}
 	}
 

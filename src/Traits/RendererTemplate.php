@@ -11,7 +11,6 @@ use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Interfaces\TemplateRenderable;
 use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Tools\Output;
-use Throwable;
 
 /**
  * @phpstan-require-implements TemplateRenderable
@@ -21,7 +20,6 @@ trait RendererTemplate
 	/** @var array<string, mixed> */
 	protected ?array $templateParams = null;
 	protected ?string $templateFile = null;
-	protected bool $strictRender = true;
 
 
 	/**
@@ -42,13 +40,12 @@ trait RendererTemplate
 	/**
 	 * @throws InvalidStateException
 	 */
-	public function setTemplateFile(?string $templateFile, bool $strict = true): static
+	public function setTemplateFile(?string $templateFile): static
 	{
 		if ($templateFile && !file_exists($templateFile)) {
 			throw InvalidStateException::customRendererMissing($this, 'template');
 		}
 
-		$this->strictRender = $strict;
 		$this->templateFile = $templateFile;
 		return $this;
 	}
@@ -72,10 +69,6 @@ trait RendererTemplate
 			echo $this->templateRender($row, ...$params);
 
 		} catch (InvalidStateException $e) {
-		}
-
-		if ($this->strictRender && isset($e)) {
-			throw $e;
 		}
 	}
 
