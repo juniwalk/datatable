@@ -81,6 +81,9 @@ trait Sources
 
 	protected function createModel(): mixed { return null; }
 	protected function createTable(): void {}
+	protected function createFilters(): void {}
+	protected function createActions(): void {}
+	protected function applySettings(): void {}
 
 
 	/**
@@ -123,5 +126,9 @@ trait Sources
 		}
 
 		$this->createTable();
+		$this->createFilters();
+		$this->createActions();
+
+		$this->applySettings();
 	}
 }

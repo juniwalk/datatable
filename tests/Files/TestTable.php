@@ -25,7 +25,11 @@ class TestTable extends Table
 		$this->addColumnNumber('height', 'Height');
 		$this->addColumnDropdown('align', 'Align', Align::cases())->setLink('this');
 		$this->addColumnNumber('id', '#')->setSortable(true);
+	}
 
+
+	protected function createFilters(): void
+	{
 		$this->addFilterText('name', 'Name');
 		$this->addFilterEnumList('align', 'Align', Align::class);
 	}
