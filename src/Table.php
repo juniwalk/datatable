@@ -10,6 +10,7 @@ namespace JuniWalk\DataTable;
 use JuniWalk\DataTable\Actions\DropdownAction;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Exceptions\SourceMissingException;
+use JuniWalk\DataTable\Traits\Attributes;
 use JuniWalk\DataTable\Traits\Translation;
 use JuniWalk\Utils\Enums\Color;
 use JuniWalk\Utils\Interfaces\EventAutoWatch;
@@ -25,7 +26,7 @@ use Stringable;
 
 class Table extends Control implements EventHandler, EventAutoWatch
 {
-	use Events, Translation, RedirectAjaxHandler;
+	use Attributes, Events, Translation, RedirectAjaxHandler;
 
 	use Plugins\Session;
 	use Plugins\Sources;
@@ -73,13 +74,13 @@ class Table extends Control implements EventHandler, EventAutoWatch
 		$template = $this->createTemplate();
 		$template->setFile(__DIR__.'/templates/table.latte');
 
-		$template->attributes = [
-			'data-dt-table' => $this->getName(),
-		];
+		$this->addAttribute('class', 'card card-outline card-secondary');
+		$this->setAttribute('data-dt-table', $this->getName());
 
 		$this->getSettingsAction();
 		$this->trigger('render', $template);
 
+		$template->attributes = $this->attributes;
 		$template->rows = $this->getRows();
 		$template->table = $this;
 		$template->render();

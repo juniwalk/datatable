@@ -85,8 +85,8 @@ class OrderingPluginTest extends TestCase
 			$template = $this->createTemplate();
 			$this->onRenderOrdering($template);
 
-			Assert::true($template->attributes['data-dt-allow-ordering'] ?? null);
 			Assert::type('string', $template->signalOrdering ?? null);
+			Assert::true($this->hasAttribute('data-dt-allow-ordering'));
 			Assert::false($this->findOrderColumn()->isDisabled());
 		});
 	}
@@ -101,8 +101,8 @@ class OrderingPluginTest extends TestCase
 			$template = $this->createTemplate();
 			$this->onRenderOrdering($template);
 
-			Assert::null($template->attributes['data-dt-allow-ordering'] ?? null);
 			Assert::null($template->signalOrdering ?? null);
+			Assert::false($this->hasAttribute('data-dt-allow-ordering'));
 		});
 	}
 }

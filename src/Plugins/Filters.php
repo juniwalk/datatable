@@ -430,7 +430,7 @@ trait Filters
 
 	protected function onRenderFilters(Template $template): void
 	{
-		$template->attributes['data-dt-allow-autosubmit'] = $this->autoSubmit;
+		$this->setAttribute('data-dt-allow-autosubmit', $this->autoSubmit ? 'true' : null);
 		$template->autoSubmit = $this->autoSubmit;
 		$template->filtering = $this->isFiltering;
 		$template->filters = $this->filters;

@@ -79,7 +79,7 @@ trait Ordering
 			return;
 		}
 
-		$template->attributes['data-dt-allow-ordering'] = true;
+		$this->setAttribute('data-dt-allow-ordering', 'true');
 		$template->signalOrdering = $this->link('ordering!');
 
 		if (!in_array($column, $this->getColumnsSorted())) {
