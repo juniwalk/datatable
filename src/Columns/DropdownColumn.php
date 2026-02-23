@@ -117,7 +117,8 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 
 	protected function createActions(Table $table): void
 	{
-		$this->dropdown = $table->addActionDropdown($this->name, '');
+		$this->dropdown = $table->addActionDropdown($this->name, '')
+			->setAlign($this->align);
 
 		foreach ($this->items as $item) {
 			$option = $this->createOption($item);

@@ -7,6 +7,7 @@
 
 namespace JuniWalk\DataTable\Actions;
 
+use JuniWalk\DataTable\Enums\Align;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\DataTable\Plugins\Actions;
 use JuniWalk\DataTable\Row;
@@ -18,6 +19,23 @@ class DropdownAction extends ButtonAction
 	use Actions;
 
 	protected string $tag = 'button';
+	protected Align $align = Align::Right;
+
+
+	/**
+	 * @param value-of<Align> $align
+	 */
+	public function setAlign(Align|string $align): static
+	{
+		$this->align = Align::make($align);
+		return $this;
+	}
+
+
+	public function getAlign(): Align
+	{
+		return $this->align;
+	}
 
 
 	public function addDivider(): static
@@ -37,7 +55,11 @@ class DropdownAction extends ButtonAction
 		$button->setAttribute('data-bs-toggle', 'dropdown');
 		$button->addClass('dropdown-toggle');
 
-		$dropdown = Html::el('div class="dropdown-menu dropdown-menu-end"');
+		$dropdown = Html::el('div class="dropdown-menu"');
+
+		if ($this->align === Align::Right) {
+			$dropdown->addClass('dropdown-menu-end');
+		}
 
 		foreach ($this->actions as $action) {
 			$item = $action->createButton($row);
