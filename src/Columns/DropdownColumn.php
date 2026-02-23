@@ -127,8 +127,7 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 
 			$action = $this->dropdown->addActionLink((string) $option->value, $option->label)
 				->setLink($this->dest ?? $this->name.'!', $arguments)
-				// ->addAttribute('class', $option->color?->for('text'))
-				->setIcon($option->icon);
+				->setIcon($option->icon, color: $option->color);
 
 			if ($this->actionCallback ?? false) {
 				$action->setAllowCondition(function($item) use ($option) {
