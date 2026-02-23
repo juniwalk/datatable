@@ -49,8 +49,11 @@ trait RendererCallback
 		try {
 			echo $this->callbackRender($row, ...$params);
 
-		} catch (Throwable $e) {
-			$this->strictRender && throw $e;
+		} catch (InvalidStateException $e) {
+		}
+
+		if ($this->strictRender && isset($e)) {
+			throw $e;
 		}
 	}
 
@@ -67,7 +70,11 @@ trait RendererCallback
 
 		$html = call_user_func($this->renderer, $row->getItem(), ...$params);
 
-		if (!is_null($html) && !(is_string($html) || $html instanceof Html)) {
+		if (empty($html)) {
+			return null;
+		}
+
+		if (!is_string($html) && !$html instanceof Html) {
 			throw FieldInvalidException::fromComponent($this, $html, 'Html|string|null');
 		}
 

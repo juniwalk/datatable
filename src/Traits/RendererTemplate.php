@@ -71,8 +71,11 @@ trait RendererTemplate
 		try {
 			echo $this->templateRender($row, ...$params);
 
-		} catch (Throwable $e) {
-			$this->strictRender && throw $e;
+		} catch (InvalidStateException $e) {
+		}
+
+		if ($this->strictRender && isset($e)) {
+			throw $e;
 		}
 	}
 
