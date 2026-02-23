@@ -21,7 +21,7 @@ trait RendererTemplate
 	/** @var array<string, mixed> */
 	protected ?array $templateParams = null;
 	protected ?string $templateFile = null;
-	protected bool $strictRender = false;
+	protected bool $strictRender = true;
 
 
 	/**
@@ -42,7 +42,7 @@ trait RendererTemplate
 	/**
 	 * @throws InvalidStateException
 	 */
-	public function setTemplateFile(?string $templateFile, bool $strict = false): static
+	public function setTemplateFile(?string $templateFile, bool $strict = true): static
 	{
 		if ($templateFile && !file_exists($templateFile)) {
 			throw InvalidStateException::customRendererMissing($this, 'template');

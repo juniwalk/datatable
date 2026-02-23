@@ -21,10 +21,10 @@ use Throwable;
 trait RendererCallback
 {
 	protected ?Closure $renderer = null;
-	protected bool $strictRender = false;
+	protected bool $strictRender = true;
 
 
-	public function setRenderer(?Closure $renderer, bool $strict = false): static
+	public function setRenderer(?Closure $renderer, bool $strict = true): static
 	{
 		$this->strictRender = $strict;
 		$this->renderer = $renderer;
