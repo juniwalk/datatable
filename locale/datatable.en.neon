@@ -17,7 +17,7 @@ page:
 	next: 'Next'
 
 limit:
-	rows: 'Entries: %from% - %to% out of %count%'
+	rows: 'Entries&#58; %from% - %to% out of %count%'
 	label: 'Limit'
 	none: 'None'
 

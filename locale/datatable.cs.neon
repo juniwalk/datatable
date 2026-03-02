@@ -17,7 +17,7 @@ page:
 	next: 'Další'
 
 limit:
-	rows: 'Záznamy: %from% - %to% z %count%'
+	rows: 'Záznamy&#58; %from% - %to% z %count%'
 	label: 'Limit'
 	none: 'Žádný'
 

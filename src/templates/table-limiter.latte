@@ -1,6 +1,6 @@
 {var $none = ('datatable.limit.none'|translate)}
 <div class="input-group input-group-sm">
-	<span class="input-group-text text-secondary">{_datatable.limit.rows, [from: $offsetStart, to: $offsetEnd, count: $count]}</span>
+	<span class="input-group-text text-secondary">{='datatable.limit.rows'|translate:[from: $offsetStart, to: $offsetEnd, count: $count]|noescape}</span>
 	<div class="dropup">
 		<button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-start-0" type="button" data-bs-toggle="dropdown">{_datatable.limit.label}: <strong>{$limit ?: $none|lower}</strong></button>
 		<ul class="dropdown-menu dropdown-menu-end" style="min-width: auto" n:inner-foreach="$limits as $_limit">
