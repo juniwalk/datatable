@@ -488,7 +488,6 @@ trait Filters
 		$form = new Form;
 		$form->setTranslator($this->getTranslator());
 		$form->addSubmit('__submit');
-		$form->addProtection();
 
 		// ? Filter values are set in onSuccess attached in Filter::attachToForm()
 		Arrays::map($this->filters, fn($filter) => $filter->attachToForm($form));

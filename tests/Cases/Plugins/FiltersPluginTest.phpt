@@ -198,14 +198,10 @@ class FiltersPluginTest extends TestCase
 		$table->addFilterText('text', 'Text');
 
 		$form = $table->getComponent('filterForm');
-		$token = $form[$form::ProtectorId];
 
 		Assert::type(Controls\DateTimeControl::class, $form['date']);
 		Assert::type(Controls\SelectBox::class, $form['enum']);
 		Assert::type(Controls\TextInput::class, $form['text']);
-
-		// ? Set token from CSRF protection into value property of Control
-		Assert::with($token, fn() => $this->value = $this->getControl()->value);
 
 		$form->setValues(['text' => 'Jane Doe']);
 		$form->setSubmittedBy($form['__submit']);
