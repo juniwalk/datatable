@@ -53,6 +53,8 @@ class ArraySource extends AbstractSource
 
 
 	/**
+	 * ? Row gets filtered out if the apply condition returns false
+	 *
 	 * @param  array<string, FilterStruct> $filters
 	 * @throws FilterInvalidException
 	 */
@@ -177,7 +179,7 @@ class ArraySource extends AbstractSource
 	protected function applyFilterList(Filter&FilterList $filter, Row $row): bool
 	{
 		if (!$filter->isFiltered()) {
-			return false;
+			return true;
 		}
 
 		$query = $filter->getValue() ?? [];
@@ -197,7 +199,7 @@ class ArraySource extends AbstractSource
 	protected function applyFilterRange(Filter&FilterRange $filter, Row $row): bool
 	{
 		if (!$filter->isFiltered()) {
-			return false;
+			return true;
 		}
 
 		$queryFrom = $filter->getValueFrom();
@@ -224,7 +226,7 @@ class ArraySource extends AbstractSource
 	protected function applyFilterSingle(Filter&FilterSingle $filter, Row $row): bool
 	{
 		if (!$filter->isFiltered()) {
-			return false;
+			return true;
 		}
 
 		$query = $filter->getValue();
@@ -234,7 +236,7 @@ class ArraySource extends AbstractSource
 			$isMatching = match (true) {
 				$filter instanceof Filters\DateFilter => Compare::date($value, $query),
 				$filter instanceof Filters\EnumFilter => Compare::enum($value, $query, $filter->getEnumType()),
-				$filter instanceof Filters\TextFilter => Compare::string($value, $query),
+				$filter instanceof Filters\TextFilter => Compare::match($value, $query),
 				$filter instanceof Filters\SelectFilter => Compare::string($value, $query),
 
 				default => $value == $query,

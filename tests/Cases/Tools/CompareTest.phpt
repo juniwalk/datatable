@@ -19,8 +19,15 @@ class CompareTest extends TestCase
 {
 	public function testString(): void
 	{
-		Assert::false(Compare::string('Hello', 'hello'));
-		Assert::true(Compare::string('John', 'Jenna'));
+		Assert::false(Compare::string('John', 'Jenna'));
+		Assert::true(Compare::string('Hello', 'hello'));
+	}
+
+
+	public function testMatch(): void
+	{
+		Assert::false(Compare::match('John', 'Jenna'));
+		Assert::true(Compare::match('Hello', 'hello'));
 	}
 
 

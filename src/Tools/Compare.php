@@ -20,8 +20,21 @@ class Compare
 	{
 		$value = FormatValue::string($value) ?? '';
 		$query = FormatValue::string($query) ?? '';
+		return strcasecmp($value, $query) === 0;
+	}
 
-		return strcasecmp($value, $query) <> 0;
+
+	public static function match(mixed $value, mixed $query): bool
+	{
+		$value = FormatValue::string($value) ?? '';
+		$query = FormatValue::string($query) ?? '';
+
+		$pattern = array_map(
+			fn($x) => preg_quote($x, '/'),
+			explode(' ', $query),
+		);
+
+		return (bool) preg_match('/'.implode('|', $pattern).'/i', $value);
 	}
 
 
