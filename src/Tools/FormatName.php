@@ -17,6 +17,10 @@ class FormatName
 
 	public static function component(string $name): string
 	{
+		if (preg_match('#^[a-zA-Z0-9_]+$#D', $name)) {
+			return $name;
+		}
+
 		$name = Format::kebabCase($name);
 		$name = Strings::webalize($name);
 		return Format::camelCase($name);
