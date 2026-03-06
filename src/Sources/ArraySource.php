@@ -206,7 +206,7 @@ class ArraySource extends AbstractSource
 		foreach ($filter->getColumns() as $column) {
 			$value = $row->getValue($column);
 
-			if ($queryFrom && $value < $queryFrom) {
+			if ($queryFrom && $value <= $queryFrom) {
 				continue;
 			}
 

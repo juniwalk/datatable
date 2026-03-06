@@ -301,7 +301,7 @@ class DoctrineSource extends AbstractSource
 		}
 
 		if ($queryTo = $filter->getValueTo()) {
-			$this->queryBuilder->andWhere("{$field} < :{$param}E")
+			$this->queryBuilder->andWhere("{$field} <= :{$param}E")
 				->setParameter($param.'E', $queryTo);
 		}
 	}
