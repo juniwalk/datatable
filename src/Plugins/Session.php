@@ -80,10 +80,7 @@ trait Session
 			'controlName'	=> $this->getUniqueId(),
 		]);
 
-		if ($this->rememberState === null && $presenter->getSession()->isStarted()) {
-			$this->rememberState = true;
-		}
-
+		$this->rememberState ??= $presenter->getSession()->isStarted();
 		$this->session = $presenter->getSession($sessionName);
 	}
 }
