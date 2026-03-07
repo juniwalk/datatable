@@ -14,7 +14,7 @@ use Nette\Http\SessionSection;
 
 trait Session
 {
-	protected bool $rememberState = false;
+	protected ?bool $rememberState = null;
 
 	protected SessionSection $session;
 
@@ -40,7 +40,7 @@ trait Session
 	}
 
 
-	public function setRememberState(bool $rememberState = true): static
+	public function setRememberState(?bool $rememberState = true): static
 	{
 		$this->rememberState = $rememberState;
 		return $this;
@@ -49,7 +49,7 @@ trait Session
 
 	public function isRememberState(): bool
 	{
-		return $this->rememberState;
+		return $this->rememberState ?? false;
 	}
 
 
@@ -79,6 +79,10 @@ trait Session
 			'presenterName'	=> $presenter->getName(),
 			'controlName'	=> $this->getUniqueId(),
 		]);
+
+		if ($this->rememberState === null && $presenter->getSession()->isStarted()) {
+			$this->rememberState = true;
+		}
 
 		$this->session = $presenter->getSession($sessionName);
 	}
