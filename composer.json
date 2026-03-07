@@ -37,8 +37,10 @@
     },
 
 	"require-dev": {
+		"contributte/translation": "^2.0",
 		"doctrine/orm": "^3.0",
 		"latte/latte": "^3.0",
+		"nette/di": "^3.0",
 		"nette/tester": "^2.0",
 		"phpstan/extension-installer": "^1.0",
 		"phpstan/phpstan": "^2.0",
