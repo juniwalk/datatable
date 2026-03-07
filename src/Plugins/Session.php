@@ -24,15 +24,15 @@ trait Session
 	 */
 	public function loadState(array $params): void
 	{
-		if ($this->rememberState && $this->getOption(Option::IsFiltered, false)) {
+		if ($this->getOption(Option::IsFiltered, false)) {
 			$params['filter'] ??= $this->getOption(Option::StateFilters, []);
 		}
 
-		if ($this->rememberState && $this->getOption(Option::IsLimited, false)) {
+		if ($this->getOption(Option::IsLimited, false)) {
 			$params['limit'] ??= $this->getOption(Option::StateLimit, null);
 		}
 
-		if ($this->rememberState && $this->getOption(Option::IsSorted, false)) {
+		if ($this->getOption(Option::IsSorted, false)) {
 			$params['sort'] ??= $this->getOption(Option::StateSorting, []);
 		}
 
