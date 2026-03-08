@@ -85,7 +85,7 @@ trait Filters
 			$this->clearFilterValue($filter);
 		}
 
-		$this->setOption(Option::IsFiltered, false);
+		$this->setOption(Option::IsFiltered);
 
 		$this->redrawControl();
 		$this->redirect('this');

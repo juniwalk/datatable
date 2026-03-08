@@ -68,7 +68,7 @@ trait Sorting
 
 	public function handleClearSort(): void
 	{
-		$this->setOption(Option::IsSorted, false);
+		$this->setOption(Option::IsSorted);
 		$this->sort = [];
 
 		if ($this->rememberState) {

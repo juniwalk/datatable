@@ -55,7 +55,7 @@ trait Columns
 
 	public function handleShowDefault(): void
 	{
-		$this->setOption(Option::StateColumns, null);
+		$this->setOption(Option::StateColumns);
 
 		$this->redrawControl('toolbar');
 		$this->redrawControl('table');
