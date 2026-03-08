@@ -47,6 +47,10 @@ trait Sorting
 
 	public function isSorted(): ?Sort
 	{
+		if (!$this->isSortable) {
+			return null;
+		}
+
 		return $this->sort;
 	}
 }
