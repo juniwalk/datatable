@@ -13,6 +13,8 @@ namespace JuniWalk\DataTable;
  */
 interface Source
 {
+	public static function isModel(mixed $model): bool;
+
 	public function setPrimaryKey(string $primaryKey): static;
 	public function getPrimaryKey(): string;
 

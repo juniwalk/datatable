@@ -35,13 +35,18 @@ class DoctrineORMSource extends AbstractSource
 	/** @var array<string, mixed> */
 	protected array $hints = [];
 
-
 	public function __construct(
 		protected QueryBuilder $queryBuilder,
 		protected string $primaryKey = 'id',
 	) {
 		$this->placeholder = sizeof($queryBuilder->getParameters());
 		$this->copy = clone $queryBuilder;
+	}
+
+
+	public static function isModel(mixed $model): bool
+	{
+		return $model instanceof QueryBuilder;
 	}
 
 

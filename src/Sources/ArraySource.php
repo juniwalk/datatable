@@ -31,7 +31,6 @@ class ArraySource extends AbstractSource
 	/** @var Items */
 	protected readonly array $copy;
 
-
 	/**
 	 * @param Items $items
 	 */
@@ -41,6 +40,12 @@ class ArraySource extends AbstractSource
 	) {
 		$this->count = sizeof($items);
 		$this->copy = $items;
+	}
+
+
+	public static function isModel(mixed $model): bool
+	{
+		return is_array($model);
 	}
 
 
