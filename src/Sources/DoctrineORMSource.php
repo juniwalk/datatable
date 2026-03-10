@@ -61,11 +61,23 @@ class DoctrineORMSource extends AbstractSource
 
 	public function getCount(): ?int
 	{
-		if ($this->isIndeterminate) {
-			return null;
+		if ($this->isIndeterminate || isset($this->count)) {
+			return $this->count ?? null;
 		}
 
-		return $this->count ??= (int) $this->getQueryCount()->getSingleScalarResult();
+		$query = clone $this->queryBuilder;
+		$query->select(sprintf('COUNT(DISTINCT %s)', $this->getPrimaryField()));
+		$query->resetDQLPart('orderBy');
+		$query->resetDQLPart('groupBy');
+		$query->setFirstResult(0);
+		$query->setMaxResults(null);
+
+		foreach ($this->hints as $name => $value) {
+			$query->setHint($name, $value);
+		}
+
+		$count = $query->getQuery()->getSingleScalarResult();
+		return $this->count ??= (int) $count;
 	}
 
 
@@ -158,54 +170,27 @@ class DoctrineORMSource extends AbstractSource
 	 */
 	protected function fetchData(): array
 	{
-		/** @var Items */
-		return $this->getQuery()->getResult();
-	}
+		$query = clone $this->queryBuilder;
 
-
-	protected function getQuery(): Query
-	{
-		$qb = clone $this->queryBuilder;
-
-		if ($qb->getDQLPart('join')) {
-			$qb->addGroupBy($this->getPrimaryField());
-			$alias = $qb->getRootAliases()[0];
+		if ($query->getDQLPart('join')) {
+			$query->addGroupBy($this->getPrimaryField());
+			$alias = $query->getRootAliases()[0];
 
 			foreach ($this->getOrderByFields() as $field) {
 				if (str_contains($field, $alias.'.')) {
 					continue;
 				}
 
-				$qb->addGroupBy($field);
+				$query->addGroupBy($field);
 			}
 		}
 
-		$query = $qb->getQuery();
-
 		foreach ($this->hints as $name => $value) {
 			$query->setHint($name, $value);
 		}
 
-		return $query;
-	}
-
-
-	protected function getQueryCount(): Query
-	{
-		$count = clone $this->queryBuilder;
-		$count->select(sprintf('COUNT(DISTINCT %s)', $this->getPrimaryField()));
-		$count->resetDQLPart('orderBy');
-		$count->resetDQLPart('groupBy');
-		$count->setFirstResult(0);
-		$count->setMaxResults(null);
-
-		$query = $count->getQuery();
-
-		foreach ($this->hints as $name => $value) {
-			$query->setHint($name, $value);
-		}
-
-		return $query;
+		/** @var Items */
+		return $query->getQuery()->getResult();
 	}
 
 
