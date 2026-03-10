@@ -27,7 +27,7 @@ use JuniWalk\DataTable\Tools\FormatValue;
 /**
  * @phpstan-import-type Items from Source
  */
-class DoctrineSource extends AbstractSource
+class DoctrineORMSource extends AbstractSource
 {
 	protected readonly QueryBuilder $copy;
 	protected int $placeholder;

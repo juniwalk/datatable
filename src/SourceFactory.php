@@ -10,7 +10,7 @@ namespace JuniWalk\DataTable;
 use Doctrine\ORM\QueryBuilder;
 use JuniWalk\DataTable\Exceptions\SourceUnknownException;
 use JuniWalk\DataTable\Sources\ArraySource;
-use JuniWalk\DataTable\Sources\DoctrineSource;
+use JuniWalk\DataTable\Sources\DoctrineORMSource;
 
 final class SourceFactory
 {
@@ -27,7 +27,7 @@ final class SourceFactory
 		}
 
 		return match (true) {
-			$model instanceof QueryBuilder	=> new DoctrineSource($model),
+			$model instanceof QueryBuilder	=> new DoctrineORMSource($model),
 			is_array($model)				=> new ArraySource($model),	// @phpstan-ignore argument.type
 
 			default => throw SourceUnknownException::fromModel($model),
