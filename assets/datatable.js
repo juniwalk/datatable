@@ -111,6 +111,12 @@ JuniWalk.DataTable.AutoSubmitExtension = class {
 				}
 
 				element.addEventListener(eventType, this.#debounce((event) => this.#submit(element, event)));
+
+				if (eventType !== 'keyup') {
+					return
+				}
+
+				element.addEventListener('paste', this.#debounce((event) => this.#submit(element, event)));
 			});
 	}
 
