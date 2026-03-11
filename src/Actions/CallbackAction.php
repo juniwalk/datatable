@@ -23,7 +23,7 @@ class CallbackAction extends AbstractAction implements EventHandler
 		protected string $label,
 		protected string $group = '',
 	) {
-		$this->watch('click');
+		$this->watchAny('render,click');
 	}
 
 
@@ -44,6 +44,9 @@ class CallbackAction extends AbstractAction implements EventHandler
 	public function createButton(?Row $row): Html
 	{
 		$button = parent::createButton($row);
+
+		$this->trigger('render', $button, $row);
+
 		$button->setHref($this->link('action!', [
 			'id' => $row?->getId(),
 		]));
