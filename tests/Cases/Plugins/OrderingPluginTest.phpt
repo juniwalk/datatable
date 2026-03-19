@@ -11,6 +11,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 use JuniWalk\DataTable\Exceptions\ColumnNotFoundException;
 use JuniWalk\DataTable\Exceptions\ColumnSortRequiredException;
+use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use JuniWalk\Tests\Files\TestPresenter;
 use Nette\Application\AbortException;
 use Tester\Assert;
@@ -62,9 +63,23 @@ class OrderingPluginTest extends TestCase
 	}
 
 
+	public function testHandler_Missing_Callabck(): void
+	{
+		$table = (new TestPresenter)->getComponent('table');
+		$table->clearRememberedState();
+
+		Assert::exception(
+			// ! Missing OrderCallback event handler
+			fn() => $table->handleOrdering(static::Delta),
+			InvalidStateException::class,
+		);
+	}
+
+
 	public function testHandler_Missing_OrderColumn(): void
 	{
 		$table = (new TestPresenter)->getComponent('table');
+		$table->addOrderCallback(fn() => true);
 		$table->clearRememberedState();
 
 		Assert::exception(
@@ -79,6 +94,7 @@ class OrderingPluginTest extends TestCase
 	{
 		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->setDefaultSort(['order' => 'asc']);
+		$table->addOrderCallback(fn() => true);
 		$table->clearRememberedState();
 
 		Assert::with($table, function() {

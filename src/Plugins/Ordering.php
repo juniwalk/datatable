@@ -17,6 +17,8 @@ use Nette\Application\UI\Template;
 
 trait Ordering
 {
+	private bool $isListeningOrder = false;
+
 	/**
 	 * @param  int[] $delta
 	 * @throws ColumnNotFoundException
@@ -27,6 +29,10 @@ trait Ordering
 	{
 		$delta = array_map('intval', $delta);
 		$delta = array_filter($delta);
+
+		if (!$this->isListeningOrder) {
+			throw InvalidStateException::callbackMissing($this, 'orderCallback');
+		}
 
 		if (!$column = $this->findOrderColumn()) {
 			throw ColumnNotFoundException::fromClass(OrderColumn::class);
@@ -60,6 +66,8 @@ trait Ordering
 	public function addOrderCallback(callable $callback): static
 	{
 		$this->when('order', $callback);
+		$this->isListeningOrder = true;
+
 		return $this;
 	}
 
@@ -82,7 +90,7 @@ trait Ordering
 		$this->setAttribute('data-dt-allow-ordering', 'true');
 		$template->signalOrdering = $this->link('ordering!');
 
-		if (!in_array($column, $this->getColumnsSorted())) {
+		if (!in_array($column, $this->getColumnsSorted()) || !$this->isListeningOrder) {
 			$template->signalOrdering = false;
 			$column->setDisabled(true);
 		}
