@@ -8,7 +8,6 @@
 namespace JuniWalk\DataTable\Sources;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Doctrine\ORM\QueryBuilder;
 use JuniWalk\DataTable\Column;
@@ -128,8 +127,9 @@ class DoctrineORMSource extends AbstractSource
 		$field = $this->getPrimaryField();
 		$param = $this->getPlaceholder();
 
-		$this->queryBuilder->andWhere("{$field} IN(:{$param})")
-			->setParameter($param, $id);
+		$this->addWhere($field, "%s IN(:{$param})", [
+			$param => $id,
+		]);
 	}
 
 
@@ -181,12 +181,21 @@ class DoctrineORMSource extends AbstractSource
 					continue;
 				}
 
+				if ($this->containsAggregateFunction($field)) {
+					continue;
+				}
+
 				$query->addGroupBy($field);
 			}
 		}
 
 		foreach ($this->hints as $name => $value) {
 			$query->setHint($name, $value);
+		}
+
+		// ! When there is having, we cannot do count query
+		if ($query->getDQLPart('having')) {
+			$this->isIndeterminate = true;
 		}
 
 		/** @var Items */
@@ -197,6 +206,12 @@ class DoctrineORMSource extends AbstractSource
 	protected function getPlaceholder(): string
 	{
 		return 'param'.($this->placeholder++);
+	}
+
+
+	protected function containsAggregateFunction(string $field): bool
+	{
+		return (bool) preg_match('/\b(?:COUNT|SUM|AVG|MIN|MAX)\s*\(/i', $field);
 	}
 
 
@@ -216,12 +231,11 @@ class DoctrineORMSource extends AbstractSource
 		return array_map(array: $fields, callback: function($field): string {
 			$field = (string) $field;
 
-			// ! This seems like insufficient way of detecting multiple columns
-			if (substr_count('.', $field) > 1) {
+			if (str_contains($field, ',')) {
 				throw new FieldInvalidException('Multiple orderBy columns in single statement.');
 			}
 
-			if (!$field = preg_replace('/\s(asc|desc)/i', '', $field)) {
+			if (!$field = preg_replace('/\s+(asc|desc)/i', '', $field)) {
 				throw new FieldInvalidException('Failed to remove asc|desc from orderBy fields.');
 			}
 
@@ -257,6 +271,23 @@ class DoctrineORMSource extends AbstractSource
 	}
 
 
+	/**
+	 * @param array<string, mixed> $params
+	 */
+	protected function addWhere(string $field, string $condition, array $params = []): void
+	{
+		$where = strtr($condition, ['%s' => $field]);
+
+		$qb = $this->containsAggregateFunction($field)
+			? $this->queryBuilder->andHaving($where)
+			: $this->queryBuilder->andWhere($where);
+
+		foreach ($params as $param => $query) {
+			$qb->setParameter($param, $query);
+		}
+	}
+
+
 	protected function applyFilterList(Filter&FilterList $filter): void
 	{
 		$field = $filter->getField();
@@ -265,12 +296,12 @@ class DoctrineORMSource extends AbstractSource
 			return;
 		}
 
-		$query = $filter->getValue() ?? [];
 		$field = $this->checkAlias($field);
 		$param = $this->getPlaceholder();
 
-		$this->queryBuilder->andWhere("{$field} IN(:{$param})")
-			->setParameter($param, $query);
+		$this->addWhere($field, "%s IN(:{$param})", [
+			$param => $filter->getValue() ?? [],
+		]);
 	}
 
 
@@ -286,13 +317,15 @@ class DoctrineORMSource extends AbstractSource
 		$param = $this->getPlaceholder();
 
 		if ($queryFrom = $filter->getValueFrom()) {
-			$this->queryBuilder->andWhere("{$field} >= :{$param}S")
-				->setParameter($param.'S', $queryFrom);
+			$this->addWhere($field, "%s >= :{$param}S", [
+				$param.'S' => $queryFrom,
+			]);
 		}
 
 		if ($queryTo = $filter->getValueTo()) {
-			$this->queryBuilder->andWhere("{$field} <= :{$param}E")
-				->setParameter($param.'E', $queryTo);
+			$this->addWhere($field, "%s <= :{$param}E", [
+				$param.'E' => $queryTo,
+			]);
 		}
 	}
 
@@ -305,26 +338,28 @@ class DoctrineORMSource extends AbstractSource
 			return;
 		}
 
-		$query = $filter->getValue();
 		$field = $this->checkAlias($field);
 		$param = $this->getPlaceholder();
 
 		switch (true) {
 			case $filter instanceof Filters\DateFilter:
-				$this->queryBuilder->andWhere("{$field} >= :{$param}S AND {$field} < :{$param}E")
-					->setParameter($param.'S', $filter->getValueFrom())
-					->setParameter($param.'E', $filter->getValueTo());
+				$this->addWhere($field, "%s >= :{$param}S AND %s < :{$param}E", [
+					$param.'S' => $filter->getValueFrom(),
+					$param.'E' => $filter->getValueTo(),
+				]);
 			break;
 
 			case $filter instanceof Filters\SelectFilter:
 			case $filter instanceof Filters\EnumFilter:
-				$this->queryBuilder->andWhere("{$field} = :{$param}")
-					->setParameter($param, $query);
+				$this->addWhere($field, "%s = :{$param}", [
+					$param => $filter->getValue(),
+				]);
 			break;
 
 			case $filter instanceof Filters\TextFilter:
-				$this->queryBuilder->andWhere("LOWER({$field}) LIKE LOWER(:{$param})")
-					->setParameter($param, '%'.FormatValue::string($query).'%');
+				$this->addWhere($field, "LOWER(%s) LIKE LOWER(:{$param})", [
+					$param => '%'.FormatValue::string($filter->getValue()).'%'
+				]);
 				break;
 
 			default: break;
