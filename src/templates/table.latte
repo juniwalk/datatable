@@ -96,7 +96,7 @@
 
 		<tbody n:if="empty($rows)">
 			<tr>
-				<td class="col-no-rows p-3 px-4 rounded-bottom" colspan="{sizeof($columns)}">
+				<td n:class="col-no-rows, p-3, px-4, !$table->hasPagination() ? rounded-bottom" colspan="{sizeof($columns)}">
 					<em class="text-secondary">
 						{_datatable.table.empty}
 						<a n:href="clearFilter!" class="text-danger text-nowrap ajax" n:if="$table->shouldShowFilters()">
