@@ -96,7 +96,7 @@
 
 		<tbody n:if="empty($rows)">
 			<tr>
-				<td class="col-no-rows p-3 px-4" colspan="{sizeof($columns)}">
+				<td class="col-no-rows p-3 px-4 rounded-bottom" colspan="{sizeof($columns)}">
 					<em class="text-secondary">
 						{_datatable.table.empty}
 						<a n:href="clearFilter!" class="text-danger text-nowrap ajax" n:if="$table->shouldShowFilters()">
@@ -110,7 +110,7 @@
 	</table>
 	</div>
 
-	<div n:if="$table->hasPagination()" n:snippet="paginator" class="card-footer rounded-bottom">
+	<div n:if="$table->hasPagination()" n:snippet="paginator" class="card-footer">
 	<div class="d-flex flex-wrap justify-content-start gap-2 py-1">
 
 		<div class="flex-fill">
