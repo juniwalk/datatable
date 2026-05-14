@@ -79,9 +79,9 @@
 				<td n:attr="$column->getAttributes()" n:if="!$column->isHidden()">{control $column, $row}</td>
 			</tr>
 
-			<tr n:if="$table->hasDetailAction()" class="d-none" n:snippet="row-{$row->getId()}-detail">
+			<tr n:if="$table->hasDetailAction() && $columnsVisible" class="d-none" n:snippet="row-{$row->getId()}-detail">
 				{var $activeDetail = $table->getActiveDetail()}
-				<td n:if="$activeDetail" class="p-0 border-0" colspan="{sizeof($columns)}">
+				<td n:if="$activeDetail" class="p-0 border-0" colspan="{$columnsVisible}">
 					<div class="collapse border-bottom" data-dt-action="{$activeDetail->getName()}">
 						<div class="bg-body p-3 px-4">
 							{control $activeDetail:callback, $row}
@@ -90,13 +90,13 @@
 					</div>
 				</td>
 			</tr>
-			<tr n:if="$table->hasDetailAction()" class="d-none"></tr>
+			<tr n:if="$table->hasDetailAction() && $columnsVisible" class="d-none"></tr>
 
 		</tbody>
 
 		<tbody n:if="empty($rows)">
 			<tr>
-				<td n:class="col-no-rows, p-3, px-4, !$table->hasPagination() ? rounded-bottom" colspan="{sizeof($columns)}">
+				<td n:class="col-no-rows, p-3, px-4, !$table->hasPagination() ? rounded-bottom" colspan="{$columnsVisible ?: 1}">
 					<em class="text-secondary">
 						{_datatable.table.empty}
 						<a n:href="clearFilter!" class="text-danger text-nowrap ajax" n:if="$table->shouldShowFilters()">

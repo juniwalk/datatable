@@ -273,6 +273,7 @@ trait Columns
 
 		$this->setAttribute('data-dt-sticky-header', 'true');
 		$template->columns = $this->columns;
+		$template->columnsVisible = count($this->columns);
 
 		if (!$this->isColumnsHideable) {
 			return;
@@ -293,6 +294,7 @@ trait Columns
 
 		/** @var array<string, bool> */
 		$columnsHidden = $this->getOption(Option::StateColumns, []);
+		$columnsHiddenCount = 0;
 
 		foreach ($this->columns as $name => $column) {
 			if (!$column instanceof Hideable) {
@@ -307,9 +309,12 @@ trait Columns
 			$column->setHidden($columnsHidden[$name] ?? null);
 
 			if ($column->isHidden()) {
+				$columnsHiddenCount++;
 				$action->addClass('text-secondary');
 				$action->setIcon('far fa-square');
 			}
 		}
+
+		$template->columnsVisible = count($this->columns) - $columnsHiddenCount;
 	}
 }
