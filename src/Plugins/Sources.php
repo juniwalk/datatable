@@ -23,6 +23,10 @@ trait Sources
 
 	public function setItemRedraw(int|string|null $id, bool $detail = false): static
 	{
+		if ($id === '') {
+			$id = null;
+		}
+
 		$this->itemRedraw = $id;
 		$snippetId = 'row-'.$id;
 
@@ -30,7 +34,7 @@ trait Sources
 			$snippetId .= '-detail';
 		}
 
-		if (!empty($id)) {
+		if (!is_null($id)) {
 			$this->redrawControl('rows');
 			$this->redrawControl($snippetId);
 		}

@@ -97,7 +97,9 @@ class Row
 	 */
 	protected function fetchPrimaryKey(string $primaryKey): void
 	{
-		if (!$id = $this->getValue($primaryKey)) {
+		$id = $this->getValue($primaryKey);
+
+		if (is_null($id)) {
 			throw FieldNotFoundException::fromName($primaryKey);
 		}
 
@@ -105,8 +107,8 @@ class Row
 			$id = (string) $id;
 		}
 
-		if (!is_string($id) && !is_int($id)) {
-			throw FieldInvalidException::fromName($primaryKey, $id, 'int|string');
+		if (!is_int($id) && (!is_string($id) || $id === '')) {
+			throw FieldInvalidException::fromName($primaryKey, $id, 'int|non-empty-string');
 		}
 
 		$this->id = $id;
