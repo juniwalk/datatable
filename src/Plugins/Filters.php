@@ -21,6 +21,7 @@ use JuniWalk\DataTable\Filters\DateRangeFilter;
 use JuniWalk\DataTable\Filters\DateTimeRangeFilter;
 use JuniWalk\DataTable\Filters\EnumFilter;
 use JuniWalk\DataTable\Filters\EnumListFilter;
+use JuniWalk\DataTable\Filters\HiddenFilter;
 use JuniWalk\DataTable\Filters\TextFilter;
 use JuniWalk\DataTable\Filters\Interfaces\FilterList;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
@@ -238,6 +239,15 @@ trait Filters
 	/**
 	 * @param string|string[] $columns
 	 */
+	public function addFilterHidden(string $name, string $label, string|array $columns = []): HiddenFilter
+	{
+		return $this->addFilter($name, new HiddenFilter($label), $columns);
+	}
+
+
+	/**
+	 * @param string|string[] $columns
+	 */
 	public function addFilterNumberRange(string $name, string $label, string|array $columns = []): NumberRangeFilter
 	{
 		return $this->addFilter($name, new NumberRangeFilter($label), $columns);
@@ -430,9 +440,12 @@ trait Filters
 
 	protected function onRenderFilters(Template $template): void
 	{
+		$filtersVisible = array_filter($this->filters, fn($x) => $x->getType() !== 'hidden');
+
 		$this->setAttribute('data-dt-allow-autosubmit', $this->autoSubmit ? 'true' : null);
 		$template->autoSubmit = $this->autoSubmit;
 		$template->filtering = $this->isFiltering;
+		$template->filtersVisible = $filtersVisible;
 		$template->filters = $this->filters;
 
 		if (!$this->filters) {
@@ -468,6 +481,10 @@ trait Filters
 
 		// ? Assign current filter values as defaults so they are kept on clear
 		$this->getComponent('filterForm')->setDefaults($current, true);
+
+		if (!$filtersVisible) {
+			return;
+		}
 
 		$this->addToolbarButton('__filter_toggle', 'datatable.filter.button', '__filters')
 			->setIcon('fa-filter')->setClass('btn btn-sm btn-info collapsed')
