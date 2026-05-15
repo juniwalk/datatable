@@ -313,6 +313,8 @@ trait Filters
 		$filter->setParent($this, $name);
 		$filter->setColumns(...$columns);
 
+		// todo: Check for duplicate field names across filters
+
 		$this->filters[$name] = $filter;
 		return $filter;
 	}
@@ -453,14 +455,17 @@ trait Filters
 		}
 
 		$current = $this->getCurrentFilter();
+		$defaults = [];
 
 		foreach ($current as $name => $value) {
-			if (!isset($this->filters[$name])) {
+			if (!$filter = $this->filters[$name] ?? null) {
 				continue;
 			}
 
+			$defaults[$filter->fieldName()] = $value;
+
 			try {
-				$this->filters[$name]->setValue($value);
+				$filter->setValue($value);
 
 			} catch (FilterValueInvalidException|TypeError) {
 			}
@@ -480,7 +485,7 @@ trait Filters
 		}
 
 		// ? Assign current filter values as defaults so they are kept on clear
-		$this->getComponent('filterForm')->setDefaults($current, true);
+		$this->getComponent('filterForm')->setDefaults($defaults, true);
 
 		if (!$filtersVisible) {
 			return;

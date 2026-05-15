@@ -172,6 +172,43 @@ class FiltersPluginTest extends TestCase
 	}
 
 
+	public function testFilters_Render_FormattedName(): void
+	{
+		$table = (new TestPresenter)->getComponent('tableTest');
+		$table->addFilterText('user-name', 'User Name');
+		$form = $table->getComponent('filterForm');
+		$table->setDefaultFilter(['user-name' => 'John Doe']);
+		$table->clearRememberedState();
+
+		Assert::with($table, function() {
+			$template = $this->createTemplate();
+			$this->onRenderFilters($template);
+		});
+
+		Assert::same('John Doe', $form['userName']->getValue());
+		Assert::same('John Doe', $table->getFilter('user-name')->getValue());
+	}
+
+
+	public function testFilters_Render_FormattedRangeName(): void
+	{
+		$table = (new TestPresenter)->getComponent('tableTest');
+		$table->addFilterNumberRange('price-range', 'Price Range');
+		$form = $table->getComponent('filterForm');
+		$table->setDefaultFilter(['price-range' => ['from' => 10, 'to' => 20]]);
+		$table->clearRememberedState();
+
+		Assert::with($table, function() {
+			$template = $this->createTemplate();
+			$this->onRenderFilters($template);
+		});
+
+		Assert::same(10, $form['priceRange']['from']->getValue());
+		Assert::same(20, $form['priceRange']['to']->getValue());
+		Assert::same(['from' => 10, 'to' => 20], $table->getFilter('price-range')->getValue());
+	}
+
+
 	public function testFilters_Render_Invalid(): void
 	{
 		$table = (new TestPresenter)->getComponent('tableTest');
