@@ -8,16 +8,15 @@
 namespace JuniWalk\Tests\Files;
 
 use JuniWalk\DataTable\Columns\TextColumn;
-use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters;
+use JuniWalk\DataTable\Filters\Interfaces\FilterList;
+use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
+use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use Nette\Http\Helpers;
 use Nette\Forms\Form;
 use Tester\Assert;
 use Tester\TestCase;
 
-/**
- * @phpstan-import-type FilterStruct from Filter
- */
 abstract class AbstractFilterCase extends TestCase
 {
 	protected Form $form;
@@ -60,11 +59,10 @@ abstract class AbstractFilterCase extends TestCase
 
 
 	/**
-	 * @param  class-string<FilterStruct> $class
+	 * @param  class-string<FilterSingle|FilterRange|FilterList> $class
 	 * @param  mixed[] $args
-	 * @return FilterStruct
 	 */
-	protected function createFilter(string $name, string $label, string $class, array $args = []): Filter
+	protected function createFilter(string $name, string $label, string $class, array $args = []): FilterSingle|FilterRange|FilterList
 	{
 		$filter = new $class($label, ...$args);
 		$filter->setParent(null, $name);

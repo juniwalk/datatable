@@ -7,7 +7,9 @@
 
 namespace JuniWalk\DataTable\Filters\Interfaces;
 
-interface FilterSingle
+use JuniWalk\DataTable\Filter;
+
+interface FilterSingle extends Filter
 {
 	public function checkValue(mixed $value): mixed;
 	public function setValue(mixed $value): static;

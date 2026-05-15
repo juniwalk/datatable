@@ -26,9 +26,6 @@ use Nette\ComponentModel\IContainer;
 use Nette\Forms\Controls\BaseControl;
 use Nette\Forms\Form;
 
-/**
- * @phpstan-import-type FilterStruct from Filter
- */
 abstract class AbstractFilter extends Component implements Filter
 {
 	use Traits\Attributes;

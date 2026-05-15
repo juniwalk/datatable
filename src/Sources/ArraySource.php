@@ -23,7 +23,6 @@ use JuniWalk\DataTable\Tools\Compare;
 use JuniWalk\Utils\Format;
 
 /**
- * @phpstan-import-type FilterStruct from Filter
  * @phpstan-import-type Items from Source
  */
 class ArraySource extends AbstractSource
@@ -60,7 +59,7 @@ class ArraySource extends AbstractSource
 	/**
 	 * ? Row gets filtered out if the apply condition returns false
 	 *
-	 * @param  array<string, FilterStruct> $filters
+	 * @param  array<string, Filter> $filters
 	 * @throws FilterInvalidException
 	 */
 	protected function filter(array $filters): void

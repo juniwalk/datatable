@@ -8,18 +8,19 @@
 namespace JuniWalk\DataTable\Exceptions;
 
 use JuniWalk\DataTable\Filter;
+use JuniWalk\DataTable\Filters\Interfaces\FilterList;
+use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
+use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
 use Throwable;
 
-/**
- * @phpstan-import-type FilterStruct from Filter
- */
 final class FilterValueInvalidException extends AbstractTableException
 {
-	/**
-	 * @param FilterStruct $filter
-	 */
-	public static function fromFilter(Filter $filter, string $expected, mixed $value = null, ?Throwable $previous = null): static
-	{
+	public static function fromFilter(
+		FilterSingle|FilterRange|FilterList $filter,
+		string $expected,
+		mixed $value = null,
+		?Throwable $previous = null,
+	): static {
 		return new static('Filter "'.$filter->getName().'" has invalid value of type "'.gettype($value ?? $filter->getValue()).'", but "'.$expected.'" was expected.', previous: $previous);
 	}
 }

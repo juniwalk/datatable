@@ -7,7 +7,9 @@
 
 namespace JuniWalk\DataTable\Filters\Interfaces;
 
-interface FilterList
+use JuniWalk\DataTable\Filter;
+
+interface FilterList extends Filter
 {
 	/**
 	 * @param  mixed[] $value

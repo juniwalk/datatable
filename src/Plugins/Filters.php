@@ -15,7 +15,6 @@ use JuniWalk\DataTable\Exceptions\FilterInvalidException;
 use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
-use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\DateRangeFilter;
 use JuniWalk\DataTable\Filters\DateTimeRangeFilter;
@@ -23,21 +22,18 @@ use JuniWalk\DataTable\Filters\EnumFilter;
 use JuniWalk\DataTable\Filters\EnumListFilter;
 use JuniWalk\DataTable\Filters\HiddenFilter;
 use JuniWalk\DataTable\Filters\TextFilter;
-use JuniWalk\DataTable\Filters\Interfaces\FilterList;
-use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
-use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Filters\NumberRangeFilter;
 use JuniWalk\DataTable\Filters\SelectFilter;
 use JuniWalk\DataTable\Filters\SelectListFilter;
+use JuniWalk\DataTable\Filters\Interfaces\FilterList;
+use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
+use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\Utils\Arrays;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
 use Nette\Application\UI\Template;
 use TypeError;
 
-/**
- * @phpstan-import-type FilterStruct from Filter
- */
 trait Filters
 {
 	/** @var array<string, mixed> */
@@ -51,7 +47,7 @@ trait Filters
 	protected bool $isFiltering = true;
 	protected ?bool $isFilterShown = null;
 
-	/** @var array<string, FilterStruct> */
+	/** @var array<string, FilterSingle|FilterRange|FilterList> */
 	protected array $filters = [];
 
 
@@ -286,21 +282,14 @@ trait Filters
 
 
 	/**
-	 * @template T of Filter
+	 * @template T of FilterSingle|FilterRange|FilterList
 	 * @param  T $filter
 	 * @param  string|string[] $columns
 	 * @return T
 	 * @throws FilterInvalidException
 	 */
-	public function addFilter(string $name, Filter $filter, string|array $columns = []): Filter
+	public function addFilter(string $name, FilterSingle|FilterRange|FilterList $filter, string|array $columns = []): FilterSingle|FilterRange|FilterList
 	{
-		if (!$filter instanceof FilterSingle &&
-			!$filter instanceof FilterRange &&
-			!$filter instanceof FilterList
-		) {
-			throw FilterInvalidException::missingImplement($filter);
-		}
-
 		$columns = (array) $columns;
 		$columns[] = $name;
 
@@ -321,10 +310,10 @@ trait Filters
 
 
 	/**
-	 * @return ($require is true ? FilterStruct : ?FilterStruct)
+	 * @return ($require is true ? FilterSingle|FilterRange|FilterList : FilterSingle|FilterRange|FilterList|null)
 	 * @throws FilterNotFoundException
 	 */
-	public function getFilter(string $name, bool $require = true): ?Filter
+	public function getFilter(string $name, bool $require = true): FilterSingle|FilterRange|FilterList|null
 	{
 		if ($require && !isset($this->filters[$name])) {
 			throw FilterNotFoundException::fromName($name);
@@ -335,7 +324,7 @@ trait Filters
 
 
 	/**
-	 * @return array<string, FilterStruct>
+	 * @return array<string, FilterSingle|FilterRange|FilterList>
 	 */
 	public function getFilters(): array
 	{
@@ -415,10 +404,9 @@ trait Filters
 
 
 	/**
-	 * @param  FilterStruct $filter
 	 * @throws InvalidStateException
 	 */
-	protected function clearFilterValue(Filter $filter): void
+	protected function clearFilterValue(FilterSingle|FilterRange|FilterList $filter): void
 	{
 		if (!$this->isFiltering /*|| !$filter->isFiltered()*/) {
 			throw InvalidStateException::filterNotUsed($filter);

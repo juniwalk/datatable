@@ -8,15 +8,9 @@
 namespace JuniWalk\DataTable;
 
 use Closure;
-use JuniWalk\DataTable\Filters\Interfaces\FilterList;
-use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
-use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use Nette\ComponentModel\IComponent;
 use Nette\Forms\Form;
 
-/**
- * @phpstan-type FilterStruct Filter&(FilterSingle|FilterRange|FilterList)
- */
 interface Filter extends IComponent
 {
 	public function getLabel(): string;

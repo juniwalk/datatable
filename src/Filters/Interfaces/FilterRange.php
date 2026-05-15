@@ -7,7 +7,9 @@
 
 namespace JuniWalk\DataTable\Filters\Interfaces;
 
-interface FilterRange
+use JuniWalk\DataTable\Filter;
+
+interface FilterRange extends Filter
 {
 	/**
 	 * @param  array{from?: mixed, to?: mixed} $value
