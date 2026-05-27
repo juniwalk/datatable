@@ -118,9 +118,16 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 	}
 
 
+	/**
+	 * @throws InvalidStateException
+	 */
 	protected function createActions(Table $table): void
 	{
-		$this->dropdown = $table->addActionDropdown($this->name, '')
+		if (!$name = $this->getName()) {
+			throw InvalidStateException::notAttached($this);
+		}
+
+		$this->dropdown = $table->addActionDropdown($name, '')
 			->setAlign($this->align);
 
 		foreach ($this->items as $item) {
@@ -130,7 +137,7 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 			]);
 
 			$action = $this->dropdown->addActionLink((string) $option->value, $option->label)
-				->setLink($this->dest ?? $this->name.'!', $arguments)
+				->setLink($this->dest ?? $name.'!', $arguments)
 				->setIcon($option->icon, color: $option->color);
 
 			if ($this->actionCallback ?? false) {
@@ -144,7 +151,7 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 			}
 		}
 
-		$table->allowRowAction($this->name, fn() => false);
+		$table->allowRowAction($name, fn() => false);
 	}
 
 

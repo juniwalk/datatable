@@ -41,7 +41,7 @@ class DropdownAction extends ButtonAction
 	public function addDivider(): static
 	{
 		$count = sizeof(array_filter($this->actions, fn($x) => $x instanceof DividerAction));
-		$this->addAction($this->name.'_divider'.$count, new DividerAction);
+		$this->addAction($this->getName().'_divider'.$count, new DividerAction);
 		return $this;
 	}
 

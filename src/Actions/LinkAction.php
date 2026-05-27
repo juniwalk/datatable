@@ -22,7 +22,7 @@ class LinkAction extends AbstractAction
 
 	public function createButton(?Row $row): Html
 	{
-		$link = $this->createLink($this->dest ?? $this->name.'!', $this->createArgs($row));
+		$link = $this->createLink($this->dest ?? $this->getName().'!', $this->createArgs($row));
 
 		$button = parent::createButton($row);
 		$button->setHref($link);

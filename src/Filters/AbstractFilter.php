@@ -152,9 +152,16 @@ abstract class AbstractFilter extends Component implements Filter
 	}
 
 
+	/**
+	 * @throws InvalidStateException
+	 */
 	public function fieldName(): string
 	{
-		return FormatName::component($this->name);
+		if (!$name = $this->getName()) {
+			throw InvalidStateException::notAttached($this);
+		}
+
+		return FormatName::component($name);
 	}
 
 

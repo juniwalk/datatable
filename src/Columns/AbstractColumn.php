@@ -134,7 +134,8 @@ abstract class AbstractColumn extends Control implements Column
 			$this->setTranslator($table->getTranslator());
 
 			$table->when('render', function() {
-				$this->addAttribute('class', 'col-'.Strings::webalize($this->name));
+				$name = $this->getName() ?? $this->getType();
+				$this->addAttribute('class', 'col-'.Strings::webalize($name));
 				$this->addAttribute('class', $this->align->class());
 			});
 		});
