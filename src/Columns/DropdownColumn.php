@@ -88,11 +88,14 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 
 	protected function formatValue(Row $row): Html
 	{
-		if (!$item = $row->getValue($this)) {
+		$value = $row->getValue($this);
+
+		// ? Allow empty values to not throw an exception
+		if ($value === null || $value === '') {
 			return Html::el();
 		}
 
-		$option = $this->createOption($item);
+		$option = $this->createOption($value);
 
 		if ($this->isDisabled) {
 			return $option->createBadge();

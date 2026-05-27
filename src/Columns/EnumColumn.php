@@ -25,7 +25,10 @@ class EnumColumn extends TextColumn
 	 */
 	protected function formatValue(Row $row): Html|string
 	{
-		if (!$value = $row->getValue($this)) {
+		$value = $row->getValue($this);
+
+		// ? Allow empty values to not throw an exception
+		if ($value === null || $value === '') {
 			return '';
 		}
 

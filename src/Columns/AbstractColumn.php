@@ -97,7 +97,7 @@ abstract class AbstractColumn extends Control implements Column
 	public function render(Row $row): void
 	{
 		try {
-			$value = $this->formatValue($row) ?: null;
+			$value = $this->formatValue($row);
 
 		} catch (FieldInvalidException $e) {
 		}

@@ -66,11 +66,12 @@ class NumberColumn extends AbstractColumn implements Sortable, Filterable, Hidea
 	 */
 	protected function formatValue(Row $row): string
 	{
-		if (!$value = $row->getValue($this)) {
+		$value = Format::numeric($row->getValue($this), strict: false);
+
+		// ? Allow empty values to not throw an exception
+		if ($value === null || $value === '') {
 			return '';
 		}
-
-		$value = Format::numeric($value, strict: false);
 
 		if (!is_numeric($value)) {
 			throw FieldInvalidException::fromColumn($this, $value, 'numeric');
