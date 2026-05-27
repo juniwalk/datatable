@@ -20,6 +20,7 @@ use JuniWalk\DataTable\Columns\LinkColumn;
 use JuniWalk\DataTable\Columns\NumberColumn;
 use JuniWalk\DataTable\Columns\OrderColumn;
 use JuniWalk\DataTable\Columns\TextColumn;
+use JuniWalk\DataTable\Columns\StatusColumn;
 use JuniWalk\DataTable\Enums\Option;
 use JuniWalk\DataTable\Exceptions\ColumnAmbiguityException;
 use JuniWalk\DataTable\Exceptions\ColumnNotFoundException;
@@ -137,6 +138,12 @@ trait Columns
 	public function addColumnOrder(string $name, string $label): OrderColumn
 	{
 		return $this->addColumn($name, new OrderColumn($label));
+	}
+
+
+	public function addColumnStatus(string $name, string $label): StatusColumn
+	{
+		return $this->addColumn($name, new StatusColumn($label));
 	}
 
 

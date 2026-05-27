@@ -40,6 +40,16 @@ class FormatValue
 	}
 
 
+	public static function boolean(mixed $value): bool|null
+	{
+		if ($value === null) {
+			return null;
+		}
+
+		return (bool) $value;
+	}
+
+
 	/**
 	 * @param  array<int|string, mixed> $values
 	 * @throws InvalidArgumentException
