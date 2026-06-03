@@ -228,11 +228,15 @@ class FiltersPluginTest extends TestCase
 		// ? Taken from Nette\Forms tests to allow Form::fireEvents to work
 		$_COOKIE[Helpers::StrictCookieName] = '1';
 		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$isFiltered = false;
 
 		$table = (new TestPresenter)->getComponent('table');
 		$table->addFilterDate('date', 'Date');
 		$table->addFilterEnum('enum', 'Enum', Sort::class);
 		$table->addFilterText('text', 'Text');
+		$table->when('filter', function() use (&$isFiltered) {
+			$isFiltered = true;
+		});
 
 		$form = $table->getComponent('filterForm');
 
@@ -250,6 +254,7 @@ class FiltersPluginTest extends TestCase
 
 		Assert::same('Jane Doe', $table->getFilter('text')->getValue());
 		Assert::count(0, $form->getErrors());
+		Assert::true($isFiltered);
 	}
 }
 

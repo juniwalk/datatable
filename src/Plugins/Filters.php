@@ -102,6 +102,8 @@ trait Filters
 			}),
 		);
 
+		$this->trigger('filter', $this);
+
 		if ($this->rememberState) {
 			$this->setOption(Option::StateFilters, $this->filter ?: null);
 		}

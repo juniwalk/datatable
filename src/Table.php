@@ -99,7 +99,7 @@ class Table extends Control implements EventHandler, EventAutoWatch
 
 		parent::validateParent($parent);
 
-		$this->watchAny('render,load,item,order');
+		$this->watchAny('render,load,item,filter,order');
 		$this->when('render', function(Template $template) {
 			$this->onRenderFilters($template);
 			$this->onRenderSorting($template);
