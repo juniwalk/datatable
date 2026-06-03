@@ -53,9 +53,14 @@ class SortingPluginTest extends TestCase
 
 	public function testHandler(): void
 	{
+		$isSorted = false;
+
 		$table = (new TestPresenter)->getComponent('tableTest');
 		$table->setDefaultSort(['id' => 'asc']);
 		$table->clearRememberedState();
+		$table->when('sort', function() use (&$isSorted) {
+			$isSorted = true;
+		});
 
 		Assert::same([], $table->sort);
 		Assert::exception(
@@ -71,6 +76,7 @@ class SortingPluginTest extends TestCase
 		);
 
 		Assert::same([], $table->sort);
+		Assert::true($isSorted);
 	}
 
 
@@ -83,6 +89,34 @@ class SortingPluginTest extends TestCase
 			fn() => $table->handleSort('name'),
 			ColumnNotSortableException::class,
 		);
+	}
+
+
+	public function testHandler_Clear(): void
+	{
+		$isCleared = false;
+
+		$table = (new TestPresenter)->getComponent('tableTest');
+		$table->setDefaultSort(['id' => 'asc']);
+		$table->clearRememberedState();
+		$table->when('sortClear', function() use (&$isCleared) {
+			$isCleared = true;
+		});
+
+		Assert::same([], $table->sort);
+		Assert::exception(
+			fn() => $table->handleSort('id'),
+			AbortException::class,
+		);
+
+		Assert::hasKey('id', $table->sort);
+		Assert::exception(
+			fn() => $table->handleClearSort(),
+			AbortException::class,
+		);
+
+		Assert::same([], $table->sort);
+		Assert::true($isCleared);
 	}
 
 

@@ -256,6 +256,30 @@ class FiltersPluginTest extends TestCase
 		Assert::count(0, $form->getErrors());
 		Assert::true($isFiltered);
 	}
+
+
+	public function testFilters_Clear(): void
+	{
+		$isCleared = false;
+
+		$table = (new TestPresenter)->getComponent('tableTest');
+		$table->addFilterText('text', 'Text');
+		$table->clearRememberedState();
+		$table->when('filterClear', function() use (&$isCleared) {
+			$isCleared = true;
+		});
+
+		$filter = $table->getFilter('text');
+		$filter->setValue('John Doe');
+
+		Assert::same('John Doe', $filter->getValue());
+		Assert::with($table, function() use ($filter, &$isCleared) {
+			$this->clearFilterValue($filter);
+
+			Assert::null($filter->getValue());
+			Assert::true($isCleared);
+		});
+	}
 }
 
 (new FiltersPluginTest)->run();

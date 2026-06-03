@@ -55,6 +55,8 @@ trait Sorting
 		$this->setOption(Option::IsSorted, true);
 		$this->sort = $sort;	// @phpstan-ignore assign.propertyType (null is not accepted but it is filtered in setter)
 
+		$this->trigger('sort', $this, $column);
+
 		if ($this->rememberState) {
 			$this->setOption(Option::StateSorting, $this->sort ?: null);
 		}
@@ -70,6 +72,8 @@ trait Sorting
 	{
 		$this->setOption(Option::IsSorted);
 		$this->sort = [];
+
+		$this->trigger('sortClear', $this);
 
 		if ($this->rememberState) {
 			$this->setOption(Option::StateSorting, $this->sort ?: null);

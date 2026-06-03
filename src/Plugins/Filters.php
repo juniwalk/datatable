@@ -424,6 +424,8 @@ trait Filters
 		$this->setOption(Option::IsFiltered, true);
 		$this->getComponent('filterForm')->reset();
 
+		$this->trigger('filterClear', $this, $filter);
+
 		if ($this->rememberState) {
 			$this->setOption(Option::StateFilters, $this->filter ?: null);
 		}
