@@ -107,8 +107,10 @@ class DoctrineDBALSource extends AbstractSource
 
 	protected function filterById(int|string ...$id): void
 	{
-		$this->queryBuilder->setParameters([]);
-		$this->queryBuilder->resetWhere();
+		$this->clear();
+
+		// $this->queryBuilder->setParameters([]);
+		// $this->queryBuilder->resetWhere();
 
 		$param = $this->queryBuilder->createNamedParameter(...);
 		$this->andWhere('%field% IN(%query%)', [

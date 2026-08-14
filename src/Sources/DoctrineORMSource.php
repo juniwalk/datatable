@@ -120,9 +120,12 @@ class DoctrineORMSource extends AbstractSource
 
 	protected function filterById(int|string ...$id): void
 	{
-		$this->queryBuilder->setParameters(new ArrayCollection);
-		$this->queryBuilder->resetDQLPart('where');
-		$this->placeholder = 0;
+		$this->clear();
+
+		// $this->queryBuilder->setParameters(new ArrayCollection);
+		// $this->queryBuilder->resetDQLPart('where');
+		// // $this->queryBuilder->resetDQLPart('join');
+		// $this->placeholder = 0;
 
 		$field = $this->getPrimaryField();
 		$param = $this->getPlaceholder();
