@@ -18,6 +18,9 @@ use JuniWalk\DataTable\Row;
 use JuniWalk\Utils\Format;
 use Nette\Utils\Html;
 
+use function is_numeric;
+use function number_format;
+
 class OrderColumn extends AbstractColumn implements Exclusive, Sortable, Hideable
 {
 	use Sorting, Hiding;

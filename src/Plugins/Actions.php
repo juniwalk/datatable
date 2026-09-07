@@ -16,6 +16,8 @@ use JuniWalk\DataTable\Actions\LinkAction;
 use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
 use JuniWalk\DataTable\Tools\FormatName;
 
+use function array_filter;
+
 trait Actions
 {
 	protected ?DetailAction $activeDetail = null;

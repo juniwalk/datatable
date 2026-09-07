@@ -9,6 +9,9 @@ namespace JuniWalk\DataTable\Exceptions;
 
 use JuniWalk\DataTable\Column;
 
+use function array_map;
+use function implode;
+
 final class ColumnAmbiguityException extends AbstractTableException
 {
 	public static function fromColumn(Column $column, Column|string $related): static

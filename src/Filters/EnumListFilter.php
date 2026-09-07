@@ -16,6 +16,11 @@ use JuniWalk\Utils\Html;
 use Nette\Forms\Form;
 use Throwable;
 
+use function array_filter;
+use function array_map;
+use function in_array;
+use function is_a;
+
 /**
  * @template T of BackedEnum
  */

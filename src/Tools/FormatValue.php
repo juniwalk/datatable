@@ -17,6 +17,15 @@ use JuniWalk\Utils\Format;
 use OutOfBoundsException;
 use ValueError;
 
+use function array_merge;
+use function gettype;
+use function is_a;
+use function is_int;
+use function is_null;
+use function is_numeric;
+use function is_object;
+use function is_string;
+
 class FormatValue
 {
 	private function __construct() {}

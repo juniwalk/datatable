@@ -10,6 +10,11 @@ namespace JuniWalk\DataTable\Traits;
 use JuniWalk\DataTable\Exceptions\FieldNotFoundException;
 use JuniWalk\DataTable\Row;
 
+use function is_null;
+use function is_string;
+use function str_starts_with;
+use function substr;
+
 /**
  * @phpstan-import-type LinkArgs from LinkHandler
  */

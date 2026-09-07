@@ -20,6 +20,9 @@ use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Traits\RendererCallback;
 use JuniWalk\Utils\Format;
 
+use function is_numeric;
+use function number_format;
+
 class NumberColumn extends AbstractColumn implements Sortable, Filterable, Hideable, CallbackRenderable
 {
 	use Sorting, Filters, Hiding, RendererCallback;

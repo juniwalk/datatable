@@ -21,6 +21,8 @@ use JuniWalk\DataTable\Traits\RendererCallback;
 use Nette\Utils\Html;
 use Nette\Utils\Strings;
 
+use function is_scalar;
+
 class TextColumn extends AbstractColumn implements Sortable, Filterable, Hideable, CallbackRenderable
 {
 	use Sorting, Filters, Hiding, RendererCallback;

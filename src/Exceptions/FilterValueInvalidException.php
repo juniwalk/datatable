@@ -13,6 +13,8 @@ use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
 use Throwable;
 
+use function gettype;
+
 final class FilterValueInvalidException extends AbstractTableException
 {
 	public static function fromFilter(

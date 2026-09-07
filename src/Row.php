@@ -15,6 +15,11 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Throwable;
 
+use function is_array;
+use function is_int;
+use function is_null;
+use function is_string;
+
 /**
  * @phpstan-import-type Item from Source
  */

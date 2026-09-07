@@ -25,6 +25,9 @@ use JuniWalk\DataTable\Traits\LinkArguments;
 use Nette\ComponentModel\IContainer;
 use Nette\Utils\Html;
 
+use function array_merge;
+use function call_user_func;
+
 class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hideable
 {
 	use Sorting, Filters, Hiding;

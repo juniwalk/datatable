@@ -34,6 +34,9 @@ use Nette\Application\UI\Form;
 use Nette\Application\UI\Template;
 use TypeError;
 
+use function array_filter;
+use function array_udiff_assoc;
+
 trait Filters
 {
 	/** @var array<string, mixed> */

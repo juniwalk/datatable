@@ -17,6 +17,9 @@ use JuniWalk\DataTable\Traits\TableAncestor;
 use JuniWalk\Utils\Traits\RedirectAjaxHandler;
 use Nette\Utils\Html;
 
+use function is_null;
+use function sprintf;
+
 class DetailAction extends AbstractAction implements CallbackRenderable, TemplateRenderable
 {
 	use RedirectAjaxHandler;

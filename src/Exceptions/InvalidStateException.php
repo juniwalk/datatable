@@ -15,6 +15,8 @@ use JuniWalk\Utils\Enums\Casing;
 use JuniWalk\Utils\Format;
 use Nette\ComponentModel\IComponent;
 
+use function implode;
+
 final class InvalidStateException extends AbstractTableException
 {
 	public static function callbackMissing(IComponent $component, string $property): static

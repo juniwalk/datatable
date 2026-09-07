@@ -12,6 +12,16 @@ use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use Nette\Application\Attributes\Persistent;
 use Nette\Utils\Paginator;
 
+use function array_filter;
+use function array_merge;
+use function array_unique;
+use function floor;
+use function in_array;
+use function max;
+use function min;
+use function range;
+use function sort;
+
 trait Pagination
 {
 	#[Persistent]

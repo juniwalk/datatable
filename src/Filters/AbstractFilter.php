@@ -26,6 +26,9 @@ use Nette\ComponentModel\IContainer;
 use Nette\Forms\Controls\BaseControl;
 use Nette\Forms\Form;
 
+use function array_walk;
+use function call_user_func;
+
 abstract class AbstractFilter extends Component implements Filter
 {
 	use Traits\Attributes;

@@ -14,6 +14,9 @@ use JuniWalk\DataTable\Row;
 use Nette\ComponentModel\IContainer;
 use Nette\Utils\Html;
 
+use function array_filter;
+use function sizeof;
+
 class DropdownAction extends ButtonAction
 {
 	use Actions;

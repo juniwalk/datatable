@@ -13,6 +13,8 @@ use JuniWalk\Utils\Format;
 use Nette\ComponentModel\Component;
 use Throwable;
 
+use function gettype;
+
 final class FieldInvalidException extends AbstractTableException
 {
 	public static function fromColumn(Column $column, mixed $value, string $expected, ?Throwable $previous = null): static

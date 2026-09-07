@@ -10,6 +10,10 @@ namespace JuniWalk\DataTable\Traits;
 use Nette\Application\UI\InvalidLinkException;
 use Nette\Application\UI\Link;
 
+use function method_exists;
+use function str_contains;
+use function str_starts_with;
+
 /**
  * @phpstan-type LinkArgs array<string, mixed>
  */

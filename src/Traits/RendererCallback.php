@@ -14,6 +14,9 @@ use JuniWalk\DataTable\Interfaces\CallbackRenderable;
 use JuniWalk\DataTable\Row;
 use Nette\Utils\Html;
 
+use function call_user_func;
+use function is_string;
+
 /**
  * @phpstan-require-implements CallbackRenderable
  */

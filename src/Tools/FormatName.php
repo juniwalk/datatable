@@ -10,6 +10,8 @@ namespace JuniWalk\DataTable\Tools;
 use JuniWalk\Utils\Format;
 use JuniWalk\Utils\Strings;
 
+use function preg_match;
+
 class FormatName
 {
 	private function __construct() {}

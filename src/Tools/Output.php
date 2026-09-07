@@ -10,6 +10,11 @@ namespace JuniWalk\DataTable\Tools;
 use Nette\Application\UI\Template;
 use Throwable;
 
+use function is_numeric;
+use function ob_end_clean;
+use function ob_get_clean;
+use function ob_start;
+
 class Output
 {
 	private function __construct() {}

@@ -11,6 +11,8 @@ use Closure;
 use JuniWalk\DataTable\Row;
 use Nette\Utils\Strings;
 
+use function call_user_func;
+
 trait Confirmation
 {
 	use Translation;

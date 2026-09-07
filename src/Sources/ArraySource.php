@@ -22,6 +22,14 @@ use JuniWalk\DataTable\Source;
 use JuniWalk\DataTable\Tools\Compare;
 use JuniWalk\Utils\Format;
 
+use function array_fill_keys;
+use function array_map;
+use function array_multisort;
+use function array_slice;
+use function in_array;
+use function is_array;
+use function sizeof;
+
 /**
  * @phpstan-import-type Items from Source
  */

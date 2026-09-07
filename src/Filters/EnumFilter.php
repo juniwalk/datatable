@@ -17,6 +17,9 @@ use Nette\Forms\Form;
 use OutOfBoundsException;
 use Throwable;
 
+use function in_array;
+use function is_a;
+
 /**
  * @template T of BackedEnum
  */

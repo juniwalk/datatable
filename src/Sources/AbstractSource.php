@@ -11,6 +11,8 @@ use JuniWalk\DataTable\Column;
 use JuniWalk\DataTable\Filter;
 use JuniWalk\DataTable\Source;
 
+use function sizeof;
+
 /**
  * @phpstan-import-type Items from Source
  */

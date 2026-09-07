@@ -26,6 +26,8 @@ use JuniWalk\Utils\Html as CustomHtml;
 use Nette\Utils\Html;
 use ValueError;
 
+use function is_string;
+
 class StatusColumn extends AbstractColumn implements Sortable, Filterable, Hideable, CallbackRenderable
 {
 	use Sorting, Filters, Hiding, RendererCallback;

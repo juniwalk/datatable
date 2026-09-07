@@ -22,6 +22,11 @@ use JuniWalk\DataTable\Source;
 use JuniWalk\DataTable\Sources\AbstractSource;
 use JuniWalk\DataTable\Tools\FormatValue;
 
+use function is_numeric;
+use function sprintf;
+use function str_contains;
+use function strtr;
+
 /**
  * @phpstan-import-type Items from Source
  */

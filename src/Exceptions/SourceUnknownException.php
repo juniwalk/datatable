@@ -7,6 +7,8 @@
 
 namespace JuniWalk\DataTable\Exceptions;
 
+use function gettype;
+
 final class SourceUnknownException extends AbstractTableException
 {
 	public static function fromModel(mixed $model): static

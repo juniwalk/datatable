@@ -11,6 +11,13 @@ use BackedEnum;
 use DateMalformedStringException;
 use ValueError;
 
+use function array_map;
+use function explode;
+use function implode;
+use function preg_match;
+use function preg_quote;
+use function strcasecmp;
+
 class Compare
 {
 	private function __construct() {}

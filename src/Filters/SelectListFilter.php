@@ -13,6 +13,9 @@ use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Forms\Form;
 use Throwable;
 
+use function array_filter;
+use function array_map;
+
 class SelectListFilter extends AbstractFilter implements FilterList
 {
 	/** @var array<int|string, mixed> */

@@ -12,6 +12,9 @@ use JuniWalk\DataTable\Interfaces\TemplateRenderable;
 use JuniWalk\DataTable\Row;
 use JuniWalk\DataTable\Tools\Output;
 
+use function array_merge;
+use function file_exists;
+
 /**
  * @phpstan-require-implements TemplateRenderable
  */

@@ -10,6 +10,9 @@ namespace JuniWalk\DataTable\Traits;
 use Nette\Localization\Translator;
 use Stringable;
 
+use function is_string;
+use function preg_match;
+
 trait Translation
 {
 	protected ?Translator $translator = null;

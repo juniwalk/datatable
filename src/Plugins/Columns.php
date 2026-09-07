@@ -30,6 +30,13 @@ use JuniWalk\Utils\Enums\Casing;
 use JuniWalk\Utils\Strings;
 use Nette\Application\UI\Template;
 
+use function array_filter;
+use function array_map;
+use function array_values;
+use function count;
+use function is_a;
+use function sizeof;
+
 /**
  * @phpstan-import-type LinkArgs from LinkHandler
  */

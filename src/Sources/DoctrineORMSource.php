@@ -23,6 +23,17 @@ use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Source;
 use JuniWalk\DataTable\Tools\FormatValue;
 
+use function array_map;
+use function explode;
+use function in_array;
+use function preg_match;
+use function preg_replace;
+use function sizeof;
+use function sprintf;
+use function str_contains;
+use function str_replace;
+use function strtr;
+
 /**
  * @phpstan-import-type Items from Source
  */

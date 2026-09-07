@@ -15,6 +15,12 @@ use JuniWalk\DataTable\Exceptions\ColumnSortRequiredException;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
 use Nette\Application\UI\Template;
 
+use function array_filter;
+use function array_keys;
+use function array_map;
+use function in_array;
+use function sizeof;
+
 trait Ordering
 {
 	private bool $isListeningOrder = false;

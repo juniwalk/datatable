@@ -18,6 +18,11 @@ use JuniWalk\DataTable\Exceptions\ActionNotFoundException;
 use JuniWalk\DataTable\Tools\FormatName;
 use Nette\Application\UI\Template;
 
+use function array_diff_key;
+use function array_filter;
+use function array_intersect_key;
+use function sizeof;
+
 trait Toolbar
 {
 	/** @var array<string, Action> */

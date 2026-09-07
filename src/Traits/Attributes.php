@@ -11,6 +11,12 @@ use JuniWalk\Utils\Format;
 use Nette\MemberAccessException;
 use Nette\Utils\ObjectHelpers;
 
+use function array_diff;
+use function array_intersect;
+use function array_key_exists;
+use function explode;
+use function implode;
+
 /**
  * @method static setClass(?string ...$value)
  * @method static addClass(?string ...$value)

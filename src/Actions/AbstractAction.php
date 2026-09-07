@@ -16,6 +16,9 @@ use Nette\Application\UI\Control;
 use Nette\ComponentModel\IContainer;
 use Nette\Utils\Html;
 
+use function call_user_func;
+use function is_bool;
+
 abstract class AbstractAction extends Control implements Action
 {
 	use Traits\Attributes;

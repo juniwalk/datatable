@@ -14,6 +14,8 @@ use JuniWalk\DataTable\Source;
 use JuniWalk\DataTable\SourceFactory;
 use Nette\Application\UI\Presenter;
 
+use function is_null;
+
 trait Sources
 {
 	protected int|string|null $itemRedraw = null;

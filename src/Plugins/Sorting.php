@@ -16,6 +16,9 @@ use JuniWalk\DataTable\Exceptions\ColumnNotSortableException;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Template;
 
+use function array_filter;
+use function array_map;
+
 trait Sorting
 {
 	/** @var array<string, Sort> */

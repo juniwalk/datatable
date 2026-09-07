@@ -10,6 +10,8 @@ namespace JuniWalk\DataTable\Columns\Traits;
 use JuniWalk\DataTable\Columns\Interfaces\Sortable;
 use JuniWalk\DataTable\Enums\Sort;
 
+use function is_string;
+
 /**
  * @phpstan-require-implements Sortable
  */
