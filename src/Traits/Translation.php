@@ -12,6 +12,7 @@ use Stringable;
 
 use function is_string;
 use function preg_match;
+use function str_contains;
 
 trait Translation
 {
@@ -37,7 +38,7 @@ trait Translation
 			return $message ?? '';
 		}
 
-		if (is_string($message) && !preg_match('/^(([a-z0-9\_\-]+)\.)+(?2)$/i', $message)) {
+		if (is_string($message) && (!str_contains($message, '.') || !preg_match('/^(([a-z0-9\_\-]+)\.)+(?2)$/i', $message))) {
 			return $message;
 		}
 
