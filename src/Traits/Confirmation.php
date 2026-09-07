@@ -45,10 +45,10 @@ trait Confirmation
 
 		$message = $this->translate($this->confirmMessage);
 		$message = call_user_func(
-			$this->confirmCallback ?? fn($x) => $x,
+			$this->confirmCallback ?? static fn($x) => $x,
 			Strings::replace(
 				(string) $message, '/\%([^\%]+)\%/iu',
-				fn($m) => $row?->getValue($m[1]) ?? $m[0],
+				static fn($m) => $row?->getValue($m[1]) ?? $m[0],
 			),
 			$row?->getItem(),
 		);

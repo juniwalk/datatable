@@ -29,7 +29,7 @@ final class ColumnAmbiguityException extends AbstractTableException
 	 */
 	public static function fromColumns(array $columns): static
 	{
-		$names = array_map(fn($x) => $x->getName(), $columns);
+		$names = array_map(static fn($x) => $x->getName(), $columns);
 		$names = implode('", "', $names);
 
 		return new static('Columns "'.$names.'" create ambiguity in the table');

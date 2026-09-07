@@ -129,7 +129,7 @@ trait Actions
 	{
 		return $this->hasDetailAction ??= (bool) array_filter(
 			$this->getComponentTree(),
-			fn($x) => $x instanceof DetailAction,
+			static fn($x) => $x instanceof DetailAction,
 		);
 	}
 

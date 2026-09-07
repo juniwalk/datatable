@@ -27,7 +27,7 @@ class Output
 	public static function capture(callable $callback): ?string
 	{
 		try {
-			ob_start(fn() => '');
+			ob_start(static fn() => '');
 
 			$callback();
 
@@ -54,6 +54,6 @@ class Output
 			$template->$key = $value;
 		}
 
-		return static::capture(fn() => $template->render());
+		return static::capture(static fn() => $template->render());
 	}
 }

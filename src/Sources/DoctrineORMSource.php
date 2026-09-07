@@ -242,7 +242,7 @@ class DoctrineORMSource extends AbstractSource
 			return [];
 		}
 
-		return array_map(array: $fields, callback: function($field): string {
+		return array_map(array: $fields, callback: static function($field): string {
 			$field = (string) $field;
 
 			if (str_contains($field, ',')) {

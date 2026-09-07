@@ -154,7 +154,7 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 			}
 		}
 
-		$table->allowRowAction($name, fn() => false);
+		$table->allowRowAction($name, static fn() => false);
 	}
 
 
@@ -168,7 +168,7 @@ class DropdownColumn extends AbstractColumn implements Sortable, Filterable, Hid
 		}
 
 		return call_user_func(
-			$this->optionFactory ?? fn($x) => Option::fromEnum($x),
+			$this->optionFactory ?? static fn($x) => Option::fromEnum($x),
 			$item,
 		);
 	}

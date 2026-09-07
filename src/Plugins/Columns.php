@@ -210,7 +210,7 @@ trait Columns
 	 */
 	public function getColumnByType(string $class, bool $require = true): ?Column
 	{
-		$columns = array_filter($this->columns, fn($x) => is_a($x, $class));
+		$columns = array_filter($this->columns, static fn($x) => is_a($x, $class));
 
 		if ($require && empty($columns)) {
 			throw ColumnNotFoundException::fromClass($class);

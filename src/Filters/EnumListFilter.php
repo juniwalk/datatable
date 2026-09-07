@@ -64,7 +64,7 @@ class EnumListFilter extends AbstractFilter implements FilterList
 		try {
 			$result = array_filter(
 				array_map(fn($x) => FormatValue::enum($x, $this->enum), $value ?? []),
-				fn($x) => in_array($x, $items),
+				static fn($x) => in_array($x, $items),
 			);
 
 			return $result ?: null;
@@ -106,7 +106,7 @@ class EnumListFilter extends AbstractFilter implements FilterList
 			return null;
 		}
 
-		return array_map(fn($x) => $x->value, $this->value);
+		return array_map(static fn($x) => $x->value, $this->value);
 	}
 
 

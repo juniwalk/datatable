@@ -24,7 +24,7 @@ trait Sorting
 	/** @var array<string, Sort> */
 	#[Persistent]
 	public array $sort = [] {
-		set => array_filter(array_map(fn($sort) => Sort::make($sort, false), $value));
+		set => array_filter(array_map(static fn($sort) => Sort::make($sort, false), $value));
 	}
 
 	/** @var array<string, Sort> */

@@ -56,7 +56,7 @@ trait Ordering
 
 		if ($sortBy === Sort::DESC) {
 			// ? Inverse delta values when sorting by DESC
-			$delta = array_map(fn($x) => $x * -1, $delta);
+			$delta = array_map(static fn($x) => $x * -1, $delta);
 		}
 
 		$items = $this->source->fetchItem(...array_keys($delta));

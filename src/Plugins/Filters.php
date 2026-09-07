@@ -98,7 +98,7 @@ trait Filters
 		$this->setPage(1);
 
 		$this->filter = array_filter(
-			callback: fn($x) => $x !== '' && $x !== null,
+			callback: static fn($x) => $x !== '' && $x !== null,
 			array: Arrays::map($this->filters, function($filter, string $name) {
 				$this->setFilterRedraw($name);
 				return $filter->getValueFormatted();
@@ -302,7 +302,7 @@ trait Filters
 			$columns[$key] = $this->getColumn($column, false);
 		}
 
-		$columns = array_filter($columns, fn($x) => $x instanceof Column);
+		$columns = array_filter($columns, static fn($x) => $x instanceof Column);
 
 		$filter->setParent($this, $name);
 		$filter->setColumns(...$columns);
@@ -403,8 +403,8 @@ trait Filters
 		$default = $this->getDefaultFilter();
 		$current = $this->getCurrentFilter();
 
-		return !array_udiff_assoc($default, $current, fn($a, $b) => $a <=> $b)
-			&& !array_udiff_assoc($current, $default, fn($a, $b) => $a <=> $b);
+		return !array_udiff_assoc($default, $current, static fn($a, $b) => $a <=> $b)
+			&& !array_udiff_assoc($current, $default, static fn($a, $b) => $a <=> $b);
 	}
 
 
@@ -437,7 +437,7 @@ trait Filters
 
 	protected function onRenderFilters(Template $template): void
 	{
-		$filtersVisible = array_filter($this->filters, fn($x) => $x->getType() !== 'hidden');
+		$filtersVisible = array_filter($this->filters, static fn($x) => $x->getType() !== 'hidden');
 
 		$this->setAttribute('data-dt-allow-autosubmit', $this->autoSubmit ? 'true' : null);
 		$template->autoSubmit = $this->autoSubmit;
@@ -507,7 +507,7 @@ trait Filters
 		$form->addSubmit('__submit');
 
 		// ? Filter values are set in onSuccess attached in Filter::attachToForm()
-		Arrays::map($this->filters, fn($filter) => $filter->attachToForm($form));
+		Arrays::map($this->filters, static fn($filter) => $filter->attachToForm($form));
 
 		$form->onSuccess[] = $this->handleFilter(...);
 		$form->onError[] = function($form) {
