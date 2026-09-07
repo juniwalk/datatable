@@ -20,6 +20,22 @@ class LinkColumn extends TextColumn
 	use LinkArguments;
 	use LinkHandler;
 
+	protected bool $allowEmptyValue = false;
+
+
+	public function setAllowEmptyValue(bool $allowEmptyValue = true): static
+	{
+		$this->allowEmptyValue = $allowEmptyValue;
+		return $this;
+	}
+
+
+	public function isAllowEmptyValue(): bool
+	{
+		return $this->allowEmptyValue;
+	}
+
+
 	/**
 	 * @throws FieldNotFoundException
 	 * @throws FieldInvalidException
@@ -27,11 +43,14 @@ class LinkColumn extends TextColumn
 	 */
 	protected function formatValue(Row $row): Html|string
 	{
-		if ($row->getValue($this) === null) {
+		$value = parent::formatValue($row);
+
+		// ? Do not create link if value is empty and allowEmptyValue is false
+		if (!$this->allowEmptyValue && empty($value)) {
 			return '';
 		}
 
-		return Html::el('a')->setHtml(parent::formatValue($row))->addClass('fw-bold')
+		return Html::el('a')->setHtml($value)->addClass('fw-bold')
 			->setHref($this->createLink($this->dest, $this->createArgs($row)));
 	}
 }

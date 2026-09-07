@@ -102,9 +102,11 @@ trait Columns
 	/**
 	 * @param LinkArgs $args
 	 */
-	public function addColumnLink(string $name, string $label, string $dest = '', array $args = []): LinkColumn
+	public function addColumnLink(string $name, string $label, string $dest = '', array $args = [], bool $allowEmpty = false): LinkColumn
 	{
-		return $this->addColumn($name, new LinkColumn($label))->setLink($dest, $args);
+		return $this->addColumn($name, new LinkColumn($label))
+			->setAllowEmptyValue($allowEmpty)
+			->setLink($dest, $args);
 	}
 
 
@@ -131,7 +133,8 @@ trait Columns
 	 */
 	public function addColumnDropdown(string $name, string $label, array $items): DropdownColumn
 	{
-		return $this->addColumn($name, new DropdownColumn($label))->setItems($items);
+		return $this->addColumn($name, new DropdownColumn($label))
+			->setItems($items);
 	}
 
 
@@ -152,7 +155,8 @@ trait Columns
 	 */
 	protected function addColumnAction(string $name, string $label, array $actions): ActionColumn
 	{
-		return $this->addColumn($name, new ActionColumn($label))->addActions($actions);
+		return $this->addColumn($name, new ActionColumn($label))
+			->addActions($actions);
 	}
 
 
