@@ -15,6 +15,7 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Throwable;
 
+use function array_key_exists;
 use function is_array;
 use function is_int;
 use function is_null;
@@ -27,7 +28,7 @@ class Row
 {
 	use Attributes;
 
-	protected PropertyAccessor $reader;
+	protected static ?PropertyAccessor $reader = null;
 	protected int|string $id;
 
 
@@ -40,7 +41,7 @@ class Row
 		protected object|array $item,
 		protected readonly string $primaryKey,
 	) {
-		$this->reader = PropertyAccess::createPropertyAccessor();
+		static::$reader ??= PropertyAccess::createPropertyAccessor();
 
 		$this->fetchPrimaryKey($primaryKey);
 		$this->setAttribute('class', 'align-middle');
@@ -81,6 +82,10 @@ class Row
 			throw FieldNotFoundException::fromName($column ?? '');
 		}
 
+		if (is_array($this->item) && array_key_exists($column, $this->item)) {
+			return $this->item[$column];
+		}
+
 		$path = match (true) {
 			is_array($this->item) => '['.$column.']',
 
@@ -88,7 +93,7 @@ class Row
 		};
 
 		try {
-			return $this->reader->getValue($this->item, $path);
+			return static::$reader?->getValue($this->item, $path);
 
 		} catch (Throwable) {
 			return null;
