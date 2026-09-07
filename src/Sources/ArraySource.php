@@ -23,6 +23,7 @@ use JuniWalk\DataTable\Tools\Compare;
 use JuniWalk\Utils\Format;
 
 use function array_fill_keys;
+use function array_filter;
 use function array_map;
 use function array_multisort;
 use function array_slice;
@@ -72,6 +73,8 @@ class ArraySource extends AbstractSource
 	 */
 	protected function filter(array $filters): void
 	{
+		$filters = array_filter($filters, static fn($x) => $x->isFiltered());
+
 		if (empty($filters) || empty($this->items)) {
 			return;
 		}
@@ -80,10 +83,6 @@ class ArraySource extends AbstractSource
 			$row = new Row($item, $this->primaryKey);
 
 			foreach ($filters as $filter) {
-				if (!$filter->isFiltered()) {
-					continue;
-				}
-
 				$isMatching = match (true) {
 					// ? Returns @true if the query matches field in the model
 					$filter->hasCondition() => $filter->applyCondition($item),
