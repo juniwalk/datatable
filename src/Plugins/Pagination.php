@@ -121,8 +121,7 @@ trait Pagination
 	 */
 	public function setLimits(array $limits, bool $allowAll = false): static
 	{
-		$limits = array_filter($limits, fn($i) => $i > 0);
-		$limits = array_unique(array_filter($limits));
+		$limits = array_unique(array_filter($limits, static fn($x) => $x > 0));
 
 		if (empty($limits)) {
 			throw InvalidStateException::limitsEmpty();
