@@ -15,7 +15,7 @@ use Nette\ComponentModel\IContainer;
 use Nette\Utils\Html;
 
 use function array_filter;
-use function sizeof;
+use function count;
 
 class DropdownAction extends ButtonAction
 {
@@ -43,7 +43,7 @@ class DropdownAction extends ButtonAction
 
 	public function addDivider(): static
 	{
-		$count = sizeof(array_filter($this->actions, fn($x) => $x instanceof DividerAction));
+		$count = count(array_filter($this->actions, static fn($x) => $x instanceof DividerAction));
 		$this->addAction($this->getName().'_divider'.$count, new DividerAction);
 		return $this;
 	}

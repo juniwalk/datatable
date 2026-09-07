@@ -21,7 +21,7 @@ use Nette\Application\UI\Template;
 use function array_diff_key;
 use function array_filter;
 use function array_intersect_key;
-use function sizeof;
+use function count;
 
 trait Toolbar
 {
@@ -55,7 +55,7 @@ trait Toolbar
 
 	public function addToolbarDivider(): static
 	{
-		$count = sizeof(array_filter($this->toolbar, fn($x) => $x instanceof DividerAction));
+		$count = count(array_filter($this->toolbar, static fn($x) => $x instanceof DividerAction));
 		$this->addToolbarAction('divider'.$count, new DividerAction(group: 'divider'.$count));
 		return $this;
 	}
