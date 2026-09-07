@@ -28,6 +28,9 @@ class CompareTest extends TestCase
 	{
 		Assert::false(Compare::match('John', 'Jenna'));
 		Assert::true(Compare::match('Hello', 'hello'));
+		Assert::true(Compare::match('John Doe Developer', 'John Doe'));
+		Assert::true(Compare::match('John Doe Developer', 'John Doe')); // verifies cached pattern path
+		Assert::false(Compare::match('John Doe Developer', 'Jenna Smith'));
 	}
 
 

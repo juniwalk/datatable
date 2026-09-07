@@ -11,6 +11,7 @@ require __DIR__ . '/../../bootstrap.php';
 
 use JuniWalk\DataTable\Columns\TextColumn;
 use JuniWalk\DataTable\Enums\Sort;
+use JuniWalk\DataTable\Filters\EnumListFilter;
 use JuniWalk\DataTable\Filters\TextFilter;
 use JuniWalk\DataTable\SourceFactory;
 use JuniWalk\DataTable\Sources\ArraySource;
@@ -80,6 +81,26 @@ class ArraySourceTest extends TestCase
 
 		Assert::same(ItemsData[2], $items[0]);
 		Assert::same(ItemsData[1], $items[1]);
+	}
+
+
+	public function testFilterList(): void
+	{
+		$column = new TextColumn('Role');
+		$column->setParent(null, 'role');
+
+		$filter = new EnumListFilter('Role', Sort::class);
+		$filter->setParent(null, 'role');
+		$filter->setColumns($column);
+		$filter->setValue([Sort::ASC]);
+
+		$source = new ArraySource([
+			['id' => 1, 'role' => Sort::ASC],
+			['id' => 2, 'role' => Sort::DESC],
+		], 'id');
+
+		$items = $source->fetchItems(['role' => $filter], [], 0, 5);
+		Assert::count(1, $items);
 	}
 
 
