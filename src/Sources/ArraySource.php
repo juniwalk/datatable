@@ -198,7 +198,7 @@ class ArraySource extends AbstractSource
 		foreach ($filter->getColumns() as $column) {
 			$value = $row->getValue($column);
 
-			if (in_array($value, $query)) {
+			if (in_array($value, $query, true)) {
 				return true;
 			}
 		}
