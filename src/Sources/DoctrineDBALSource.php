@@ -169,7 +169,7 @@ class DoctrineDBALSource extends AbstractSource
 		$query = clone $this->queryBuilder;
 
 		// todo: this will cause issues as MSSQL requires all columns to be in groupBy or aggregate
-		if (str_contains('JOIN', $query->getSQL())) {
+		if (str_contains($query->getSQL(), 'JOIN')) {
 			$query->addGroupBy($this->primaryKey);
 
 			foreach ($this->orderBy as $field => $sort) {
