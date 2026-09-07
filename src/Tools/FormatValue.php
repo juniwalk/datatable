@@ -116,6 +116,13 @@ class FormatValue
 	 */
 	public static function datetime(mixed $value, array $formats = []): ?DateTimeImmutable
 	{
+		static $defaultFormats = [
+			DateTimeInterface::RFC3339_EXTENDED,
+			DateTimeInterface::RFC3339,
+			'Y-m-d H:i:s',
+			'Y-m-d',
+		];
+
 		if (empty($value)) {
 			return null;
 		}
@@ -129,12 +136,9 @@ class FormatValue
 		}
 
 		if (is_string($value)) {
-			$formats = array_merge($formats, [
-				DateTimeInterface::RFC3339_EXTENDED,
-				DateTimeInterface::RFC3339,
-				'Y-m-d H:i:s',
-				'Y-m-d',
-			]);
+			$formats = $formats !== []
+				? array_merge($formats, $defaultFormats)
+				: $defaultFormats;
 
 			foreach ($formats as $format) {
 				$date = DateTimeImmutable::createFromFormat($format, $value);
