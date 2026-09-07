@@ -30,8 +30,9 @@ use JuniWalk\Utils\Enums\Casing;
 use JuniWalk\Utils\Strings;
 use Nette\Application\UI\Template;
 
+use function array_fill_keys;
 use function array_filter;
-use function array_map;
+use function array_keys;
 use function array_values;
 use function count;
 use function is_a;
@@ -50,8 +51,8 @@ trait Columns
 
 	public function handleShowAll(): void
 	{
-		$columnsHidden = array_filter($this->columns, fn($x) => $x instanceof Hideable);
-		$columnsHidden = array_map(fn() => false, $columnsHidden);
+		$columnsHidden = array_filter($this->columns, static fn($x) => $x instanceof Hideable);
+		$columnsHidden = array_fill_keys(array_keys($columnsHidden), false);
 
 		$this->setOption(Option::StateColumns, $columnsHidden);
 
