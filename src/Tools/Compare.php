@@ -33,15 +33,17 @@ class Compare
 
 	public static function match(mixed $value, mixed $query): bool
 	{
+		static $cache = [];
+
 		$value = FormatValue::string($value) ?? '';
 		$query = FormatValue::string($query) ?? '';
 
-		$pattern = array_map(
-			fn($x) => preg_quote($x, '/'),
+		$pattern = $cache[$query] ??= '/'.implode('|', array_map(
+			static fn($x) => preg_quote($x, '/'),
 			explode(' ', $query),
-		);
+		)).'/i';
 
-		return (bool) preg_match('/'.implode('|', $pattern).'/i', $value);
+		return (bool) preg_match($pattern, $value);
 	}
 
 
