@@ -32,7 +32,7 @@ trait Translation
 	}
 
 
-	protected function translate(Stringable|string|null $message, string ...$params): Stringable|string
+	protected function translate(Stringable|string|null $message, mixed ...$params): Stringable|string
 	{
 		if (!$message || !isset($this->translator)) {
 			return $message ?? '';
