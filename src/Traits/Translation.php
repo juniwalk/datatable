@@ -17,6 +17,7 @@ use function str_contains;
 trait Translation
 {
 	protected ?Translator $translator = null;
+	protected bool $translateDisabled = false;
 
 
 	public function setTranslator(?Translator $translator): static
@@ -32,9 +33,22 @@ trait Translation
 	}
 
 
+	public function setTranslateDisabled(bool $translateDisabled = true): static
+	{
+		$this->translateDisabled = $translateDisabled;
+		return $this;
+	}
+
+
+	public function isTranslateDisabled(): bool
+	{
+		return $this->translateDisabled;
+	}
+
+
 	protected function translate(Stringable|string|null $message, mixed ...$params): Stringable|string
 	{
-		if (!$message || !isset($this->translator)) {
+		if ($this->translateDisabled || !$message || !isset($this->translator)) {
 			return $message ?? '';
 		}
 

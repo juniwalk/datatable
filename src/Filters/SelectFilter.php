@@ -107,6 +107,10 @@ class SelectFilter extends AbstractFilter implements FilterSingle
 
 		$this->applyAttributes($input);
 
+		if ($this->translateDisabled) {
+			$input->setTranslator(null);
+		}
+
 		$form->onSuccess[] = function($form, $data) {
 			$this->setValue($data[$this->fieldName()]);
 		};

@@ -149,6 +149,10 @@ class EnumListFilter extends AbstractFilter implements FilterList
 
 		$this->applyAttributes($input);
 
+		if ($this->translateDisabled) {
+			$input->setTranslator(null);
+		}
+
 		$form->onSuccess[] = function($form, $data) {
 			$this->setValue((array) $data[$this->fieldName()]);
 		};

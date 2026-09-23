@@ -25,13 +25,12 @@ use function is_a;
  */
 class EnumFilter extends AbstractFilter implements FilterSingle
 {
-	protected string|bool $placeholder = true;
-
 	/** @var array<int|string, T> */
 	protected array $items;
 
 	/** @var ?T */
 	protected ?BackedEnum $value;
+	protected string|bool $placeholder = true;
 
 
 	/**
@@ -157,6 +156,10 @@ class EnumFilter extends AbstractFilter implements FilterSingle
 			->setPrompt($placeholder);
 
 		$this->applyAttributes($input);
+
+		if ($this->translateDisabled) {
+			$input->setTranslator(null);
+		}
 
 		$form->onSuccess[] = function($form, $data) {
 			$this->setValue($data[$this->fieldName()] ?? null);
