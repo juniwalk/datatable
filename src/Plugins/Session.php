@@ -60,16 +60,24 @@ trait Session
 	}
 
 
-	protected function setOption(Option $key, mixed $value = null): static
+	protected function setOption(Option|string $key, mixed $value = null): static
 	{
-		$this->session->set($key->value, $value);
+		if ($key instanceof Option) {
+			$key = $key->value;
+		}
+
+		$this->session->set($key, $value);
 		return $this;
 	}
 
 
-	protected function getOption(Option $key, mixed $default = null): mixed
+	protected function getOption(Option|string $key, mixed $default = null): mixed
 	{
-		return $this->session->get($key->value) ?? $default;
+		if ($key instanceof Option) {
+			$key = $key->value;
+		}
+
+		return $this->session->get($key) ?? $default;
 	}
 
 
