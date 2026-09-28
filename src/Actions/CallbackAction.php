@@ -10,11 +10,12 @@ namespace JuniWalk\DataTable\Actions;
 use JuniWalk\DataTable\Row;
 use JuniWalk\Utils\Interfaces\EventHandler;
 use JuniWalk\Utils\Traits\Events;
+use JuniWalk\Utils\Traits\RedirectAjaxHandler;
 use Nette\Utils\Html;
 
 class CallbackAction extends AbstractAction implements EventHandler
 {
-	use Events;
+	use Events, RedirectAjaxHandler;
 
 	protected string $tag = 'a';
 
