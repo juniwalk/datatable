@@ -9,12 +9,16 @@ namespace JuniWalk\DataTable\Filters;
 
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
+use JuniWalk\DataTable\Interfaces\CallbackSearchable;
+use JuniWalk\DataTable\Traits\SearchCallback;
 use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Forms\Form;
 use Throwable;
 
-class SelectFilter extends AbstractFilter implements FilterSingle
+class SelectFilter extends AbstractFilter implements FilterSingle, CallbackSearchable
 {
+	use SearchCallback;
+
 	/** @var array<int|string, mixed> */
 	protected array $items = [];
 

@@ -9,6 +9,8 @@ namespace JuniWalk\DataTable\Filters;
 
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filters\Interfaces\FilterList;
+use JuniWalk\DataTable\Interfaces\CallbackSearchable;
+use JuniWalk\DataTable\Traits\SearchCallback;
 use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Forms\Form;
 use Throwable;
@@ -16,8 +18,10 @@ use Throwable;
 use function array_filter;
 use function array_map;
 
-class SelectListFilter extends AbstractFilter implements FilterList
+class SelectListFilter extends AbstractFilter implements FilterList, CallbackSearchable
 {
+	use SearchCallback;
+
 	/** @var array<int|string, mixed> */
 	protected array $items = [];
 

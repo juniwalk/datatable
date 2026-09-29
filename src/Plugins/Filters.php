@@ -15,6 +15,7 @@ use JuniWalk\DataTable\Exceptions\FilterInvalidException;
 use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
+use JuniWalk\DataTable\Interfaces\CallbackSearchable;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\DateRangeFilter;
 use JuniWalk\DataTable\Filters\DateTimeRangeFilter;
@@ -28,10 +29,14 @@ use JuniWalk\DataTable\Filters\SelectListFilter;
 use JuniWalk\DataTable\Filters\Interfaces\FilterList;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
+use JuniWalk\Form\SearchPayload;
 use JuniWalk\Utils\Arrays;
+use JuniWalk\Utils\Enums\Color;
 use Nette\Application\Attributes\Persistent;
 use Nette\Application\UI\Form;
 use Nette\Application\UI\Template;
+use Tracy\Debugger;
+use Throwable;
 use TypeError;
 
 use function array_filter;
@@ -52,6 +57,36 @@ trait Filters
 
 	/** @var array<string, FilterSingle|FilterRange|FilterList> */
 	protected array $filters = [];
+
+
+	/**
+	 * @throws Throwable
+	 */
+	public function handleSearch(string $filterName, ?int $maxResults = null, ?string $term = null, ?int $page = null): void
+	{
+		$search = new SearchPayload($page, $maxResults);
+
+		try {
+			$filter = $this->getFilter($filterName);
+
+			if (!$filter instanceof CallbackSearchable) {
+				throw FilterInvalidException::fromFilter($filter, 'is not searchable');
+			}
+
+			if ($result = $filter->searchCallback($term ?? '', $search)) {
+				$search->addItems($result);
+			}
+
+		} catch (Throwable $e) {
+			$this->flashMessage($e->getMessage(), Color::Danger);
+			Debugger::log($e);
+
+			// todo: Remove if error displaying is solved in future
+			throw $e;
+		}
+
+		$this->getPresenter()->sendJson($search);
+	}
 
 
 	public function handleClearByFilter(string $filterName): void
@@ -503,6 +538,7 @@ trait Filters
 	protected function createComponentFilterForm(): Form
 	{
 		$form = new Form;
+		$form->setHtmlAttribute('data-form-name', $this->getName());
 		$form->setTranslator($this->getTranslator());
 		$form->addSubmit('__submit');
 
