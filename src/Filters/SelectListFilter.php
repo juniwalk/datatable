@@ -9,8 +9,8 @@ namespace JuniWalk\DataTable\Filters;
 
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filters\Interfaces\FilterList;
-use JuniWalk\DataTable\Interfaces\CallbackSearchable;
-use JuniWalk\DataTable\Traits\SearchCallback;
+use JuniWalk\DataTable\Filters\Interfaces\FilterSearchable;
+use JuniWalk\DataTable\Traits\SearchHandler;
 use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Forms\Form;
 use Throwable;
@@ -18,9 +18,9 @@ use Throwable;
 use function array_filter;
 use function array_map;
 
-class SelectListFilter extends AbstractFilter implements FilterList, CallbackSearchable
+class SelectListFilter extends AbstractFilter implements FilterList, FilterSearchable
 {
-	use SearchCallback;
+	use SearchHandler;
 
 	/** @var array<int|string, mixed> */
 	protected array $items = [];
@@ -36,6 +36,8 @@ class SelectListFilter extends AbstractFilter implements FilterList, CallbackSea
 	 */
 	public function checkValue(?array $value): ?array
 	{
+		$this->items = $this->searchProvider?->findOptions($value) ?? $this->items;
+
 		try {
 			$result = array_filter(
 				array_map(fn($x) => FormatValue::index($x, $this->items), $value ?? []),
@@ -105,18 +107,21 @@ class SelectListFilter extends AbstractFilter implements FilterList, CallbackSea
 
 	public function attachToForm(Form $form): void
 	{
-		$input = $form->addMultiSelect($this->fieldName(), $this->label, $this->items)
+		$fieldName = $this->fieldName();
+		$input = $form->addMultiSelect($fieldName, $this->label, $this->items)
 			->setValue($this->value ?? null)
 			->checkDefaultValue(false);
 
+		$this->applyAttributeSearch($input, $fieldName);
 		$this->applyAttributes($input);
 
 		if ($this->translateDisabled) {
 			$input->setTranslator(null);
 		}
 
-		$form->onSuccess[] = function($form, $data) {
-			$this->setValue((array) $data[$this->fieldName()]);
+		$form->onSuccess[] = function($form, $data) use ($fieldName) {
+			$value = $data[$fieldName] ?: $form->getHttpData(Form::DataLine, $fieldName.'[]');
+			$this->setValue($value);
 		};
 	}
 }

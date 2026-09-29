@@ -9,15 +9,15 @@ namespace JuniWalk\DataTable\Filters;
 
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
-use JuniWalk\DataTable\Interfaces\CallbackSearchable;
-use JuniWalk\DataTable\Traits\SearchCallback;
+use JuniWalk\DataTable\Filters\Interfaces\FilterSearchable;
+use JuniWalk\DataTable\Traits\SearchHandler;
 use JuniWalk\DataTable\Tools\FormatValue;
 use Nette\Forms\Form;
 use Throwable;
 
-class SelectFilter extends AbstractFilter implements FilterSingle, CallbackSearchable
+class SelectFilter extends AbstractFilter implements FilterSingle, FilterSearchable
 {
-	use SearchCallback;
+	use SearchHandler;
 
 	/** @var array<int|string, mixed> */
 	protected array $items = [];
@@ -44,6 +44,8 @@ class SelectFilter extends AbstractFilter implements FilterSingle, CallbackSearc
 	 */
 	public function checkValue(mixed $value): int|string|null
 	{
+		$this->items = $this->searchProvider?->findOptions($value) ?? $this->items;
+
 		try {
 			return FormatValue::index($value, $this->items);
 
@@ -100,23 +102,26 @@ class SelectFilter extends AbstractFilter implements FilterSingle, CallbackSearc
 	public function attachToForm(Form $form): void
 	{
 		$placeholder = match ($this->placeholder) {
-			true => 'datatable.filter.select-placeholder',
-			default => $this->placeholder,
+			true	=> 'datatable.filter.select-placeholder',
+			default	=> $this->placeholder,
 		};
 
-		$input = $form->addSelect($this->fieldName(), $this->label, $this->items)
+		$fieldName = $this->fieldName();
+		$input = $form->addSelect($fieldName, $this->label, $this->items)
 			->setValue($this->value ?? null)
 			->checkDefaultValue(false)
 			->setPrompt($placeholder);
 
+		$this->applyAttributeSearch($input, $fieldName);
 		$this->applyAttributes($input);
 
 		if ($this->translateDisabled) {
 			$input->setTranslator(null);
 		}
 
-		$form->onSuccess[] = function($form, $data) {
-			$this->setValue($data[$this->fieldName()]);
+		$form->onSuccess[] = function($form, $data) use ($fieldName) { 
+			$value = $data[$fieldName] ?: $form->getHttpData(Form::DataText, $fieldName);
+			$this->setValue($value ?: null);
 		};
 	}
 }

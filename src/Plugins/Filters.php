@@ -15,7 +15,6 @@ use JuniWalk\DataTable\Exceptions\FilterInvalidException;
 use JuniWalk\DataTable\Exceptions\FilterNotFoundException;
 use JuniWalk\DataTable\Exceptions\FilterValueInvalidException;
 use JuniWalk\DataTable\Exceptions\InvalidStateException;
-use JuniWalk\DataTable\Interfaces\CallbackSearchable;
 use JuniWalk\DataTable\Filters\DateFilter;
 use JuniWalk\DataTable\Filters\DateRangeFilter;
 use JuniWalk\DataTable\Filters\DateTimeRangeFilter;
@@ -28,6 +27,7 @@ use JuniWalk\DataTable\Filters\SelectFilter;
 use JuniWalk\DataTable\Filters\SelectListFilter;
 use JuniWalk\DataTable\Filters\Interfaces\FilterList;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
+use JuniWalk\DataTable\Filters\Interfaces\FilterSearchable;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\Form\SearchPayload;
 use JuniWalk\Utils\Arrays;
@@ -69,13 +69,16 @@ trait Filters
 		try {
 			$filter = $this->getFilter($filterName);
 
-			if (!$filter instanceof CallbackSearchable) {
-				throw FilterInvalidException::fromFilter($filter, 'is not searchable');
+			if (!$filter instanceof FilterSearchable) {
+				throw FilterInvalidException::notSearchable($filter);
 			}
 
-			if ($result = $filter->searchCallback($term ?? '', $search)) {
-				$search->addItems($result);
+			if (!$searchProvider = $filter->getSearchProvider()) {
+				throw FilterInvalidException::missingSearchProvider($filter);
 			}
+
+			$result = $searchProvider->search($filter, $term ?? '', $search);
+			$search->addItems($result);
 
 		} catch (Throwable $e) {
 			$this->flashMessage($e->getMessage(), Color::Danger);
