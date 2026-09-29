@@ -44,9 +44,11 @@ class SelectFilter extends AbstractFilter implements FilterSingle, FilterSearcha
 	 */
 	public function checkValue(mixed $value): int|string|null
 	{
-		$this->items = $this->searchProvider?->findOptions($value) ?? $this->items;
-
 		try {
+			if ($this->items === [] && $this->searchProvider !== null) {
+				$this->items = $this->searchProvider->findOptions($value);
+			}
+
 			return FormatValue::index($value, $this->items);
 
 		} catch (Throwable $e) {

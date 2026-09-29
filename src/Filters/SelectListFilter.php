@@ -36,9 +36,11 @@ class SelectListFilter extends AbstractFilter implements FilterList, FilterSearc
 	 */
 	public function checkValue(?array $value): ?array
 	{
-		$this->items = $this->searchProvider?->findOptions($value) ?? $this->items;
-
 		try {
+			if ($this->items === [] && $this->searchProvider !== null) {
+				$this->items = $this->searchProvider->findOptions($value);
+			}
+
 			$result = array_filter(
 				array_map(fn($x) => FormatValue::index($x, $this->items), $value ?? []),
 			);
