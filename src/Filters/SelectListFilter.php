@@ -123,6 +123,11 @@ class SelectListFilter extends AbstractFilter implements FilterList, FilterSearc
 
 		$form->onSuccess[] = function($form, $data) use ($fieldName) {
 			$value = $data[$fieldName] ?: $form->getHttpData(Form::DataLine, $fieldName.'[]');
+
+			if ($value === '' || $value === []) {
+				$value = null;
+			}
+
 			$this->setValue($value);
 		};
 	}

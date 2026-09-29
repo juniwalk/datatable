@@ -121,9 +121,14 @@ class SelectFilter extends AbstractFilter implements FilterSingle, FilterSearcha
 			$input->setTranslator(null);
 		}
 
-		$form->onSuccess[] = function($form, $data) use ($fieldName) { 
+		$form->onSuccess[] = function($form, $data) use ($fieldName) {
 			$value = $data[$fieldName] ?: $form->getHttpData(Form::DataText, $fieldName);
-			$this->setValue($value ?: null);
+
+			if ($value === '' || $value === []) {
+				$value = null;
+			}
+
+			$this->setValue($value);
 		};
 	}
 }
