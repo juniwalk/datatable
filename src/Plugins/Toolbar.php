@@ -62,9 +62,9 @@ trait Toolbar
 
 
 	/**
-	 * @template T of Action
-	 * @param  T $action
-	 * @return T
+	 * @template TAction of Action
+	 * @param  TAction $action
+	 * @return TAction
 	 */
 	public function addToolbarAction(string $name, Action $action): Action
 	{

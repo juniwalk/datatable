@@ -325,10 +325,10 @@ trait Filters
 
 
 	/**
-	 * @template T of FilterSingle|FilterRange|FilterList
-	 * @param  T $filter
+	 * @template TFilter of FilterSingle|FilterRange|FilterList
+	 * @param  TFilter $filter
 	 * @param  string|string[] $columns
-	 * @return T
+	 * @return TFilter
 	 * @throws FilterInvalidException
 	 */
 	public function addFilter(string $name, FilterSingle|FilterRange|FilterList $filter, string|array $columns = []): FilterSingle|FilterRange|FilterList

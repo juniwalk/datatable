@@ -52,9 +52,9 @@ trait Actions
 
 
 	/**
-	 * @template T of Action
-	 * @param  T $action
-	 * @return T
+	 * @template TAction of Action
+	 * @param  TAction $action
+	 * @return TAction
 	 */
 	public function addAction(string $name, Action $action): Action
 	{

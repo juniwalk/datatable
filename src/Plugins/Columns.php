@@ -169,9 +169,9 @@ trait Columns
 
 
 	/**
-	 * @template T of Column
-	 * @param  T $column
-	 * @return T
+	 * @template TColumn of Column
+	 * @param  TColumn $column
+	 * @return TColumn
 	 * @throws ColumnAmbiguityException
 	 */
 	public function addColumn(string $name, Column $column): Column
@@ -202,9 +202,9 @@ trait Columns
 
 
 	/**
-	 * @template T of Column
-	 * @param  class-string<T> $class
-	 * @return ($require is true ? T : ?T)
+	 * @template TColumn of Column
+	 * @param  class-string<TColumn> $class
+	 * @return ($require is true ? TColumn : ?TColumn)
 	 * @throws ColumnAmbiguityException
 	 * @throws ColumnNotFoundException
 	 */
