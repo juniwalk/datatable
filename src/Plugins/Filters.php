@@ -29,7 +29,7 @@ use JuniWalk\DataTable\Filters\Interfaces\FilterList;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSearchable;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
-use JuniWalk\Form\SearchPayload;
+use JuniWalk\ORM\SearchPayload;
 use JuniWalk\Utils\Arrays;
 use JuniWalk\Utils\Enums\Color;
 use Nette\Application\Attributes\Persistent;
@@ -78,7 +78,7 @@ trait Filters
 			}
 
 			$result = $searchProvider->search($filter, $term ?? '', $search);
-			$search->addItems($result);
+			$search->addItems($result ?? []);
 
 		} catch (Throwable $e) {
 			$this->flashMessage($e->getMessage(), Color::Danger);

@@ -8,19 +8,19 @@
 namespace JuniWalk\DataTable\Interfaces;
 
 use JuniWalk\DataTable\Filters\Interfaces\FilterSearchable;
-use JuniWalk\Form\SearchPayload;
-use JuniWalk\ORM\Entity\Interfaces\HtmlOption;
+use JuniWalk\ORM\SearchPayload;
+use Nette\Utils\Html;
 
 interface SearchProvider
 {
 	/**
 	 * @param  mixed|mixed[] $items
-	 * @return HtmlOption[]
+	 * @return Html[]
 	 */
 	public function findOptions(mixed $items): array;
 
 	/**
-	 * @return HtmlOption[]
+	 * @return Html[]
 	 */
 	public function search(FilterSearchable $filter, string $query, SearchPayload $payload): ?array;
 }
