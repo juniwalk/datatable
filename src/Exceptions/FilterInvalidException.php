@@ -23,6 +23,18 @@ final class FilterInvalidException extends AbstractTableException
 	}
 
 
+	public static function notSearchable(Filter $filter): static
+	{
+		return static::fromFilter($filter, 'is not searchable');
+	}
+
+
+	public static function missingSearchProvider(Filter $filter): static
+	{
+		return static::fromFilter($filter, 'is missing a search provider');
+	}
+
+
 	protected static function fromFilter(Filter $filter, string $message): static
 	{
 		return new static('Filter "'.$filter->getName().'" of type "'.$filter::class.'" '.$message.'.');
