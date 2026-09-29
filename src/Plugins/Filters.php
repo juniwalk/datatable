@@ -295,7 +295,7 @@ trait Filters
 	 * @param  string|string[] $columns
 	 * @return SelectFilter
 	 */
-	public function addFilterSelect(string $name, string $label, array $items, string|array $columns = []): SelectFilter
+	public function addFilterSelect(string $name, string $label, array $items = [], string|array $columns = []): SelectFilter
 	{
 		return $this->addFilter($name, new SelectFilter($label), $columns)->setItems($items);
 	}
@@ -306,7 +306,7 @@ trait Filters
 	 * @param  string|string[] $columns
 	 * @return SelectListFilter
 	 */
-	public function addFilterSelectList(string $name, string $label, array $items, string|array $columns = []): SelectListFilter
+	public function addFilterSelectList(string $name, string $label, array $items = [], string|array $columns = []): SelectListFilter
 	{
 		return $this->addFilter($name, new SelectListFilter($label), $columns)->setItems($items);
 	}
