@@ -24,7 +24,13 @@ class TextFilter extends AbstractFilter implements FilterSingle
 	public function checkValue(mixed $value): ?string
 	{
 		try {
-			return FormatValue::string($value);
+			$value = FormatValue::string($value);
+
+			if ($value === '') {
+				$value = null;
+			}
+
+			return $value;
 
 		} catch (Throwable $e) {
 			throw FilterValueInvalidException::fromFilter($this, 'string', $value, $e);
