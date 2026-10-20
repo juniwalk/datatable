@@ -10,6 +10,7 @@ namespace JuniWalk\Tests\Cases;
 require __DIR__ . '/../bootstrap.php';
 
 use JuniWalk\DataTable\Exceptions\SourceMissingException;
+use JuniWalk\DataTable\Sources\NonInteractiveSource;
 use JuniWalk\DataTable\Tools\Output;
 use JuniWalk\Tests\Files\TestPresenter;
 use Tester\Assert;
@@ -69,6 +70,34 @@ class TableTest extends TestCase
 
 		// ? Check that rendered output contains some key elements
 		Assert::notContains('id="snippet-tableTest-paginator"', $output);
+	}
+
+
+	public function testInteractive(): void
+	{
+		$table = (new TestPresenter)->getComponent('tableTest');
+
+		Assert::true($table->isInteractive());
+		Assert::same($table, $table->setInteractive(false));
+		Assert::false($table->isInteractive());
+		Assert::true($table->setInteractive()->isInteractive());
+	}
+
+
+	public function testNonInteractive_Missing_Source(): void
+	{
+		$table = (new TestPresenter)->getComponent('tableNonInteractive');
+
+		Assert::type(NonInteractiveSource::class, $table->getSource());
+	}
+
+
+	public function testRender_NonInteractive(): void
+	{
+		$table = (new TestPresenter)->getComponent('tableNonInteractive');
+
+		Assert::noError(fn() => Output::capture(fn() => $table->render()));
+		Assert::type(NonInteractiveSource::class, $table->getSource());
 	}
 }
 

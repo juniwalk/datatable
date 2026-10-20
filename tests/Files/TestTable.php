@@ -12,8 +12,17 @@ use JuniWalk\DataTable\Table;
 
 class TestTable extends Table
 {
+	public function __construct(
+		bool $interactive = true,
+	) {
+		$this->setCaption('Test Table');
+		$this->setInteractive($interactive);
+	}
+
+
 	protected function createModel(): mixed
 	{
+		// ? Data from ItemsData constant in bootstrap.php
 		return ItemsData;
 	}
 

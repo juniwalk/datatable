@@ -39,6 +39,7 @@ class Table extends Control implements EventHandler, EventAutoWatch
 	use Plugins\Pagination;
 
 	protected Stringable|string|null $caption = null;
+	protected bool $isInteractive = true;
 
 
 	public function setCaption(Stringable|string|null $caption): static
@@ -51,6 +52,19 @@ class Table extends Control implements EventHandler, EventAutoWatch
 	public function getCaption(): Stringable|string|null
 	{
 		return $this->caption;
+	}
+
+
+	public function setInteractive(bool $interactive = true): static
+	{
+		$this->isInteractive = $interactive;
+		return $this;
+	}
+
+
+	public function isInteractive(): bool
+	{
+		return $this->isInteractive;
 	}
 
 

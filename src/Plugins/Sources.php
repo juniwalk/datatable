@@ -127,7 +127,10 @@ trait Sources
 	 */
 	protected function validateSources(Presenter $presenter): void
 	{
-		if (($model = $this->createModel()) !== null) {
+		if ($this->isInteractive === false) {
+			$this->source = SourceFactory::createNonInteractive();
+
+		} elseif (($model = $this->createModel()) !== null) {
 			$this->source = SourceFactory::fromModel($model);
 		}
 

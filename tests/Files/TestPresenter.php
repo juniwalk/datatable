@@ -54,4 +54,10 @@ class TestPresenter extends Presenter
 	{
 		return new TestTable;
 	}
+
+
+	protected function createComponentTableNonInteractive(): Table
+	{
+		return new TestTable(interactive: false);
+	}
 }
