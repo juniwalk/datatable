@@ -87,6 +87,23 @@ trait Sorting
 	}
 
 
+	/**
+	 * todo: this being in the trait might not be ideal, consider moving to a dedicated state management plugin or class
+	 * @param array<string, mixed> $params
+	 */
+	public function saveState(array &$params): void
+	{
+		parent::saveState($params);
+
+		if (isset($params['sort']) && is_array($params['sort'])) {
+			$params['sort'] = array_map(
+				static fn($s) => $s instanceof Sort ? $s->value : $s,
+				$params['sort']
+			);
+		}
+	}
+
+
 	public function setSortable(bool $sortable = true): static
 	{
 		$this->isSortable = $sortable;

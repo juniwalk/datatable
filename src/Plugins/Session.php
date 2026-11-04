@@ -20,6 +20,7 @@ trait Session
 
 
 	/**
+	 * todo: this being in the trait might not be ideal, consider moving to a dedicated state management plugin or class
 	 * @param array<string, mixed> $params
 	 */
 	public function loadState(array $params): void
