@@ -50,5 +50,10 @@
 		"scrivo/highlight.php": "^9.0",
 		"staabm/phpstan-todo-by": "^0.3",
 		"tracy/tracy": "^2.0"
+	},
+
+	"scripts": {
+		"lint": "phpstan analyze",
+		"test": "tester tests/ -C"
 	}
 }
