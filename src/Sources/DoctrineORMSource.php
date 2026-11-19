@@ -7,7 +7,6 @@
 
 namespace JuniWalk\DataTable\Sources;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr\OrderBy;
 use Doctrine\ORM\QueryBuilder;
 use JuniWalk\DataTable\Column;
@@ -21,6 +20,7 @@ use JuniWalk\DataTable\Filters\Interfaces\FilterList;
 use JuniWalk\DataTable\Filters\Interfaces\FilterRange;
 use JuniWalk\DataTable\Filters\Interfaces\FilterSingle;
 use JuniWalk\DataTable\Source;
+use JuniWalk\DataTable\Tools\DQLJoinPruner;
 use JuniWalk\DataTable\Tools\FormatValue;
 
 use function array_map;
@@ -44,6 +44,8 @@ class DoctrineORMSource extends AbstractSource
 
 	/** @var array<string, mixed> */
 	protected array $hints = [];
+
+	protected bool $leftJoinsPruning = true;
 
 	public function __construct(
 		protected QueryBuilder $queryBuilder,
@@ -69,25 +71,16 @@ class DoctrineORMSource extends AbstractSource
 	}
 
 
-	public function getCount(): ?int
+	public function setLeftJoinsPruning(bool $leftJoinPruning): static
 	{
-		if ($this->isIndeterminate || isset($this->count)) {
-			return $this->count ?? null;
-		}
+		$this->leftJoinsPruning = $leftJoinPruning;
+		return $this;
+	}
 
-		$query = clone $this->queryBuilder;
-		$query->select(sprintf('COUNT(DISTINCT %s)', $this->getPrimaryField()));
-		$query->resetDQLPart('orderBy');
-		$query->resetDQLPart('groupBy');
-		$query->setFirstResult(0);
-		$query->setMaxResults(null);
 
-		foreach ($this->hints as $name => $value) {
-			$query->setHint($name, $value);
-		}
-
-		$count = $query->getQuery()->getSingleScalarResult();
-		return $this->count ??= (int) $count;
+	public function isLeftJoinsPruning(): bool
+	{
+		return $this->leftJoinsPruning;
 	}
 
 
@@ -101,6 +94,32 @@ class DoctrineORMSource extends AbstractSource
 	{
 		$this->hints[$name] = $value;
 		return $this;
+	}
+
+
+	public function getCount(): ?int
+	{
+		if ($this->isIndeterminate || isset($this->count)) {
+			return $this->count ?? null;
+		}
+
+		$query = clone $this->queryBuilder;
+		$query->select(sprintf('COUNT(DISTINCT %s)', $this->getPrimaryField()));
+		$query->resetDQLPart('orderBy');
+		$query->resetDQLPart('groupBy');
+		$query->setFirstResult(0);
+		$query->setMaxResults(null);
+
+		if ($this->leftJoinsPruning === true) {
+			DQLJoinPruner::prune($query);
+		}
+
+		foreach ($this->hints as $name => $value) {
+			$query->setHint($name, $value);
+		}
+
+		$count = $query->getQuery()->getSingleScalarResult();
+		return $this->count ??= (int) $count;
 	}
 
 
@@ -185,6 +204,10 @@ class DoctrineORMSource extends AbstractSource
 	protected function fetchData(): array
 	{
 		$query = clone $this->queryBuilder;
+
+		if ($this->leftJoinsPruning === true) {
+			DQLJoinPruner::prune($query);
+		}
 
 		if ($query->getDQLPart('join')) {
 			$query->addGroupBy($this->getPrimaryField());
